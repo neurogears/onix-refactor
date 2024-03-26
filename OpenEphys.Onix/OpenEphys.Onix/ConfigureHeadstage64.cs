@@ -10,10 +10,17 @@ namespace OpenEphys.Onix
 
         public ConfigureHeadstage64()
         {
+            // TODO: The issue with this headstage is that its locking voltage is far, far lower than the votlage requried for full
+            // functionality. Locking occurs at aroud 2V on the headstage (enough to turn 1.8V on). Full functionality is 5.0 volts.
+            // Whats worse: the port voltage can only go down to 3.3V, which means that its very hard to find a the true lowest voltage
+            // for a lock and then add a large offset to that.
             Port = PortName.PortA;
             LinkController.HubConfiguration = HubConfiguration.Standard;
-            LinkController.MinVoltage = 5.0;
-            LinkController.MaxVoltage = 7.0;
+            LinkController.MinVoltage = 3.3;
+            LinkController.MaxVoltage = 6.0;
+            LinkController.VoltageOffset = 3.4;
+            LinkController.VoltageOffSettleMillis = 4000; // TODO: It takes a huge amount of time to get to 0, almost 10 seconds
+            LinkController.VoltageOnSettleMillis = 100;
         }
 
         [Category(ConfigurationCategory)]
@@ -28,6 +35,10 @@ namespace OpenEphys.Onix
         [TypeConverter(typeof(HubDeviceConverter))]
         public ConfigureTS4231 TS4231 { get; set; } = new() { Enable = false };
 
+        [Category(ConfigurationCategory)]
+        [TypeConverter(typeof(HubDeviceConverter))]
+        public ConfigureHeadstage64ElectricalStimulator ElectricalStimulator { get; set; } = new() { Enable = false };
+
         public PortName Port
         {
             get { return port; }
@@ -39,6 +50,7 @@ namespace OpenEphys.Onix
                 Rhd2164.DeviceAddress = offset + 0;
                 Bno055.DeviceAddress = offset + 1;
                 TS4231.DeviceAddress = offset + 2;
+                ElectricalStimulator.DeviceAddress = offset + 3;
             }
         }
 
@@ -48,6 +60,7 @@ namespace OpenEphys.Onix
             yield return Rhd2164;
             yield return Bno055;
             yield return TS4231;
+            yield return ElectricalStimulator;
         }
     }
 

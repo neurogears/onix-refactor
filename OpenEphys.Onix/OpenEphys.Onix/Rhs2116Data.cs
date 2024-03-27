@@ -37,7 +37,7 @@ namespace OpenEphys.Onix
                                 var payload = (Rhs2116Payload*)frame.Data.ToPointer();
                                 Marshal.Copy(new IntPtr(payload->AmplifierData), amplifierBuffer, sampleIndex * Rhs2116.AmplifierChannelCount, Rhs2116.AmplifierChannelCount);
                                 Marshal.Copy(new IntPtr(payload->DCData), dcBuffer, sampleIndex * Rhs2116.AmplifierChannelCount, Rhs2116.AmplifierChannelCount);
-                                hubClockBuffer[sampleIndex] = BitHelper.SwapEndian(payload->HubClock);
+                                hubClockBuffer[sampleIndex] = payload->HubClock;
                                 clockBuffer[sampleIndex] = frame.Clock;
                                 if (++sampleIndex >= bufferSize)
                                 {

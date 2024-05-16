@@ -91,7 +91,7 @@ namespace OpenEphys.Onix
                 i2cNpx.WriteByte(NeuropixelsV1e.REC_MOD, (uint)NeuropixelsV1e.RecordRegisterValues.ACTIVE);
                 i2cNpx.WriteByte(NeuropixelsV1e.OP_MODE, (uint)NeuropixelsV1e.OperationRegisterValues.RECORD);
 
-                // blast some bits into the shift registers' stupid face
+                // program shift registers
                 var settings = new NeuropixelsV1eSettings(SpikeAmplifierGain, LfpAmplifierGain, Reference, SpikeFilter, GainCalibrationFile, AdcCalibrationFile);
                 settings.WriteShiftRegisters(i2cNpx);
 

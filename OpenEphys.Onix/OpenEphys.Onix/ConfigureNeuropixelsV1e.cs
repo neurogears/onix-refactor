@@ -78,7 +78,7 @@ namespace OpenEphys.Onix
                 if (probeMetadata.ProbeSerialNumber == null)
                     throw new InvalidOperationException("Probe serial number could not be read.");
 
-                // blast some bits into the shift registers' stupid face
+                // program shift registers
                 var probeControl = new NeuropixelsV1eRegisterContext(device, NeuropixelsV1e.ProbeAddress, SpikeAmplifierGain, LfpAmplifierGain, Reference, SpikeFilter, GainCalibrationFile, AdcCalibrationFile);
                 probeControl.InitializeProbe();
                 probeControl.WriteConfiguration();

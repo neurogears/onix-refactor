@@ -13,9 +13,9 @@ namespace OpenEphys.Onix.Design
         public static readonly string ContactStringFormat = "Contact_{0}";
         public static readonly string TextStringFormat = "TextContact_{0}";
 
-        public Rhs2116ProbeGroup ChannelConfiguration;
+        public ProbeGroup ChannelConfiguration;
 
-        public ChannelConfigurationDialog(Rhs2116ProbeGroup probeGroup)
+        public ChannelConfigurationDialog(ProbeGroup probeGroup)
         {
             InitializeComponent();
             Shown += FormShown;
@@ -26,11 +26,16 @@ namespace OpenEphys.Onix.Design
             }
             else
             {
-                ChannelConfiguration = new(probeGroup);
+                ChannelConfiguration = DefaultChannelLayout();
             }
 
             InitializeZedGraphChannels(zedGraphChannels);
             DrawChannels(zedGraphChannels, ChannelConfiguration);
+        }
+
+        public virtual ProbeGroup DefaultChannelLayout()
+        {
+            return null;
         }
 
         private void FormShown(object sender, EventArgs e)
@@ -46,7 +51,7 @@ namespace OpenEphys.Onix.Design
 
         private void LoadDefaultChannelLayout()
         {
-            ChannelConfiguration = new();
+            ChannelConfiguration = DefaultChannelLayout();
         }
 
         private void OpenFile()
@@ -60,7 +65,7 @@ namespace OpenEphys.Onix.Design
 
             if (ofd.ShowDialog() == DialogResult.OK && File.Exists(ofd.FileName))
             {
-                var channelConfiguration = DesignHelper.DeserializeString<Rhs2116ProbeGroup>(File.ReadAllText(ofd.FileName));
+                var channelConfiguration = DesignHelper.DeserializeString<ProbeGroup>(File.ReadAllText(ofd.FileName));
                 
                 if (channelConfiguration == null || channelConfiguration.NumContacts != 32)
                 {
@@ -97,32 +102,42 @@ namespace OpenEphys.Onix.Design
 
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
-                        EllipseObj contactObj = new(contact.PosX - contact.ShapeParams.Radius, contact.PosY + contact.ShapeParams.Radius,
-                            contact.ShapeParams.Radius * 2, contact.ShapeParams.Radius * 2, Color.DarkGray, Color.WhiteSmoke)
+                        EllipseObj contactObj = new(contact.PosX - contact.ShapeParams.Radius.Value, contact.PosY + contact.ShapeParams.Radius.Value,
+                            contact.ShapeParams.Radius.Value * 2, contact.ShapeParams.Radius.Value * 2, Color.DarkGray, Color.WhiteSmoke)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, contact.DeviceId)
                         };
 
-
                         zedGraph.GraphPane.GraphObjList.Add(contactObj);
-
-                        TextObj textObj = new(contact.DeviceId.ToString(), contact.PosX, contact.PosY)
+                    }
+                    else if (contact.Shape.Equals(ContactShape.Square))
+                    {
+                        BoxObj contactObj = new(contact.PosX - contact.ShapeParams.Width.Value / 2, contact.PosY + contact.ShapeParams.Width.Value / 2,
+                            contact.ShapeParams.Width.Value, contact.ShapeParams.Width.Value, Color.DarkGray, Color.WhiteSmoke)
                         {
-                            ZOrder = ZOrder.A_InFront,
-                            Tag = string.Format(TextStringFormat, contact.DeviceId)
+                            ZOrder = ZOrder.B_BehindLegend,
+                            Tag = string.Format(ContactStringFormat, contact.DeviceId)
                         };
 
-                        textObj.FontSpec.Size = 22;
-                        textObj.FontSpec.Border.IsVisible = false;
-                        textObj.FontSpec.Fill.IsVisible = false;
-
-                        zedGraph.GraphPane.GraphObjList.Add(textObj);
+                        zedGraph.GraphPane.GraphObjList.Add(contactObj);
                     }
                     else
                     {
                         MessageBox.Show("Contact shapes other than 'circle' not implemented yet.");
                     }
+
+                    TextObj textObj = new(contact.DeviceId.ToString(), contact.PosX, contact.PosY)
+                    {
+                        ZOrder = ZOrder.A_InFront,
+                        Tag = string.Format(TextStringFormat, contact.DeviceId)
+                    };
+
+                    textObj.FontSpec.Size = 22;
+                    textObj.FontSpec.Border.IsVisible = false;
+                    textObj.FontSpec.Fill.IsVisible = false;
+
+                    zedGraph.GraphPane.GraphObjList.Add(textObj);
                 }
             }
 

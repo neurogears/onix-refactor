@@ -1,9 +1,11 @@
-using System;
+﻿using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using Bonsai;
 
 namespace OpenEphys.Onix
 {
+    [DefaultProperty(nameof(Enable))]
     public class ConfigureNeuropixelsV1e : SingleDeviceFactory
     {
         public ConfigureNeuropixelsV1e()
@@ -13,6 +15,7 @@ namespace OpenEphys.Onix
 
         [Category(ConfigurationCategory)]
         [Description("Specifies whether the NeuropixelsV1e data stream is enabled.")]
+        [Editor("OpenEphys.Onix.Design.NeuropixelsV1eChannelConfigurationEditor, OpenEphys.Onix.Design", typeof(UITypeEditor))]
         public bool Enable { get; set; } = true;
 
         [Category(ConfigurationCategory)]

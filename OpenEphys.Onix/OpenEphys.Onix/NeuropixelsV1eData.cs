@@ -8,9 +8,9 @@ using OpenCV.Net;
 
 namespace OpenEphys.Onix
 {
-    public class NeuropixelsV1fData : Source<NeuropixelsV1fDataFrame>
+    public class NeuropixelsV1eData : Source<NeuropixelsV1eDataFrame>
     {
-        [TypeConverter(typeof(NeuropixelsV1f.NameConverter))]
+        [TypeConverter(typeof(NeuropixelsV1e.NameConverter))]
         public string DeviceName { get; set; }
 
         int bufferSize = 36;
@@ -22,7 +22,7 @@ namespace OpenEphys.Onix
             set => bufferSize = (int)(Math.Ceiling((double)value / NeuropixelsV1.FramesPerRoundRobin) * NeuropixelsV1.FramesPerRoundRobin);
         }
 
-        public unsafe override IObservable<NeuropixelsV1fDataFrame> Generate()
+        public unsafe override IObservable<NeuropixelsV1eDataFrame> Generate()
         {
             var spikeBufferSize = BufferSize;
             var lfpBufferSize = spikeBufferSize / NeuropixelsV1.FramesPerRoundRobin;
@@ -31,10 +31,10 @@ namespace OpenEphys.Onix
             return Observable.Using(
                 () => DeviceManager.ReserveDevice(DeviceName),
                 disposable => disposable.Subject.SelectMany(deviceInfo =>
-                    Observable.Create<NeuropixelsV1fDataFrame>(observer =>
+                    Observable.Create<NeuropixelsV1eDataFrame>(observer =>
                     {
                         var sampleIndex = 0;
-                        var device = deviceInfo.GetDeviceContext(typeof(NeuropixelsV1f));
+                        var device = deviceInfo.GetDeviceContext(typeof(NeuropixelsV1e));
                         var spikeBuffer = new ushort[NeuropixelsV1.ChannelCount, spikeBufferSize];
                         var lfpBuffer = new ushort[NeuropixelsV1.ChannelCount, lfpBufferSize];
                         var frameCountBuffer = new int[spikeBufferSize * NeuropixelsV1.FramesPerSuperframe];
@@ -45,7 +45,7 @@ namespace OpenEphys.Onix
                             frame =>
                             {
                                 var payload = (NeuropixelsV1fPayload*)frame.Data.ToPointer();
-                                NeuropixelsV1fDataFrame.CopyAmplifierBuffer(payload->AmplifierData, frameCountBuffer, spikeBuffer, lfpBuffer, sampleIndex);
+                                NeuropixelsV1eDataFrame.CopyAmplifierBuffer(payload->AmplifierData, frameCountBuffer, spikeBuffer, lfpBuffer, sampleIndex);
                                 hubClockBuffer[sampleIndex] = payload->HubClock;
                                 clockBuffer[sampleIndex] = frame.Clock;
 
@@ -53,7 +53,7 @@ namespace OpenEphys.Onix
                                 {
                                     var spikeData = Mat.FromArray(spikeBuffer);
                                     var lfpData = Mat.FromArray(lfpBuffer);
-                                    observer.OnNext(new NeuropixelsV1fDataFrame(clockBuffer, hubClockBuffer, frameCountBuffer, spikeData, lfpData));
+                                    observer.OnNext(new NeuropixelsV1eDataFrame(clockBuffer, hubClockBuffer, frameCountBuffer, spikeData, lfpData));
                                     frameCountBuffer = new int[spikeBufferSize * NeuropixelsV1.FramesPerSuperframe];
                                     hubClockBuffer = new ulong[spikeBufferSize];
                                     clockBuffer = new ulong[spikeBufferSize];

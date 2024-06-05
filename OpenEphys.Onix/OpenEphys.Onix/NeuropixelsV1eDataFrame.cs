@@ -3,9 +3,9 @@ using OpenCV.Net;
 
 namespace OpenEphys.Onix
 {
-    public class NeuropixelsV1fDataFrame
+    public class NeuropixelsV1eDataFrame
     {
-        public NeuropixelsV1fDataFrame(ulong[] clock, ulong[] hubClock, int[] frameCount, Mat spikeData, Mat lfpData)
+        public NeuropixelsV1eDataFrame(ulong[] clock, ulong[] hubClock, int[] frameCount, Mat spikeData, Mat lfpData)
         {
             Clock = clock;
             HubClock = hubClock;
@@ -46,7 +46,7 @@ namespace OpenEphys.Onix
             for (int i = 0; i < NeuropixelsV1.FramesPerRoundRobin; i++)
             {
                 // The period of ADC data within data array is 36 words
-                var adcDataOffset = (i + 1) * NeuropixelsV1f.WordsPerFrame;
+                var adcDataOffset = (i + 1) * NeuropixelsV1e.WordsPerFrame;
 
                 for (int k = 0; k < NeuropixelsV1.AdcCount; k++)
                 {
@@ -113,7 +113,7 @@ namespace OpenEphys.Onix
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
     unsafe struct NeuropixelsV1fPayload
     {
-        public fixed ushort AmplifierData[NeuropixelsV1f.WordsPerFrame * NeuropixelsV1.FramesPerSuperframe];
+        public fixed ushort AmplifierData[NeuropixelsV1e.WordsPerFrame * NeuropixelsV1.FramesPerSuperframe];
         public ulong HubClock;
     }
 }

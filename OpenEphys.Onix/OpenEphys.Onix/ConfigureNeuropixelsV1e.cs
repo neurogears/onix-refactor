@@ -4,10 +4,10 @@ using Bonsai;
 
 namespace OpenEphys.Onix
 {
-    public class ConfigureNeuropixelsV1f : SingleDeviceFactory
+    public class ConfigureNeuropixelsV1e : SingleDeviceFactory
     {
-        public ConfigureNeuropixelsV1f()
-            : base(typeof(NeuropixelsV1f))
+        public ConfigureNeuropixelsV1e()
+            : base(typeof(NeuropixelsV1e))
         {
         }
 
@@ -49,12 +49,12 @@ namespace OpenEphys.Onix
             var deviceAddress = DeviceAddress;
             return source.ConfigureDevice(context =>
             {
-                var device = context.GetDeviceContext(deviceAddress, NeuropixelsV1f.ID);
-                device.WriteRegister(NeuropixelsV1f.ENABLE, enable ? 1u : 0);
+                var device = context.GetDeviceContext(deviceAddress, NeuropixelsV1e.ID);
+                device.WriteRegister(NeuropixelsV1e.ENABLE, enable ? 1u : 0);
 
                 if (enable)
                 {
-                    var probeControl = new NeuropixelsV1fRegisterContext(device, SpikeAmplifierGain, LfpAmplifierGain, Reference, SpikeFilter, GainCalibrationFile, AdcCalibrationFile);
+                    var probeControl = new NeuropixelsV1eRegisterContext(device, SpikeAmplifierGain, LfpAmplifierGain, Reference, SpikeFilter, GainCalibrationFile, AdcCalibrationFile);
                     probeControl.InitializeProbe();
                     probeControl.WriteShiftRegisters();
                 }
@@ -64,7 +64,7 @@ namespace OpenEphys.Onix
         }
     }
 
-    static class NeuropixelsV1f
+    static class NeuropixelsV1e
     {
         public const int ID = 11;
 
@@ -506,7 +506,7 @@ namespace OpenEphys.Onix
         internal class NameConverter : DeviceNameConverter
         {
             public NameConverter()
-                : base(typeof(NeuropixelsV1f))
+                : base(typeof(NeuropixelsV1e))
             {
             }
         }

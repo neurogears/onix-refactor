@@ -4,12 +4,12 @@ using System.Threading;
 
 namespace OpenEphys.Onix
 {
-    public class ConfigureNeuropixels1fHeadstage : HubDeviceFactory
+    public class ConfigureNeuropixelsV1eHeadstage : HubDeviceFactory
     {
         PortName port;
         readonly ConfigureNeuropixels1fHeadstageLinkController LinkController = new();
 
-        public ConfigureNeuropixels1fHeadstage()
+        public ConfigureNeuropixelsV1eHeadstage()
         {
             // TODO: The issue with this headstage is that its locking voltage is far, far lower than the voltage required for full
             // functionality. Locking occurs at around 2V on the headstage (enough to turn 1.8V on). Full functionality is at 5.0 volts.
@@ -21,11 +21,11 @@ namespace OpenEphys.Onix
 
         [Category(ConfigurationCategory)]
         [TypeConverter(typeof(HubDeviceConverter))]
-        public ConfigureNeuropixelsV1f NeuropixelsV1A { get; set; } = new();
+        public ConfigureNeuropixelsV1e NeuropixelsV1A { get; set; } = new();
 
         [Category(ConfigurationCategory)]
         [TypeConverter(typeof(HubDeviceConverter))]
-        public ConfigureNeuropixelsV1f NeuropixelsV1B { get; set; } = new();
+        public ConfigureNeuropixelsV1e NeuropixelsV1B { get; set; } = new();
 
         [Category(ConfigurationCategory)]
         [TypeConverter(typeof(HubDeviceConverter))]

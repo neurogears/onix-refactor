@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using Bonsai;
 
@@ -12,7 +12,7 @@ namespace OpenEphys.Onix
         }
 
         [Category(ConfigurationCategory)]
-        [Description("Specifies whether the NRIC1384 data stream is enabled.")]
+        [Description("Specifies whether the NeuropixelsV1e data stream is enabled.")]
         public bool Enable { get; set; } = true;
 
         [Category(ConfigurationCategory)]
@@ -33,12 +33,12 @@ namespace OpenEphys.Onix
         public bool SpikeFilter { get; set; } = true;
 
         [FileNameFilter("Gain calibration files (*_gainCalValues.csv)|*_gainCalValues.csv")]
-        [Description("Path to the NRIC1384 gain calibraiton file.")]
+        [Description("Path to the NeuropixelsV1e gain calibraiton file.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string GainCalibrationFile { get; set; }
 
         [FileNameFilter("ADC calibration files (*_ADCCalibration.csv)|*_ADCCalibration.csv")]
-        [Description("Path to the NRIC1384 ADC calibraiton file.")]
+        [Description("Path to the NeuropixelsV1e ADC calibraiton file.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string AdcCalibrationFile { get; set; }
 

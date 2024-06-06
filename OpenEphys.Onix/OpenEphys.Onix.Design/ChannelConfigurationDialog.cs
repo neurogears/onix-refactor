@@ -8,13 +8,33 @@ using OpenEphys.ProbeInterface;
 
 namespace OpenEphys.Onix.Design
 {
-    public partial class ChannelConfigurationDialog : Form
+    /// <summary>
+    /// Simple dialog window that serves as the base class for all Channel Configuration windows.
+    /// Within, there are a number of useful methods for initializing, resizing, and drawing channels.
+    /// Each device must implement their own ChannelConfigurationDialog.
+    /// </summary>
+    public abstract partial class ChannelConfigurationDialog : Form
     {
+        /// <summary>
+        /// Standardize the format of the string used for creating tags, so that
+        /// they can be searched for effectively
+        /// </summary>
         public static readonly string ContactStringFormat = "Contact_{0}";
+        /// <summary>
+        /// Standardize the format of the string used for creating tags, so that
+        /// they can be searched for effectively
+        /// </summary>
         public static readonly string TextStringFormat = "TextContact_{0}";
 
+        /// <summary>
+        /// Local variable that holds the channel configuration in memory until the user presses Okay
+        /// </summary>
         public ProbeGroup ChannelConfiguration;
 
+        /// <summary>
+        /// Constructs the dialog window using the given probe group, and plots all contacts after loading.
+        /// </summary>
+        /// <param name="probeGroup">Channel configuration given as a <see cref="ProbeGroup"/></param>
         public ChannelConfigurationDialog(ProbeGroup probeGroup)
         {
             InitializeComponent();
@@ -33,11 +53,28 @@ namespace OpenEphys.Onix.Design
             DrawChannels(zedGraphChannels, ChannelConfiguration);
         }
 
-        public virtual ProbeGroup DefaultChannelLayout()
-        {
-            return null;
-        }
+        /// <summary>
+        /// Return the default channel layout of the current device, which fully instatiates the probe group object
+        /// </summary>
+        /// <example>
+        /// Using a class that inherits from ProbeGroup, the general usage would
+        /// be the default constructor which should fully initialize a <see cref="ProbeGroup"/> object.
+        /// For example, if there was <code>SampleDeviceProbeGroup : ProbeGroup</code>, the body of this 
+        /// function could be:
+        /// <code>
+        /// return new SampleDeviceProbeGroup();
+        /// </code>
+        /// </example>
+        /// <returns>Returns an object that inherits from <see cref="ProbeGroup"/></returns>
+        public abstract ProbeGroup DefaultChannelLayout();
 
+        /// <summary>
+        /// After every zoom event, check that the axis liimits are equal to maintain the equal
+        /// aspect ratio of the graph, ensuring that all contacts do not look smashed or stretched.
+        /// </summary>
+        /// <param name="sender">Incoming <see cref="ZedGraphControl"/> object</param>
+        /// <param name="oldState"><code>null</code></param>
+        /// <param name="newState">New state, of type <see cref="ZoomState"/></param>
         public virtual void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
         {
             if (newState.Type == ZoomState.StateType.Zoom)
@@ -103,6 +140,12 @@ namespace OpenEphys.Onix.Design
             }
         }
 
+        /// <summary>
+        /// Given a <see cref="ZedGraphControl"/> and a <see cref="ProbeGroup"/>-inherited class, draw all available contacts
+        /// in the probe contour, with the device channel indices plotted to indicate the contact number.
+        /// </summary>
+        /// <param name="zedGraph">A <see cref="ZedGraphControl"/> holding the current graph to plot in</param>
+        /// <param name="probeGroup">Fully instantiated <see cref="ProbeGroup"/> object, implemented for a specific device</param>
         public static void DrawChannels(ZedGraphControl zedGraph, ProbeGroup probeGroup)
         {
             if (probeGroup == null)
@@ -168,6 +211,11 @@ namespace OpenEphys.Onix.Design
             zedGraph.Refresh();
         }
 
+        /// <summary>
+        /// After a resize event (such as changing the window size), readjust the size of the control to 
+        /// ensure an equal aspect ratio for axes.
+        /// </summary>
+        /// <param name="zedGraph">A <see cref="ZedGraphControl"/> containing the current control to resize</param>
         public static void ResizeAxes(ZedGraphControl zedGraph)
         {
             if (zedGraph.GraphPane.GraphObjList.Count == 0)
@@ -256,6 +304,13 @@ namespace OpenEphys.Onix.Design
             zedGraph.GraphPane.Rect = axisRect;
         }
 
+        /// <summary>
+        /// Converts a two-dimensional <see cref="float"/> array into an array of <see cref="PointD"/>
+        /// objects. Assumes that the float array is ordered so that the first index of each pair is 
+        /// the X position, and the second index is the Y position.
+        /// </summary>
+        /// <param name="floats">Two-dimensional array of <see cref="float"/> values</param>
+        /// <returns></returns>
         public static PointD[] ConvertFloatArrayToPointD(float[][] floats)
         {
             PointD[] pointD = new PointD[floats.Length];
@@ -268,6 +323,11 @@ namespace OpenEphys.Onix.Design
             return pointD;
         }
 
+        /// <summary>
+        /// Initialize the given <see cref="ZedGraphControl"/> so that almost everything other than the 
+        /// axis itself is hidden, reducing visual clutter before plotting contacts
+        /// </summary>
+        /// <param name="zedGraph">A <see cref="ZedGraphControl"/> containing the current control to initialize</param>
         public static void InitializeZedGraphChannels(ZedGraphControl zedGraph)
         {
             zedGraph.GraphPane.Title.IsVisible = false;

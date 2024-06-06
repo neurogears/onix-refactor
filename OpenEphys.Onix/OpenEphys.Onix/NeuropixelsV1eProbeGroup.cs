@@ -98,7 +98,7 @@ namespace OpenEphys.Onix
             float[][] probePlanarContour = new float[6][];
 
             probePlanarContour[0] = new float[2] { 0f, -15f };
-            probePlanarContour[1] = new float[2] { 35f, -60f };
+            probePlanarContour[1] = new float[2] { 35f, -110f };
             probePlanarContour[2] = new float[2] { 70f, -15f };
             probePlanarContour[3] = new float[2] { 70f, 9600f };
             probePlanarContour[4] = new float[2] { 0f, 9600f };

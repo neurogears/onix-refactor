@@ -156,7 +156,7 @@ namespace OpenEphys.Onix.Design
             for (int i = 0; i < probeGroup.Probes.Count(); i++)
             {
                 PointD[] planarContours = ConvertFloatArrayToPointD(probeGroup.Probes.ElementAt(i).ProbePlanarContour);
-                PolyObj contour = new(planarContours, Color.LightGreen, Color.LightGreen)
+                PolyObj contour = new(planarContours, Color.Black, Color.White)
                 {
                     ZOrder = ZOrder.E_BehindCurves
                 };

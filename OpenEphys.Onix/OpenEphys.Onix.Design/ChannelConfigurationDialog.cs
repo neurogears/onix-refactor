@@ -38,6 +38,30 @@ namespace OpenEphys.Onix.Design
             return null;
         }
 
+        public virtual void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
+        {
+            if (newState.Type == ZoomState.StateType.Zoom)
+            {
+                var rangeX = sender.GraphPane.XAxis.Scale.Max - sender.GraphPane.XAxis.Scale.Min;
+                var rangeY = sender.GraphPane.YAxis.Scale.Max - sender.GraphPane.YAxis.Scale.Min;
+
+                if (rangeX > rangeY)
+                {
+                    var diff = rangeX - rangeY;
+
+                    sender.GraphPane.YAxis.Scale.Max += diff / 2;
+                    sender.GraphPane.YAxis.Scale.Min -= diff / 2;
+                }
+                else
+                {
+                    var diff = rangeY - rangeX;
+
+                    sender.GraphPane.XAxis.Scale.Max += diff / 2;
+                    sender.GraphPane.XAxis.Scale.Min -= diff / 2;
+                }
+            }
+        }
+
         private void FormShown(object sender, EventArgs e)
         {
             if (!TopLevel)

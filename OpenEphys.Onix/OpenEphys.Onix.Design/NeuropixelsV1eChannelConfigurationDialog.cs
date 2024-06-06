@@ -1,5 +1,5 @@
-﻿using System.Windows.Forms;
-using OpenEphys.ProbeInterface;
+﻿using OpenEphys.ProbeInterface;
+using ZedGraph;
 
 namespace OpenEphys.Onix.Design
 {
@@ -14,6 +14,11 @@ namespace OpenEphys.Onix.Design
         public override ProbeGroup DefaultChannelLayout()
         {
             return new NeuropixelsV1eProbeGroup();
+        }
+
+        public override void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
+        {
+            base.ZoomEvent(sender, oldState, newState);
         }
     }
 }

@@ -1,33 +1,36 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.Windows.Forms;
-using System.Windows.Forms.Design;
+using Bonsai.Design;
 
 namespace OpenEphys.Onix.Design
 {
-    public class NeuropixelsV1eEditor : UITypeEditor
+    public class NeuropixelsV1eEditor : WorkflowComponentEditor
     {
-        public override UITypeEditorEditStyle GetEditStyle(ITypeDescriptorContext context)
+        public override bool EditComponent(ITypeDescriptorContext context, object component, IServiceProvider provider, IWin32Window owner)
         {
-            return UITypeEditorEditStyle.Modal;
-        }
-
-        public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
-        {
-            var editorService = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
-
-            if (editorService != null)
+            if (provider != null)
             {
-                var editorDialog = new NeuropixelsV1eDialog();
-
-                if (editorDialog.ShowDialog() == DialogResult.OK)
+                var editorState = (IWorkflowEditorState)provider.GetService(typeof(IWorkflowEditorState));  
+                if (editorState != null && !editorState.WorkflowRunning && component is ConfigureNeuropixelsV1e configureNeuropixelsV1e)
                 {
-                    return value;
+                    using var editorDialog = new NeuropixelsV1eDialog(configureNeuropixelsV1e);
+
+                    if (editorDialog.ShowDialog() == DialogResult.OK)
+                    {
+                        configureNeuropixelsV1e.Enable = editorDialog.configureNeuropixelsV1e.Enable;
+                        configureNeuropixelsV1e.SpikeAmplifierGain = editorDialog.configureNeuropixelsV1e.SpikeAmplifierGain;
+                        configureNeuropixelsV1e.LfpAmplifierGain = editorDialog.configureNeuropixelsV1e.LfpAmplifierGain;
+                        configureNeuropixelsV1e.Reference = editorDialog.configureNeuropixelsV1e.Reference;
+                        configureNeuropixelsV1e.SpikeFilter = editorDialog.configureNeuropixelsV1e.SpikeFilter;
+                        configureNeuropixelsV1e.GainCalibrationFile = editorDialog.configureNeuropixelsV1e.GainCalibrationFile;
+                        configureNeuropixelsV1e.AdcCalibrationFile = editorDialog.configureNeuropixelsV1e.AdcCalibrationFile;
+                        return true;
+                    }
                 }
             }
 
-            return base.EditValue(context, provider, value);
+            return false;
         }
     }
 }

@@ -11,18 +11,20 @@ namespace OpenEphys.Onix.Design
         public NeuropixelsV1eProbeGroup ChannelConfiguration;
 
         readonly NeuropixelsV1eChannelConfigurationDialog npxChannelConfigurationDialog;
-        readonly ConfigureNeuropixelsV1e configureNeuropixelsV1e;
+
+        public ConfigureNeuropixelsV1e configureNeuropixelsV1e;
 
         bool RefreshNeeded = false;
 
-        public NeuropixelsV1eDialog()
+        public NeuropixelsV1eDialog(ConfigureNeuropixelsV1e configureNode)
         {
             InitializeComponent();
 
-            // TODO: Pull out the entire ConfigureNeuropixelsV1e node here, and assign to local variable
-            configureNeuropixelsV1e = new();
+            configureNeuropixelsV1e = new(configureNode);
 
-            var ChannelConfiguration = new NeuropixelsV1eProbeGroup();
+            propertyGrid.SelectedObject = configureNeuropixelsV1e;
+
+            ChannelConfiguration = new NeuropixelsV1eProbeGroup();
 
             npxChannelConfigurationDialog = new(ChannelConfiguration)
             {
@@ -56,6 +58,21 @@ namespace OpenEphys.Onix.Design
             {
                 toolStripStatus.Image = Properties.Resources.StatusReadyImage;
                 toolStripStatus.Text = "";
+            }
+        }
+
+        public void ButtonClicked(object sender, EventArgs e)
+        {
+            if (sender is Button button)
+            {
+                if (button.Text == "OK")
+                {
+                    DialogResult = DialogResult.OK;
+                }
+                else if (button.Text == "Cancel")
+                {
+                    DialogResult = DialogResult.Cancel;
+                }
             }
         }
 

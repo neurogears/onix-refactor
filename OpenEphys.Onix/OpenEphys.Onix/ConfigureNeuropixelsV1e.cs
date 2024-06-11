@@ -1,11 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing.Design;
 using Bonsai;
 
 namespace OpenEphys.Onix
 {
-    [DefaultProperty(nameof(Enable))]
+    [Editor("OpenEphys.Onix.Design.NeuropixelsV1eEditor, OpenEphys.Onix.Design", typeof(ComponentEditor))]
     public class ConfigureNeuropixelsV1e : SingleDeviceFactory
     {
         public ConfigureNeuropixelsV1e()
@@ -13,9 +12,20 @@ namespace OpenEphys.Onix
         {
         }
 
+        public ConfigureNeuropixelsV1e(ConfigureNeuropixelsV1e configureNeuropixelsV1e)
+            : base(typeof(NeuropixelsV1e))
+        {
+            Enable = configureNeuropixelsV1e.Enable;
+            SpikeAmplifierGain = configureNeuropixelsV1e.SpikeAmplifierGain;
+            LfpAmplifierGain = configureNeuropixelsV1e.LfpAmplifierGain;
+            Reference = configureNeuropixelsV1e.Reference;
+            SpikeFilter = configureNeuropixelsV1e.SpikeFilter;
+            GainCalibrationFile = configureNeuropixelsV1e.GainCalibrationFile;
+            AdcCalibrationFile = configureNeuropixelsV1e.AdcCalibrationFile;
+        }
+
         [Category(ConfigurationCategory)]
         [Description("Specifies whether the NeuropixelsV1e data stream is enabled.")]
-        [Editor("OpenEphys.Onix.Design.NeuropixelsV1eEditor, OpenEphys.Onix.Design", typeof(UITypeEditor))]
         public bool Enable { get; set; } = true;
 
         [Category(ConfigurationCategory)]

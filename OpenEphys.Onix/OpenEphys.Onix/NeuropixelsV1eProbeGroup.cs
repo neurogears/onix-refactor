@@ -10,8 +10,6 @@ using Bonsai;
 namespace OpenEphys.Onix
 {
     [GeneratedCode("Bonsai.Sgen", "0.3.0.0 (Newtonsoft.Json v13.0.0.0)")]
-    [Combinator]
-    [WorkflowElementCategory(ElementCategory.Source)]
     public class NeuropixelsV1eProbeGroup : ProbeGroup
     {
         private const int ChannelCount = 384;

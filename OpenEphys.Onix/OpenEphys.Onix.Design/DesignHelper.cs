@@ -33,5 +33,31 @@ namespace OpenEphys.Onix.Design
                 yield return next;
             }
         }
+
+        public static void AddMenuItemsFromDialog(this Form thisForm, Form form, string menuName)
+        {
+            if (form != null)
+            {
+                var menuStrips = form.GetAllChildren()
+                                     .OfType<MenuStrip>()
+                                     .ToList();
+
+                if (menuStrips != null && menuStrips.Count > 0)
+                {
+                    foreach (var menuStrip in menuStrips)
+                    {
+                        var toolStripMenuItem = new ToolStripMenuItem(menuName);
+
+                        toolStripMenuItem.DropDownItems.AddRange(menuStrip.Items);
+
+                        if (thisForm.Controls["menuStrip"] is MenuStrip thisMenuStrip)
+                        {
+                            thisMenuStrip.Items.AddRange(new ToolStripItem[] { toolStripMenuItem });
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -15,7 +15,7 @@ namespace OpenEphys.Onix
 
         [Category(ConfigurationCategory)]
         [Description("Specifies whether the NeuropixelsV1e data stream is enabled.")]
-        [Editor("OpenEphys.Onix.Design.NeuropixelsV1eChannelConfigurationEditor, OpenEphys.Onix.Design", typeof(UITypeEditor))]
+        [Editor("OpenEphys.Onix.Design.NeuropixelsV1eEditor, OpenEphys.Onix.Design", typeof(UITypeEditor))]
         public bool Enable { get; set; } = true;
 
         [Category(ConfigurationCategory)]

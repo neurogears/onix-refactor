@@ -357,6 +357,8 @@ namespace OpenEphys.Onix.Design
             }
 
             zedGraph.GraphPane.Rect = axisRect;
+            zedGraph.Size = new Size((int)axisRect.Width, (int)axisRect.Height);
+            zedGraph.Location = new Point((int)axisRect.X, (int)axisRect.Y);
         }
 
         /// <summary>
@@ -388,7 +390,9 @@ namespace OpenEphys.Onix.Design
             zedGraph.GraphPane.Title.IsVisible = false;
             zedGraph.GraphPane.TitleGap = 0;
             zedGraph.GraphPane.Border.IsVisible = false;
+            zedGraph.GraphPane.Border.Width = 0;
             zedGraph.GraphPane.Chart.Border.IsVisible = false;
+            zedGraph.GraphPane.Margin.All = -1;
             zedGraph.GraphPane.IsFontsScaled = true;
             zedGraph.BorderStyle = BorderStyle.None;
 

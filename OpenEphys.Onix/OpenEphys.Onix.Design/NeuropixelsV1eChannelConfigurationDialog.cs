@@ -19,6 +19,8 @@ namespace OpenEphys.Onix.Design
         public override void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
         {
             base.ZoomEvent(sender, oldState, newState);
+
+            UpdateFontSize(sender);
         }
     }
 }

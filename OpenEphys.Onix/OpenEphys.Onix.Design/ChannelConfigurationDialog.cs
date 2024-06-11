@@ -97,6 +97,9 @@ namespace OpenEphys.Onix.Design
                     sender.GraphPane.XAxis.Scale.Min -= diff / 2;
                 }
             }
+
+            sender.AxisChange();
+            sender.Refresh();
         }
 
         private void FormShown(object sender, EventArgs e)
@@ -108,6 +111,8 @@ namespace OpenEphys.Onix.Design
 
                 menuStrip.Visible = false;
             }
+
+            UpdateFontSize(zedGraphChannels);
         }
 
         private void LoadDefaultChannelLayout()
@@ -127,7 +132,7 @@ namespace OpenEphys.Onix.Design
             if (ofd.ShowDialog() == DialogResult.OK && File.Exists(ofd.FileName))
             {
                 var channelConfiguration = DesignHelper.DeserializeString<ProbeGroup>(File.ReadAllText(ofd.FileName));
-                
+
                 if (channelConfiguration == null || channelConfiguration.NumContacts != 32)
                 {
                     MessageBox.Show("Error opening the JSON file. Incorrect number of contacts.");
@@ -169,8 +174,10 @@ namespace OpenEphys.Onix.Design
 
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
-                        EllipseObj contactObj = new(contact.PosX - contact.ShapeParams.Radius.Value, contact.PosY + contact.ShapeParams.Radius.Value,
-                            contact.ShapeParams.Radius.Value * 2, contact.ShapeParams.Radius.Value * 2, Color.DarkGray, Color.WhiteSmoke)
+                        var size = contact.ShapeParams.Radius.Value * 2;
+
+                        EllipseObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
+                            size, size, Color.DarkGray, Color.WhiteSmoke)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, contact.DeviceId)
@@ -180,8 +187,10 @@ namespace OpenEphys.Onix.Design
                     }
                     else if (contact.Shape.Equals(ContactShape.Square))
                     {
-                        BoxObj contactObj = new(contact.PosX - contact.ShapeParams.Width.Value / 2, contact.PosY + contact.ShapeParams.Width.Value / 2,
-                            contact.ShapeParams.Width.Value, contact.ShapeParams.Width.Value, Color.DarkGray, Color.WhiteSmoke)
+                        var size = contact.ShapeParams.Width.Value;
+
+                        BoxObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
+                            size, size, Color.DarkGray, Color.WhiteSmoke)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, contact.DeviceId)
@@ -191,7 +200,8 @@ namespace OpenEphys.Onix.Design
                     }
                     else
                     {
-                        MessageBox.Show("Contact shapes other than 'circle' not implemented yet.");
+                        MessageBox.Show("Contact shapes other than 'circle' and 'square' not implemented yet.");
+                        return;
                     }
 
                     TextObj textObj = new(contact.DeviceId.ToString(), contact.PosX, contact.PosY)
@@ -199,8 +209,7 @@ namespace OpenEphys.Onix.Design
                         ZOrder = ZOrder.A_InFront,
                         Tag = string.Format(TextStringFormat, contact.DeviceId)
                     };
-
-                    textObj.FontSpec.Size = 22;
+                    textObj.FontSpec.IsBold = true;
                     textObj.FontSpec.Border.IsVisible = false;
                     textObj.FontSpec.Fill.IsVisible = false;
 
@@ -209,6 +218,52 @@ namespace OpenEphys.Onix.Design
             }
 
             zedGraph.Refresh();
+        }
+
+        internal static void UpdateFontSize(ZedGraphControl zedGraph)
+        {
+            var fontSize = CalculateFontSize(zedGraph);
+
+            foreach (var obj in zedGraph.GraphPane.GraphObjList)
+            {
+                if (obj == null) continue;
+
+                if (obj is TextObj textObj)
+                {
+                    textObj.FontSpec.Size = fontSize;
+                }
+            }
+
+            zedGraph.Refresh();
+        }
+
+        internal static float CalculateFontSize(ZedGraphControl zedGraph)
+        {
+            float rangeY = (float)(zedGraph.GraphPane.YAxis.Scale.Max - zedGraph.GraphPane.YAxis.Scale.Min);
+
+            float contactSize = ContactSize(zedGraph);
+
+            var fontSize = 300f * contactSize / rangeY;
+
+            fontSize = fontSize < 1f ? 1f : fontSize;
+            fontSize = fontSize > 100f ? 200f : fontSize;
+
+            return fontSize;
+        }
+
+        internal static float ContactSize(ZedGraphControl zedGraph)
+        {
+            var obj = zedGraph.GraphPane.GraphObjList
+                        .OfType<BoxObj>()
+                        .Where(obj => obj is not PolyObj)
+                        .FirstOrDefault();
+
+            if (obj != null && obj != default(BoxObj))
+            {
+                return (float)obj.Location.Width;
+            }
+
+            return 1f;
         }
 
         /// <summary>
@@ -335,8 +390,7 @@ namespace OpenEphys.Onix.Design
             zedGraph.GraphPane.Border.IsVisible = false;
             zedGraph.GraphPane.Chart.Border.IsVisible = false;
             zedGraph.GraphPane.IsFontsScaled = true;
-
-            zedGraph.IsAutoScrollRange = true;
+            zedGraph.BorderStyle = BorderStyle.None;
 
             zedGraph.GraphPane.XAxis.IsVisible = false;
             zedGraph.GraphPane.XAxis.IsAxisSegmentVisible = false;
@@ -367,6 +421,7 @@ namespace OpenEphys.Onix.Design
         private void ZedGraphChannels_Resize(object sender, EventArgs e)
         {
             ResizeAxes(zedGraphChannels);
+            zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();
         }
 

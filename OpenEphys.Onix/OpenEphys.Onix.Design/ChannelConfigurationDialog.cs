@@ -19,12 +19,12 @@ namespace OpenEphys.Onix.Design
         /// Standardize the format of the string used for creating tags, so that
         /// they can be searched for effectively
         /// </summary>
-        public static readonly string ContactStringFormat = "Contact_{0}";
+        public const string ContactStringFormat = "Contact_{0}";
         /// <summary>
         /// Standardize the format of the string used for creating tags, so that
         /// they can be searched for effectively
         /// </summary>
-        public static readonly string TextStringFormat = "TextContact_{0}";
+        public const string TextStringFormat = "TextContact_{0}";
 
         /// <summary>
         /// Local variable that holds the channel configuration in memory until the user presses Okay
@@ -49,8 +49,8 @@ namespace OpenEphys.Onix.Design
                 ChannelConfiguration = DefaultChannelLayout();
             }
 
-            InitializeZedGraphChannels(zedGraphChannels);
-            DrawChannels(zedGraphChannels, ChannelConfiguration);
+            InitializeZedGraphChannels();
+            DrawChannels();
         }
 
         /// <summary>
@@ -112,7 +112,7 @@ namespace OpenEphys.Onix.Design
                 menuStrip.Visible = false;
             }
 
-            UpdateFontSize(zedGraphChannels);
+            UpdateFontSize();
         }
 
         private void LoadDefaultChannelLayout()
@@ -146,31 +146,28 @@ namespace OpenEphys.Onix.Design
         }
 
         /// <summary>
-        /// Given a <see cref="ZedGraphControl"/> and a <see cref="ProbeGroup"/>-inherited class, draw all available contacts
-        /// in the probe contour, with the device channel indices plotted to indicate the contact number.
+        /// Draw all available contacts in the probe contour, with the device channel indices plotted to indicate the contact number.
         /// </summary>
-        /// <param name="zedGraph">A <see cref="ZedGraphControl"/> holding the current graph to plot in</param>
-        /// <param name="probeGroup">Fully instantiated <see cref="ProbeGroup"/> object, implemented for a specific device</param>
-        public static void DrawChannels(ZedGraphControl zedGraph, ProbeGroup probeGroup)
+        public void DrawChannels()
         {
-            if (probeGroup == null)
+            if (ChannelConfiguration == null)
                 return;
 
-            zedGraph.GraphPane.GraphObjList.Clear();
+            zedGraphChannels.GraphPane.GraphObjList.Clear();
 
-            for (int i = 0; i < probeGroup.Probes.Count(); i++)
+            for (int i = 0; i < ChannelConfiguration.Probes.Count(); i++)
             {
-                PointD[] planarContours = ConvertFloatArrayToPointD(probeGroup.Probes.ElementAt(i).ProbePlanarContour);
+                PointD[] planarContours = ConvertFloatArrayToPointD(ChannelConfiguration.Probes.ElementAt(i).ProbePlanarContour);
                 PolyObj contour = new(planarContours, Color.Black, Color.White)
                 {
                     ZOrder = ZOrder.E_BehindCurves
                 };
 
-                zedGraph.GraphPane.GraphObjList.Add(contour);
+                zedGraphChannels.GraphPane.GraphObjList.Add(contour);
 
-                for (int j = 0; j < probeGroup.Probes.ElementAt(i).ContactPositions.Length; j++)
+                for (int j = 0; j < ChannelConfiguration.Probes.ElementAt(i).ContactPositions.Length; j++)
                 {
-                    Contact contact = probeGroup.Probes.ElementAt(i).GetContact(j);
+                    Contact contact = ChannelConfiguration.Probes.ElementAt(i).GetContact(j);
 
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
@@ -183,7 +180,7 @@ namespace OpenEphys.Onix.Design
                             Tag = string.Format(ContactStringFormat, contact.DeviceId)
                         };
 
-                        zedGraph.GraphPane.GraphObjList.Add(contactObj);
+                        zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
                     }
                     else if (contact.Shape.Equals(ContactShape.Square))
                     {
@@ -196,7 +193,7 @@ namespace OpenEphys.Onix.Design
                             Tag = string.Format(ContactStringFormat, contact.DeviceId)
                         };
 
-                        zedGraph.GraphPane.GraphObjList.Add(contactObj);
+                        zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
                     }
                     else
                     {
@@ -213,18 +210,24 @@ namespace OpenEphys.Onix.Design
                     textObj.FontSpec.Border.IsVisible = false;
                     textObj.FontSpec.Fill.IsVisible = false;
 
-                    zedGraph.GraphPane.GraphObjList.Add(textObj);
+                    zedGraphChannels.GraphPane.GraphObjList.Add(textObj);
                 }
             }
 
-            zedGraph.Refresh();
+            DrawScale();
+
+            zedGraphChannels.Refresh();
         }
 
-        internal static void UpdateFontSize(ZedGraphControl zedGraph)
+        public virtual void DrawScale()
         {
-            var fontSize = CalculateFontSize(zedGraph);
+        }
 
-            foreach (var obj in zedGraph.GraphPane.GraphObjList)
+        internal void UpdateFontSize()
+        {
+            var fontSize = CalculateFontSize();
+
+            foreach (var obj in zedGraphChannels.GraphPane.GraphObjList)
             {
                 if (obj == null) continue;
 
@@ -234,14 +237,14 @@ namespace OpenEphys.Onix.Design
                 }
             }
 
-            zedGraph.Refresh();
+            zedGraphChannels.Refresh();
         }
 
-        internal static float CalculateFontSize(ZedGraphControl zedGraph)
+        internal float CalculateFontSize()
         {
-            float rangeY = (float)(zedGraph.GraphPane.YAxis.Scale.Max - zedGraph.GraphPane.YAxis.Scale.Min);
+            float rangeY = (float)(zedGraphChannels.GraphPane.YAxis.Scale.Max - zedGraphChannels.GraphPane.YAxis.Scale.Min);
 
-            float contactSize = ContactSize(zedGraph);
+            float contactSize = ContactSize();
 
             var fontSize = 300f * contactSize / rangeY;
 
@@ -251,9 +254,9 @@ namespace OpenEphys.Onix.Design
             return fontSize;
         }
 
-        internal static float ContactSize(ZedGraphControl zedGraph)
+        internal float ContactSize()
         {
-            var obj = zedGraph.GraphPane.GraphObjList
+            var obj = zedGraphChannels.GraphPane.GraphObjList
                         .OfType<BoxObj>()
                         .Where(obj => obj is not PolyObj)
                         .FirstOrDefault();
@@ -270,12 +273,11 @@ namespace OpenEphys.Onix.Design
         /// After a resize event (such as changing the window size), readjust the size of the control to 
         /// ensure an equal aspect ratio for axes.
         /// </summary>
-        /// <param name="zedGraph">A <see cref="ZedGraphControl"/> containing the current control to resize</param>
-        public static void ResizeAxes(ZedGraphControl zedGraph)
+        public void ResizeAxes()
         {
-            SetEqualAspectRatio(zedGraph);
+            SetEqualAspectRatio();
 
-            RectangleF axisRect = zedGraph.GraphPane.Rect;
+            RectangleF axisRect = zedGraphChannels.GraphPane.Rect;
 
             if (axisRect.Width > axisRect.Height)
             {
@@ -288,17 +290,17 @@ namespace OpenEphys.Onix.Design
                 axisRect.Height = axisRect.Width;
             }
 
-            zedGraph.GraphPane.Rect = axisRect;
-            zedGraph.Size = new Size((int)axisRect.Width, (int)axisRect.Height);
-            zedGraph.Location = new Point((int)axisRect.X, (int)axisRect.Y);
+            zedGraphChannels.GraphPane.Rect = axisRect;
+            zedGraphChannels.Size = new Size((int)axisRect.Width, (int)axisRect.Height);
+            zedGraphChannels.Location = new Point((int)axisRect.X, (int)axisRect.Y);
         }
 
-        internal static void SetEqualAspectRatio(ZedGraphControl zedGraph)
+        internal void SetEqualAspectRatio()
         {
-            if (zedGraph.GraphPane.GraphObjList.Count == 0)
+            if (zedGraphChannels.GraphPane.GraphObjList.Count == 0)
                 return;
 
-            var minX = zedGraph.GraphPane.GraphObjList.Min<GraphObj, double>(obj =>
+            var minX = zedGraphChannels.GraphPane.GraphObjList.Min<GraphObj, double>(obj =>
             {
                 if (obj is PolyObj polyObj)
                 {
@@ -308,7 +310,7 @@ namespace OpenEphys.Onix.Design
                 return double.MaxValue;
             });
 
-            var minY = zedGraph.GraphPane.GraphObjList.Min<GraphObj, double>(obj =>
+            var minY = zedGraphChannels.GraphPane.GraphObjList.Min<GraphObj, double>(obj =>
             {
                 if (obj is PolyObj polyObj)
                 {
@@ -318,7 +320,7 @@ namespace OpenEphys.Onix.Design
                 return double.MaxValue;
             });
 
-            var maxX = zedGraph.GraphPane.GraphObjList.Max<GraphObj, double>(obj =>
+            var maxX = zedGraphChannels.GraphPane.GraphObjList.Max<GraphObj, double>(obj =>
             {
                 if (obj is PolyObj polyObj)
                 {
@@ -328,7 +330,7 @@ namespace OpenEphys.Onix.Design
                 return double.MinValue;
             });
 
-            var maxY = zedGraph.GraphPane.GraphObjList.Max<GraphObj, double>(obj =>
+            var maxY = zedGraphChannels.GraphPane.GraphObjList.Max<GraphObj, double>(obj =>
             {
                 if (obj is PolyObj polyObj)
                 {
@@ -359,11 +361,11 @@ namespace OpenEphys.Onix.Design
                 maxX += diff;
             }
 
-            zedGraph.GraphPane.XAxis.Scale.Min = minX;
-            zedGraph.GraphPane.XAxis.Scale.Max = maxX;
+            zedGraphChannels.GraphPane.XAxis.Scale.Min = minX;
+            zedGraphChannels.GraphPane.XAxis.Scale.Max = maxX;
 
-            zedGraph.GraphPane.YAxis.Scale.Min = minY;
-            zedGraph.GraphPane.YAxis.Scale.Max = maxY;
+            zedGraphChannels.GraphPane.YAxis.Scale.Min = minY;
+            zedGraphChannels.GraphPane.YAxis.Scale.Max = maxY;
         }
 
         /// <summary>
@@ -389,27 +391,26 @@ namespace OpenEphys.Onix.Design
         /// Initialize the given <see cref="ZedGraphControl"/> so that almost everything other than the 
         /// axis itself is hidden, reducing visual clutter before plotting contacts
         /// </summary>
-        /// <param name="zedGraph">A <see cref="ZedGraphControl"/> containing the current control to initialize</param>
-        public static void InitializeZedGraphChannels(ZedGraphControl zedGraph)
+        public void InitializeZedGraphChannels()
         {
-            zedGraph.GraphPane.Title.IsVisible = false;
-            zedGraph.GraphPane.TitleGap = 0;
-            zedGraph.GraphPane.Border.IsVisible = false;
-            zedGraph.GraphPane.Border.Width = 0;
-            zedGraph.GraphPane.Chart.Border.IsVisible = false;
-            zedGraph.GraphPane.Margin.All = -1;
-            zedGraph.GraphPane.IsFontsScaled = true;
-            zedGraph.BorderStyle = BorderStyle.None;
+            zedGraphChannels.GraphPane.Title.IsVisible = false;
+            zedGraphChannels.GraphPane.TitleGap = 0;
+            zedGraphChannels.GraphPane.Border.IsVisible = false;
+            zedGraphChannels.GraphPane.Border.Width = 0;
+            zedGraphChannels.GraphPane.Chart.Border.IsVisible = false;
+            zedGraphChannels.GraphPane.Margin.All = -1;
+            zedGraphChannels.GraphPane.IsFontsScaled = true;
+            zedGraphChannels.BorderStyle = BorderStyle.None;
 
-            zedGraph.GraphPane.XAxis.IsVisible = false;
-            zedGraph.GraphPane.XAxis.IsAxisSegmentVisible = false;
-            zedGraph.GraphPane.XAxis.Scale.MaxAuto = true;
-            zedGraph.GraphPane.XAxis.Scale.MinAuto = true;
+            zedGraphChannels.GraphPane.XAxis.IsVisible = false;
+            zedGraphChannels.GraphPane.XAxis.IsAxisSegmentVisible = false;
+            zedGraphChannels.GraphPane.XAxis.Scale.MaxAuto = true;
+            zedGraphChannels.GraphPane.XAxis.Scale.MinAuto = true;
 
-            zedGraph.GraphPane.YAxis.IsVisible = false;
-            zedGraph.GraphPane.YAxis.IsAxisSegmentVisible = false;
-            zedGraph.GraphPane.YAxis.Scale.MaxAuto = true;
-            zedGraph.GraphPane.YAxis.Scale.MinAuto = true;
+            zedGraphChannels.GraphPane.YAxis.IsVisible = false;
+            zedGraphChannels.GraphPane.YAxis.IsAxisSegmentVisible = false;
+            zedGraphChannels.GraphPane.YAxis.Scale.MaxAuto = true;
+            zedGraphChannels.GraphPane.YAxis.Scale.MinAuto = true;
         }
 
         private void MenuItemSaveFile_Click(object sender, EventArgs e)
@@ -429,8 +430,8 @@ namespace OpenEphys.Onix.Design
 
         private void ZedGraphChannels_Resize(object sender, EventArgs e)
         {
-            ResizeAxes(zedGraphChannels);
-            UpdateFontSize(zedGraphChannels);
+            ResizeAxes();
+            UpdateFontSize();
             zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();
         }
@@ -438,13 +439,13 @@ namespace OpenEphys.Onix.Design
         private void MenuItemOpenFile_Click(object sender, EventArgs e)
         {
             OpenFile();
-            DrawChannels(zedGraphChannels, ChannelConfiguration);
+            DrawChannels();
         }
 
         private void LoadDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LoadDefaultChannelLayout();
-            DrawChannels(zedGraphChannels, ChannelConfiguration);
+            DrawChannels();
         }
 
         private void ButtonOK_Click(object sender, EventArgs e)
@@ -463,13 +464,13 @@ namespace OpenEphys.Onix.Design
 
             zedGraphChannels.ZoomPane(zedGraphChannels.GraphPane, 1 / zoomFactor, center, true);
 
-            UpdateFontSize(zedGraphChannels);
+            UpdateFontSize();
         }
 
         public void ResetZoom()
         {
-            SetEqualAspectRatio(zedGraphChannels);
-            UpdateFontSize(zedGraphChannels);
+            SetEqualAspectRatio();
+            UpdateFontSize();
             zedGraphChannels.Refresh();
         }
     }

@@ -62,6 +62,8 @@
             this.comboBoxApGain = new System.Windows.Forms.ComboBox();
             this.tabPageChannelOptions = new System.Windows.Forms.TabPage();
             this.panelChannelOptions = new System.Windows.Forms.Panel();
+            this.buttonZoomIn100 = new System.Windows.Forms.Button();
+            this.buttonZoomIn10 = new System.Windows.Forms.Button();
             this.tabPagePropertyGrid = new System.Windows.Forms.TabPage();
             this.propertyGrid = new Bonsai.Design.PropertyGrid();
             this.tabPageChannels = new System.Windows.Forms.TabPage();
@@ -70,6 +72,9 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOkay = new System.Windows.Forms.Button();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
+            this.buttonZoomOut100 = new System.Windows.Forms.Button();
+            this.buttonZoomOut10 = new System.Windows.Forms.Button();
+            this.buttonResetZoom = new System.Windows.Forms.Button();
             toolStripStatusLabelProbe = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusLabelConfigSN = new System.Windows.Forms.ToolStripStatusLabel();
             apGain = new System.Windows.Forms.Label();
@@ -94,6 +99,7 @@
             this.tabPageOptions.SuspendLayout();
             this.panelOptions.SuspendLayout();
             this.tabPageChannelOptions.SuspendLayout();
+            this.panelChannelOptions.SuspendLayout();
             this.tabPagePropertyGrid.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -433,11 +439,36 @@
             // 
             // panelChannelOptions
             // 
+            this.panelChannelOptions.Controls.Add(this.buttonResetZoom);
+            this.panelChannelOptions.Controls.Add(this.buttonZoomOut100);
+            this.panelChannelOptions.Controls.Add(this.buttonZoomOut10);
+            this.panelChannelOptions.Controls.Add(this.buttonZoomIn100);
+            this.panelChannelOptions.Controls.Add(this.buttonZoomIn10);
             this.panelChannelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelChannelOptions.Location = new System.Drawing.Point(0, 0);
             this.panelChannelOptions.Name = "panelChannelOptions";
             this.panelChannelOptions.Size = new System.Drawing.Size(246, 554);
             this.panelChannelOptions.TabIndex = 0;
+            // 
+            // buttonZoomIn100
+            // 
+            this.buttonZoomIn100.Location = new System.Drawing.Point(16, 79);
+            this.buttonZoomIn100.Name = "buttonZoomIn100";
+            this.buttonZoomIn100.Size = new System.Drawing.Size(96, 57);
+            this.buttonZoomIn100.TabIndex = 1;
+            this.buttonZoomIn100.Text = "Zoom In x100";
+            this.buttonZoomIn100.UseVisualStyleBackColor = true;
+            this.buttonZoomIn100.Click += new System.EventHandler(this.ButtonZoomClick);
+            // 
+            // buttonZoomIn10
+            // 
+            this.buttonZoomIn10.Location = new System.Drawing.Point(16, 16);
+            this.buttonZoomIn10.Name = "buttonZoomIn10";
+            this.buttonZoomIn10.Size = new System.Drawing.Size(96, 57);
+            this.buttonZoomIn10.TabIndex = 0;
+            this.buttonZoomIn10.Text = "Zoom In x10";
+            this.buttonZoomIn10.UseVisualStyleBackColor = true;
+            this.buttonZoomIn10.Click += new System.EventHandler(this.ButtonZoomClick);
             // 
             // tabPagePropertyGrid
             // 
@@ -522,6 +553,36 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
             // 
+            // buttonZoomOut100
+            // 
+            this.buttonZoomOut100.Location = new System.Drawing.Point(129, 79);
+            this.buttonZoomOut100.Name = "buttonZoomOut100";
+            this.buttonZoomOut100.Size = new System.Drawing.Size(96, 57);
+            this.buttonZoomOut100.TabIndex = 3;
+            this.buttonZoomOut100.Text = "Zoom Out x100";
+            this.buttonZoomOut100.UseVisualStyleBackColor = true;
+            this.buttonZoomOut100.Click += new System.EventHandler(this.ButtonZoomClick);
+            // 
+            // buttonZoomOut10
+            // 
+            this.buttonZoomOut10.Location = new System.Drawing.Point(129, 16);
+            this.buttonZoomOut10.Name = "buttonZoomOut10";
+            this.buttonZoomOut10.Size = new System.Drawing.Size(96, 57);
+            this.buttonZoomOut10.TabIndex = 2;
+            this.buttonZoomOut10.Text = "Zoom Out x10";
+            this.buttonZoomOut10.UseVisualStyleBackColor = true;
+            this.buttonZoomOut10.Click += new System.EventHandler(this.ButtonZoomClick);
+            // 
+            // buttonResetZoom
+            // 
+            this.buttonResetZoom.Location = new System.Drawing.Point(58, 153);
+            this.buttonResetZoom.Name = "buttonResetZoom";
+            this.buttonResetZoom.Size = new System.Drawing.Size(124, 37);
+            this.buttonResetZoom.TabIndex = 4;
+            this.buttonResetZoom.Text = "Reset Zoom";
+            this.buttonResetZoom.UseVisualStyleBackColor = true;
+            this.buttonResetZoom.Click += new System.EventHandler(this.ButtonClick);
+            // 
             // NeuropixelsV1eDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -553,6 +614,7 @@
             this.panelOptions.ResumeLayout(false);
             this.panelOptions.PerformLayout();
             this.tabPageChannelOptions.ResumeLayout(false);
+            this.panelChannelOptions.ResumeLayout(false);
             this.tabPagePropertyGrid.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -596,5 +658,10 @@
         private System.Windows.Forms.TabPage tabPageChannelOptions;
         private System.Windows.Forms.Panel panelChannelOptions;
         private System.Windows.Forms.CheckBox checkBoxSpikeFilter;
+        private System.Windows.Forms.Button buttonZoomIn100;
+        private System.Windows.Forms.Button buttonZoomIn10;
+        private System.Windows.Forms.Button buttonZoomOut100;
+        private System.Windows.Forms.Button buttonZoomOut10;
+        private System.Windows.Forms.Button buttonResetZoom;
     }
 }

@@ -273,6 +273,28 @@ namespace OpenEphys.Onix.Design
         /// <param name="zedGraph">A <see cref="ZedGraphControl"/> containing the current control to resize</param>
         public static void ResizeAxes(ZedGraphControl zedGraph)
         {
+            SetEqualAspectRatio(zedGraph);
+
+            RectangleF axisRect = zedGraph.GraphPane.Rect;
+
+            if (axisRect.Width > axisRect.Height)
+            {
+                axisRect.X += (axisRect.Width - axisRect.Height) / 2;
+                axisRect.Width = axisRect.Height;
+            }
+            else if (axisRect.Height > axisRect.Width)
+            {
+                axisRect.Y += (axisRect.Height - axisRect.Width) / 2;
+                axisRect.Height = axisRect.Width;
+            }
+
+            zedGraph.GraphPane.Rect = axisRect;
+            zedGraph.Size = new Size((int)axisRect.Width, (int)axisRect.Height);
+            zedGraph.Location = new Point((int)axisRect.X, (int)axisRect.Y);
+        }
+
+        internal static void SetEqualAspectRatio(ZedGraphControl zedGraph)
+        {
             if (zedGraph.GraphPane.GraphObjList.Count == 0)
                 return;
 
@@ -342,23 +364,6 @@ namespace OpenEphys.Onix.Design
 
             zedGraph.GraphPane.YAxis.Scale.Min = minY;
             zedGraph.GraphPane.YAxis.Scale.Max = maxY;
-
-            RectangleF axisRect = zedGraph.GraphPane.Rect;
-
-            if (axisRect.Width > axisRect.Height)
-            {
-                axisRect.X += (axisRect.Width - axisRect.Height) / 2;
-                axisRect.Width = axisRect.Height;
-            }
-            else if (axisRect.Height > axisRect.Width)
-            {
-                axisRect.Y += (axisRect.Height - axisRect.Width) / 2;
-                axisRect.Height = axisRect.Width;
-            }
-
-            zedGraph.GraphPane.Rect = axisRect;
-            zedGraph.Size = new Size((int)axisRect.Width, (int)axisRect.Height);
-            zedGraph.Location = new Point((int)axisRect.X, (int)axisRect.Y);
         }
 
         /// <summary>
@@ -427,6 +432,7 @@ namespace OpenEphys.Onix.Design
             ResizeAxes(zedGraphChannels);
             zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();
+            UpdateFontSize(zedGraphChannels);
         }
 
         private void MenuItemOpenFile_Click(object sender, EventArgs e)
@@ -448,6 +454,23 @@ namespace OpenEphys.Onix.Design
                 DialogResult = DialogResult.OK;
                 Close();
             }
+        }
+
+        public void ManualZoom(double zoomFactor)
+        {
+            var center = new PointF(zedGraphChannels.GraphPane.Rect.Left + zedGraphChannels.GraphPane.Rect.Width / 2,
+                                    zedGraphChannels.GraphPane.Rect.Top  + zedGraphChannels.GraphPane.Rect.Height / 2);
+
+            zedGraphChannels.ZoomPane(zedGraphChannels.GraphPane, 1 / zoomFactor, center, true);
+
+            UpdateFontSize(zedGraphChannels);
+        }
+
+        public void ResetZoom()
+        {
+            SetEqualAspectRatio(zedGraphChannels);
+            UpdateFontSize(zedGraphChannels);
+            zedGraphChannels.Refresh();
         }
     }
 }

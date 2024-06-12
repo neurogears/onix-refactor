@@ -178,6 +178,33 @@ namespace OpenEphys.Onix.Design
                         textBoxAdcCalibrationFile.Text = ofd.FileName;
                     }
                 }
+                else if (button.Name == nameof(buttonResetZoom))
+                {
+                    channelConfigurationDialog.ResetZoom();
+                }
+            }
+        }
+
+        private void ButtonZoomClick(object sender, EventArgs e)
+        {
+            if (sender is Button button && button != null)
+            {
+                if (button.Name == nameof(buttonZoomIn10))
+                {
+                    channelConfigurationDialog.ManualZoom(10.0);
+                }
+                else if (button.Name == nameof(buttonZoomIn100))
+                {
+                    channelConfigurationDialog.ManualZoom(100.0);
+                }
+                else if (button.Name == nameof(buttonZoomOut10))
+                {
+                    channelConfigurationDialog.ManualZoom(0.1);
+                }
+                else if (button.Name == nameof(buttonZoomOut100))
+                {
+                    channelConfigurationDialog.ManualZoom(0.01);
+                }
             }
         }
     }

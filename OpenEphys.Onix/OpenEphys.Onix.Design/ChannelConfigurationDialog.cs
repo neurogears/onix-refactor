@@ -300,50 +300,10 @@ namespace OpenEphys.Onix.Design
             if (zedGraphChannels.GraphPane.GraphObjList.Count == 0)
                 return;
 
-            var minX = zedGraphChannels.GraphPane.GraphObjList.Min<GraphObj, double>(obj =>
-            {
-                if (obj is PolyObj polyObj)
-                {
-                    return polyObj.Points.Min(p => p.X);
-                }
-
-                return double.MaxValue;
-            });
-
-            var minY = zedGraphChannels.GraphPane.GraphObjList.Min<GraphObj, double>(obj =>
-            {
-                if (obj is PolyObj polyObj)
-                {
-                    return polyObj.Points.Min(p => p.Y);
-                }
-
-                return double.MaxValue;
-            });
-
-            var maxX = zedGraphChannels.GraphPane.GraphObjList.Max<GraphObj, double>(obj =>
-            {
-                if (obj is PolyObj polyObj)
-                {
-                    return polyObj.Points.Max(p => p.X);
-                }
-
-                return double.MinValue;
-            });
-
-            var maxY = zedGraphChannels.GraphPane.GraphObjList.Max<GraphObj, double>(obj =>
-            {
-                if (obj is PolyObj polyObj)
-                {
-                    return polyObj.Points.Max(p => p.Y);
-                }
-
-                return double.MinValue;
-            });
-
-            var min = Math.Min(minX, minY);
-            var max = Math.Max(maxX, maxY);
-
-            var margin = (max - min) * 0.05;
+            var minX = MinX(zedGraphChannels.GraphPane.GraphObjList);
+            var minY = MinY(zedGraphChannels.GraphPane.GraphObjList);
+            var maxX = MaxX(zedGraphChannels.GraphPane.GraphObjList);
+            var maxY = MaxY(zedGraphChannels.GraphPane.GraphObjList);
 
             var rangeX = maxX - minX;
             var rangeY = maxY - minY;
@@ -366,6 +326,58 @@ namespace OpenEphys.Onix.Design
 
             zedGraphChannels.GraphPane.YAxis.Scale.Min = minY;
             zedGraphChannels.GraphPane.YAxis.Scale.Max = maxY;
+        }
+
+        protected static double MinX(GraphObjList graphObjs)
+        {
+            return graphObjs.Min<GraphObj, double>(obj =>
+            {
+                if (obj is PolyObj polyObj)
+                {
+                    return polyObj.Points.Min(p => p.X);
+                }
+
+                return double.MaxValue;
+            });
+        }
+
+        protected static double MinY(GraphObjList graphObjs)
+        {
+            return graphObjs.Min<GraphObj, double>(obj =>
+            {
+                if (obj is PolyObj polyObj)
+                {
+                    return polyObj.Points.Min(p => p.Y);
+                }
+
+                return double.MaxValue;
+            });
+        }
+
+        protected static double MaxX(GraphObjList graphObjs)
+        {
+            return graphObjs.Max<GraphObj, double>(obj =>
+            {
+                if (obj is PolyObj polyObj)
+                {
+                    return polyObj.Points.Max(p => p.X);
+                }
+
+                return double.MinValue;
+            });
+        }
+
+        protected static double MaxY(GraphObjList graphObjs)
+        {
+            return graphObjs.Max<GraphObj, double>(obj =>
+            {
+                if (obj is PolyObj polyObj)
+                {
+                    return polyObj.Points.Max(p => p.Y);
+                }
+
+                return double.MinValue;
+            });
         }
 
         /// <summary>

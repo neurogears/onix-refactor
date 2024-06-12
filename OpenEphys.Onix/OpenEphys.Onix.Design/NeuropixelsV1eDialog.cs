@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Windows.Forms;
-using Bonsai.Design;
 
 namespace OpenEphys.Onix.Design
 {
     public partial class NeuropixelsV1eDialog : Form
     {
-        /// <summary>
-        /// Local variable that holds the channel configuration in memory until the user presses Okay
-        /// </summary>
-        public NeuropixelsV1eProbeGroup ChannelConfiguration;
-
         readonly NeuropixelsV1eChannelConfigurationDialog channelConfigurationDialog;
 
         public ConfigureNeuropixelsV1e configureNeuropixelsV1e
@@ -27,9 +21,7 @@ namespace OpenEphys.Onix.Design
 
             configureNeuropixelsV1e = new(configureNode);
 
-            ChannelConfiguration = new NeuropixelsV1eProbeGroup();
-
-            channelConfigurationDialog = new(ChannelConfiguration)
+            channelConfigurationDialog = new(configureNeuropixelsV1e.ChannelConfiguration)
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,

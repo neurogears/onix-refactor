@@ -25,6 +25,8 @@ namespace OpenEphys.Onix.Design
                         configureNeuropixelsV1e.SpikeFilter = editorDialog.configureNeuropixelsV1e.SpikeFilter;
                         configureNeuropixelsV1e.GainCalibrationFile = editorDialog.configureNeuropixelsV1e.GainCalibrationFile;
                         configureNeuropixelsV1e.AdcCalibrationFile = editorDialog.configureNeuropixelsV1e.AdcCalibrationFile;
+                        configureNeuropixelsV1e.ChannelConfiguration = editorDialog.configureNeuropixelsV1e.ChannelConfiguration;
+
                         return true;
                     }
                 }

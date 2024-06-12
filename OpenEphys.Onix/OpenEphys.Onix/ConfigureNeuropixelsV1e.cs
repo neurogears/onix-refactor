@@ -1,6 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Text;
+using System.Xml.Serialization;
 using Bonsai;
+using Newtonsoft.Json;
 
 namespace OpenEphys.Onix
 {
@@ -45,15 +48,39 @@ namespace OpenEphys.Onix
         [Description("If true, activates a 300 Hz high-pass in the spike-band data stream.")]
         public bool SpikeFilter { get; set; } = true;
 
+        [Category(ConfigurationCategory)]
         [FileNameFilter("Gain calibration files (*_gainCalValues.csv)|*_gainCalValues.csv")]
         [Description("Path to the NeuropixelsV1e gain calibraiton file.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string GainCalibrationFile { get; set; }
 
+        [Category(ConfigurationCategory)]
         [FileNameFilter("ADC calibration files (*_ADCCalibration.csv)|*_ADCCalibration.csv")]
         [Description("Path to the NeuropixelsV1e ADC calibraiton file.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string AdcCalibrationFile { get; set; }
+
+        [XmlIgnore]
+        [Category(ConfigurationCategory)]
+        [Description("Defines the shape of the probe, and which contacts are currently selected for streaming")]
+        public NeuropixelsV1eProbeGroup ChannelConfiguration { get; set; } = new();
+
+        [Browsable(false)]
+        [Externalizable(false)]
+        [XmlElement(nameof(ChannelConfiguration))]
+        public string ChannelConfigurationString
+        {
+            get
+            {
+                var jsonString = JsonConvert.SerializeObject(ChannelConfiguration);
+                return Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
+            }
+            set
+            {
+                var jsonString = Encoding.UTF8.GetString(Convert.FromBase64String(value));
+                ChannelConfiguration = JsonConvert.DeserializeObject<NeuropixelsV1eProbeGroup>(jsonString);
+            }
+        }
 
         public override IObservable<ContextTask> Process(IObservable<ContextTask> source)
         {

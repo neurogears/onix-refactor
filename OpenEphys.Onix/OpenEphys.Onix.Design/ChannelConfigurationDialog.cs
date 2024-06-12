@@ -430,9 +430,9 @@ namespace OpenEphys.Onix.Design
         private void ZedGraphChannels_Resize(object sender, EventArgs e)
         {
             ResizeAxes(zedGraphChannels);
+            UpdateFontSize(zedGraphChannels);
             zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();
-            UpdateFontSize(zedGraphChannels);
         }
 
         private void MenuItemOpenFile_Click(object sender, EventArgs e)

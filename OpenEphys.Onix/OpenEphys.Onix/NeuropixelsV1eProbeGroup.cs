@@ -58,7 +58,7 @@ namespace OpenEphys.Onix
 
             for (int i = 0; i < numberOfChannels; i++)
             {
-                contactPositions[i] = new float[2] { ContactPositionX(i), i / 2 * 20 };
+                contactPositions[i] = new float[2] { ContactPositionX(i), i / 2 * 20 + 170 };
             }
 
             return contactPositions;
@@ -95,12 +95,12 @@ namespace OpenEphys.Onix
         {
             float[][] probePlanarContour = new float[6][];
 
-            probePlanarContour[0] = new float[2] { 0f, -15f };
-            probePlanarContour[1] = new float[2] { 35f, -110f };
-            probePlanarContour[2] = new float[2] { 70f, -15f };
-            probePlanarContour[3] = new float[2] { 70f, 9600f };
-            probePlanarContour[4] = new float[2] { 0f, 9600f };
-            probePlanarContour[5] = new float[2] { 0f, -15f };
+            probePlanarContour[0] = new float[2] { 0f, 155f };
+            probePlanarContour[1] = new float[2] { 35f, 0f };
+            probePlanarContour[2] = new float[2] { 70f, 155f };
+            probePlanarContour[3] = new float[2] { 70f, 9770f };
+            probePlanarContour[4] = new float[2] { 0f, 9770f };
+            probePlanarContour[5] = new float[2] { 0f, 155f };
 
             return probePlanarContour;
         }

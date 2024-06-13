@@ -18,14 +18,14 @@ namespace OpenEphys.Onix.Design
 
                     if (editorDialog.ShowDialog() == DialogResult.OK)
                     {
-                        configureNeuropixelsV1e.Enable = editorDialog.configureNeuropixelsV1e.Enable;
-                        configureNeuropixelsV1e.SpikeAmplifierGain = editorDialog.configureNeuropixelsV1e.SpikeAmplifierGain;
-                        configureNeuropixelsV1e.LfpAmplifierGain = editorDialog.configureNeuropixelsV1e.LfpAmplifierGain;
-                        configureNeuropixelsV1e.Reference = editorDialog.configureNeuropixelsV1e.Reference;
-                        configureNeuropixelsV1e.SpikeFilter = editorDialog.configureNeuropixelsV1e.SpikeFilter;
-                        configureNeuropixelsV1e.GainCalibrationFile = editorDialog.configureNeuropixelsV1e.GainCalibrationFile;
-                        configureNeuropixelsV1e.AdcCalibrationFile = editorDialog.configureNeuropixelsV1e.AdcCalibrationFile;
-                        configureNeuropixelsV1e.ChannelConfiguration = editorDialog.configureNeuropixelsV1e.ChannelConfiguration;
+                        configureNeuropixelsV1e.Enable = editorDialog.ConfigureNode.Enable;
+                        configureNeuropixelsV1e.SpikeAmplifierGain = editorDialog.ConfigureNode.SpikeAmplifierGain;
+                        configureNeuropixelsV1e.LfpAmplifierGain = editorDialog.ConfigureNode.LfpAmplifierGain;
+                        configureNeuropixelsV1e.Reference = editorDialog.ConfigureNode.Reference;
+                        configureNeuropixelsV1e.SpikeFilter = editorDialog.ConfigureNode.SpikeFilter;
+                        configureNeuropixelsV1e.GainCalibrationFile = editorDialog.ConfigureNode.GainCalibrationFile;
+                        configureNeuropixelsV1e.AdcCalibrationFile = editorDialog.ConfigureNode.AdcCalibrationFile;
+                        configureNeuropixelsV1e.ChannelConfiguration = editorDialog.ConfigureNode.ChannelConfiguration;
 
                         return true;
                     }

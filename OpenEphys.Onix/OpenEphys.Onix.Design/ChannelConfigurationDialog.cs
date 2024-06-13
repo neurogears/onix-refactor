@@ -31,6 +31,9 @@ namespace OpenEphys.Onix.Design
         /// </summary>
         public ProbeGroup ChannelConfiguration;
 
+        readonly Color InactiveContactColor = Color.DarkGray;
+        readonly Color ActiveContactColor = Color.LightYellow;
+
         /// <summary>
         /// Constructs the dialog window using the given probe group, and plots all contacts after loading.
         /// </summary>
@@ -77,7 +80,7 @@ namespace OpenEphys.Onix.Design
         /// <param name="newState">New state, of type <see cref="ZoomState"/></param>
         public virtual void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
         {
-            if (newState.Type == ZoomState.StateType.Zoom)
+            if (newState.Type == ZoomState.StateType.Zoom || newState.Type == ZoomState.StateType.WheelZoom)
             {
                 var rangeX = sender.GraphPane.XAxis.Scale.Max - sender.GraphPane.XAxis.Scale.Min;
                 var rangeY = sender.GraphPane.YAxis.Scale.Max - sender.GraphPane.YAxis.Scale.Min;
@@ -89,7 +92,7 @@ namespace OpenEphys.Onix.Design
                     sender.GraphPane.YAxis.Scale.Max += diff / 2;
                     sender.GraphPane.YAxis.Scale.Min -= diff / 2;
                 }
-                else
+                else if (rangeX < rangeY) 
                 {
                     var diff = rangeY - rangeX;
 
@@ -97,9 +100,6 @@ namespace OpenEphys.Onix.Design
                     sender.GraphPane.XAxis.Scale.Min -= diff / 2;
                 }
             }
-
-            sender.AxisChange();
-            sender.Refresh();
         }
 
         private void FormShown(object sender, EventArgs e)
@@ -113,6 +113,7 @@ namespace OpenEphys.Onix.Design
             }
 
             UpdateFontSize();
+            zedGraphChannels.Refresh();
         }
 
         private void LoadDefaultChannelLayout()
@@ -160,7 +161,7 @@ namespace OpenEphys.Onix.Design
                 PointD[] planarContours = ConvertFloatArrayToPointD(ChannelConfiguration.Probes.ElementAt(i).ProbePlanarContour);
                 PolyObj contour = new(planarContours, Color.Black, Color.White)
                 {
-                    ZOrder = ZOrder.E_BehindCurves
+                    ZOrder = ZOrder.C_BehindChartBorder
                 };
 
                 zedGraphChannels.GraphPane.GraphObjList.Add(contour);
@@ -169,15 +170,18 @@ namespace OpenEphys.Onix.Design
                 {
                     Contact contact = ChannelConfiguration.Probes.ElementAt(i).GetContact(j);
 
+                    Color color = contact.DeviceId == -1 ? InactiveContactColor : ActiveContactColor;
+                    string id =   contact.DeviceId == -1 ? "Off"                : contact.DeviceId.ToString();
+
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
                         var size = contact.ShapeParams.Radius.Value * 2;
 
                         EllipseObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, Color.DarkGray, Color.WhiteSmoke)
+                            size, size, Color.DarkGray, color)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
-                            Tag = string.Format(ContactStringFormat, contact.DeviceId)
+                            Tag = string.Format(ContactStringFormat, contact.Index)
                         };
 
                         zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
@@ -187,10 +191,10 @@ namespace OpenEphys.Onix.Design
                         var size = contact.ShapeParams.Width.Value;
 
                         BoxObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, Color.DarkGray, Color.WhiteSmoke)
+                            size, size, Color.DarkGray, color)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
-                            Tag = string.Format(ContactStringFormat, contact.DeviceId)
+                            Tag = string.Format(ContactStringFormat, contact.Index)
                         };
 
                         zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
@@ -201,10 +205,10 @@ namespace OpenEphys.Onix.Design
                         return;
                     }
 
-                    TextObj textObj = new(contact.DeviceId.ToString(), contact.PosX, contact.PosY)
+                    TextObj textObj = new(id, contact.PosX, contact.PosY)
                     {
                         ZOrder = ZOrder.A_InFront,
-                        Tag = string.Format(TextStringFormat, contact.DeviceId)
+                        Tag = string.Format(TextStringFormat, contact.Index)
                     };
                     textObj.FontSpec.IsBold = true;
                     textObj.FontSpec.Border.IsVisible = false;
@@ -236,8 +240,6 @@ namespace OpenEphys.Onix.Design
                     textObj.FontSpec.Size = fontSize;
                 }
             }
-
-            zedGraphChannels.Refresh();
         }
 
         internal float CalculateFontSize()
@@ -289,8 +291,15 @@ namespace OpenEphys.Onix.Design
                 axisRect.Y += (axisRect.Height - axisRect.Width) / 2;
                 axisRect.Height = axisRect.Width;
             }
+            else
+            {
+                zedGraphChannels.GraphPane.Chart.Rect = axisRect;
+                return;
+            }
 
             zedGraphChannels.GraphPane.Rect = axisRect;
+            zedGraphChannels.GraphPane.Chart.Rect = axisRect;
+
             zedGraphChannels.Size = new Size((int)axisRect.Width, (int)axisRect.Height);
             zedGraphChannels.Location = new Point((int)axisRect.X, (int)axisRect.Y);
         }
@@ -483,6 +492,37 @@ namespace OpenEphys.Onix.Design
         {
             SetEqualAspectRatio();
             UpdateFontSize();
+        }
+
+        /// <summary>
+        /// Shifts the whole ZedGraph to the given relative position, where 0.0 is the very bottom of the horizontal 
+        /// space, and 1.0 is the very top. Note that this accounts for a buffer on the top and bottom, so giving a 
+        /// value of 0.0 would have the minimum value of Y axis equal to the bottom of the graph, and keep the range 
+        /// the same. Similarly, a value of 1.0 would set the maximum value of the Y axis to the top of the graph, 
+        /// and keep the range the same.
+        /// </summary>
+        /// <param name="relativePosition">A float value defining the percentage of the graph to move to vertically</param>
+        public void MoveToVerticalPosition(float relativePosition)
+        {
+            if (relativePosition < 0.0 || relativePosition > 1.0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(relativePosition));
+            }
+
+            var currentRange = zedGraphChannels.GraphPane.YAxis.Scale.Max - zedGraphChannels.GraphPane.YAxis.Scale.Min;
+
+            var minY = MinY(zedGraphChannels.GraphPane.GraphObjList);
+            var maxY = MaxY(zedGraphChannels.GraphPane.GraphObjList);
+
+            var newMinY = (maxY - minY - currentRange) * relativePosition;
+
+            zedGraphChannels.GraphPane.YAxis.Scale.Min = newMinY;
+            zedGraphChannels.GraphPane.YAxis.Scale.Max = newMinY + currentRange;
+        }
+
+        public void RefreshZedGraph()
+        {
+            zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();
         }
     }

@@ -1,4 +1,6 @@
-﻿using OpenEphys.ProbeInterface;
+﻿using System.Drawing;
+using System.Windows.Forms;
+using OpenEphys.ProbeInterface;
 using ZedGraph;
 
 namespace OpenEphys.Onix.Design
@@ -9,6 +11,12 @@ namespace OpenEphys.Onix.Design
             : base(probeGroup)
         {
             InitializeComponent();
+
+            zedGraphChannels.IsEnableHPan = false;
+            zedGraphChannels.ZoomButtons = MouseButtons.None;
+            zedGraphChannels.ZoomButtons2 = MouseButtons.None;
+
+            zedGraphChannels.ZoomStepFraction = 0.5;
         }
 
         public override ProbeGroup DefaultChannelLayout()
@@ -20,7 +28,62 @@ namespace OpenEphys.Onix.Design
         {
             base.ZoomEvent(sender, oldState, newState);
 
-            UpdateFontSize(sender);
+            UpdateFontSize();
+            RefreshZedGraph();
+        }
+
+        public override void DrawScale()
+        {
+            const int MajorTickIncrement = 100;
+            const int MajorTickLength = 10;
+            const int MinorTickIncrement = 10;
+            const int MinorTickLength = 5;
+
+            var x = MaxX(zedGraphChannels.GraphPane.GraphObjList) + 10;
+            var minY = MinY(zedGraphChannels.GraphPane.GraphObjList);
+            var maxY = MaxY(zedGraphChannels.GraphPane.GraphObjList);
+
+            zedGraphChannels.GraphPane.CurveList.Clear();
+
+            PointPairList pointList = new();
+
+            var countMajorTicks = 0;
+
+            for (int i = (int)minY; i < maxY; i += MajorTickIncrement)
+            {
+                pointList.Add(new PointPair(x, minY + MajorTickIncrement * countMajorTicks));
+                PointPair majorTickLocation = new(x + MajorTickLength, minY + MajorTickIncrement * countMajorTicks);
+                pointList.Add(majorTickLocation);
+                pointList.Add(new PointPair(x, minY + MajorTickIncrement * countMajorTicks));
+
+                TextObj textObj = new($"{i} µm", majorTickLocation.X + 10, majorTickLocation.Y);
+                textObj.FontSpec.Border.IsVisible = false;
+                zedGraphChannels.GraphPane.GraphObjList.Add(textObj);
+
+                var countMinorTicks = 1;
+
+                for (int j = i + MinorTickIncrement; j < i + MajorTickIncrement && i + MinorTickIncrement * countMinorTicks < maxY; j += MinorTickIncrement)
+                {
+                    pointList.Add(new PointPair(x, minY + MajorTickIncrement * countMajorTicks + MinorTickIncrement * countMinorTicks));
+                    pointList.Add(new PointPair(x + MinorTickLength, minY + MajorTickIncrement * countMajorTicks + MinorTickIncrement * countMinorTicks));
+                    pointList.Add(new PointPair(x, minY + MajorTickIncrement * countMajorTicks + MinorTickIncrement * countMinorTicks));
+
+                    countMinorTicks++;
+                }
+
+                countMajorTicks++;
+            }
+
+            AddPointsToCurve(pointList);
+        }
+
+        private void AddPointsToCurve(PointPairList pointList)
+        {
+            var curve = zedGraphChannels.GraphPane.AddCurve("", pointList, Color.Black, SymbolType.None);
+
+            curve.Line.Width = 4;
+            curve.Label.IsVisible = false;
+            curve.Symbol.IsVisible = false;
         }
     }
 }

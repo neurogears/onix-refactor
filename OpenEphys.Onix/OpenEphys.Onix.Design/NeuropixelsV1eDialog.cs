@@ -7,21 +7,19 @@ namespace OpenEphys.Onix.Design
     {
         readonly NeuropixelsV1eChannelConfigurationDialog channelConfigurationDialog;
 
-        public ConfigureNeuropixelsV1e configureNeuropixelsV1e
+        public ConfigureNeuropixelsV1e ConfigureNode
         {
             get { return (ConfigureNeuropixelsV1e)propertyGrid.SelectedObject; }
             set { propertyGrid.SelectedObject = value; }
         }
 
-        bool RefreshNeeded = false;
-
         public NeuropixelsV1eDialog(ConfigureNeuropixelsV1e configureNode)
         {
             InitializeComponent();
 
-            configureNeuropixelsV1e = new(configureNode);
+            ConfigureNode = new(configureNode);
 
-            channelConfigurationDialog = new(configureNeuropixelsV1e.ChannelConfiguration)
+            channelConfigurationDialog = new(ConfigureNode.ChannelConfiguration)
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
@@ -35,24 +33,24 @@ namespace OpenEphys.Onix.Design
             channelConfigurationDialog.Show();
 
             comboBoxApGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
-            comboBoxApGain.SelectedItem = configureNeuropixelsV1e.SpikeAmplifierGain;
+            comboBoxApGain.SelectedItem = ConfigureNode.SpikeAmplifierGain;
             comboBoxApGain.SelectedIndexChanged += SelectedIndexChanged;
 
             comboBoxLfpGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
-            comboBoxLfpGain.SelectedItem = configureNeuropixelsV1e.LfpAmplifierGain;
+            comboBoxLfpGain.SelectedItem = ConfigureNode.LfpAmplifierGain;
             comboBoxLfpGain.SelectedIndexChanged += SelectedIndexChanged;
 
             comboBoxReference.DataSource = Enum.GetValues(typeof(NeuropixelsV1Reference));
-            comboBoxReference.SelectedItem = configureNeuropixelsV1e.Reference;
+            comboBoxReference.SelectedItem = ConfigureNode.Reference;
             comboBoxReference.SelectedIndexChanged += SelectedIndexChanged;
 
-            checkBoxSpikeFilter.Checked = configureNeuropixelsV1e.SpikeFilter;
+            checkBoxSpikeFilter.Checked = ConfigureNode.SpikeFilter;
             checkBoxSpikeFilter.CheckedChanged += SelectedIndexChanged;
 
-            textBoxAdcCalibrationFile.Text = configureNeuropixelsV1e.AdcCalibrationFile;
+            textBoxAdcCalibrationFile.Text = ConfigureNode.AdcCalibrationFile;
             textBoxAdcCalibrationFile.TextChanged += FileTextChanged;
 
-            textBoxGainCalibrationFile.Text = configureNeuropixelsV1e.GainCalibrationFile;
+            textBoxGainCalibrationFile.Text = ConfigureNode.GainCalibrationFile;
             textBoxGainCalibrationFile.TextChanged += FileTextChanged;
 
             CheckStatus();
@@ -64,11 +62,11 @@ namespace OpenEphys.Onix.Design
             {
                 if (textBox.Name == nameof(textBoxGainCalibrationFile))
                 {
-                    configureNeuropixelsV1e.GainCalibrationFile = textBox.Text;
+                    ConfigureNode.GainCalibrationFile = textBox.Text;
                 }
                 else if (textBox.Name == nameof(textBoxAdcCalibrationFile))
                 { 
-                    configureNeuropixelsV1e.AdcCalibrationFile = textBox.Text;
+                    ConfigureNode.AdcCalibrationFile = textBox.Text;
                 }
             }
         }
@@ -79,22 +77,22 @@ namespace OpenEphys.Onix.Design
             {
                 if (comboBox.Name == nameof(comboBoxApGain))
                 {
-                    configureNeuropixelsV1e.SpikeAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
+                    ConfigureNode.SpikeAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
                 }
                 else if (comboBox.Name == nameof(comboBoxLfpGain))
                 {
-                    configureNeuropixelsV1e.LfpAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
+                    ConfigureNode.LfpAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
                 }
                 else if (comboBox.Name == nameof(comboBoxReference))
                 {
-                    configureNeuropixelsV1e.Reference = (NeuropixelsV1Reference)comboBox.SelectedItem;
+                    ConfigureNode.Reference = (NeuropixelsV1Reference)comboBox.SelectedItem;
                 }
             }
             else if (sender is CheckBox checkBox && checkBox != null)
             {
                 if (checkBox.Name == nameof(checkBoxSpikeFilter))
                 {
-                    configureNeuropixelsV1e.SpikeFilter = checkBox.Checked;
+                    ConfigureNode.SpikeFilter = checkBox.Checked;
                 }
             }
         }
@@ -105,11 +103,6 @@ namespace OpenEphys.Onix.Design
             {
                 toolStripStatus.Image = Properties.Resources.StatusWarningImage;
                 toolStripStatus.Text = "Serial number mismatch";
-            }
-            else if (RefreshNeeded)
-            {
-                toolStripStatus.Image = Properties.Resources.StatusWarningImage;
-                toolStripStatus.Text = "Upload required";
             }
             else
             {
@@ -132,6 +125,8 @@ namespace OpenEphys.Onix.Design
 
         private void ButtonClick(object sender, EventArgs e)
         {
+            const float zoomFactor = 8f;
+
             if (sender is Button button && button != null)
             {
                 if (button.Name == nameof(buttonOkay))
@@ -170,34 +165,97 @@ namespace OpenEphys.Onix.Design
                         textBoxAdcCalibrationFile.Text = ofd.FileName;
                     }
                 }
+                else if (button.Name == nameof(buttonZoomIn))
+                {
+                    ZoomIn(zoomFactor);
+                }
+                else if (button.Name == nameof(buttonZoomOut))
+                {
+                    ZoomOut(1 / zoomFactor);
+                }
                 else if (button.Name == nameof(buttonResetZoom))
                 {
-                    channelConfigurationDialog.ResetZoom();
+                    ResetZoom();
+                }
+                else if (button.Name == nameof(buttonJumpTo0))
+                {
+                    MoveToVerticalPosition(0f);
+                }
+                else if (button.Name == nameof(buttonJumpTo1))
+                {
+                    MoveToVerticalPosition(0.1f);
+                }
+                else if (button.Name == nameof(buttonJumpTo2))
+                {
+                    MoveToVerticalPosition(0.2f);
+                }
+                else if (button.Name == nameof(buttonJumpTo3))
+                {
+                    MoveToVerticalPosition(0.3f);
+                }
+                else if (button.Name == nameof(buttonJumpTo4))
+                {
+                    MoveToVerticalPosition(0.4f);
+                }
+                else if (button.Name == nameof(buttonJumpTo5))
+                {
+                    MoveToVerticalPosition(0.5f);
+                }
+                else if (button.Name == nameof(buttonJumpTo6))
+                {
+                    MoveToVerticalPosition(0.6f);
+                }
+                else if (button.Name == nameof(buttonJumpTo7))
+                {
+                    MoveToVerticalPosition(0.7f);
+                }
+                else if (button.Name == nameof(buttonJumpTo8))
+                {
+                    MoveToVerticalPosition(0.8f);
+                }
+                else if (button.Name == nameof(buttonJumpTo9))
+                {
+                    MoveToVerticalPosition(0.9f);
+                }
+                else if (button.Name == nameof(buttonJumpTo10))
+                {
+                    MoveToVerticalPosition(1f);
                 }
             }
         }
 
-        private void ButtonZoomClick(object sender, EventArgs e)
+        private void ZoomIn(double zoom)
         {
-            if (sender is Button button && button != null)
+            if (zoom <= 1)
             {
-                if (button.Name == nameof(buttonZoomIn10))
-                {
-                    channelConfigurationDialog.ManualZoom(10.0);
-                }
-                else if (button.Name == nameof(buttonZoomIn100))
-                {
-                    channelConfigurationDialog.ManualZoom(100.0);
-                }
-                else if (button.Name == nameof(buttonZoomOut10))
-                {
-                    channelConfigurationDialog.ManualZoom(0.1);
-                }
-                else if (button.Name == nameof(buttonZoomOut100))
-                {
-                    channelConfigurationDialog.ManualZoom(0.01);
-                }
+                throw new ArgumentOutOfRangeException($"Argument {nameof(zoom)} must be greater than 1.0 to zoom in");
             }
+
+            channelConfigurationDialog.ManualZoom(zoom);
+            channelConfigurationDialog.RefreshZedGraph();
+        }
+
+        private void ZoomOut(double zoom)
+        {
+            if (zoom >= 1)
+            {
+                throw new ArgumentOutOfRangeException($"Argument {nameof(zoom)} must be less than 1.0 to zoom out");
+            }
+
+            channelConfigurationDialog.ManualZoom(zoom);
+            channelConfigurationDialog.RefreshZedGraph();
+        }
+
+        private void ResetZoom()
+        {
+            channelConfigurationDialog.ResetZoom();
+            channelConfigurationDialog.RefreshZedGraph();
+        }
+
+        private void MoveToVerticalPosition(float relativePosition)
+        {
+            channelConfigurationDialog.MoveToVerticalPosition(relativePosition);
+            channelConfigurationDialog.RefreshZedGraph();
         }
     }
 }

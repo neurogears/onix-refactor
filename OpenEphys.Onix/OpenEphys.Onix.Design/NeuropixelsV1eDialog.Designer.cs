@@ -28,18 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelProbe;
-            System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelConfigSN;
+            System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelGainCalSN;
+            System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelAdcCalSN;
             System.Windows.Forms.Label apGain;
             System.Windows.Forms.Label lfpGain;
             System.Windows.Forms.Label Reference;
             System.Windows.Forms.Label spikeFilter;
             System.Windows.Forms.Label gainCalibrationFile;
             System.Windows.Forms.Label adcCalibrationFile;
+            System.Windows.Forms.Label label1;
+            System.Windows.Forms.Label label2;
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.toolStripSplitButtonUpload = new System.Windows.Forms.ToolStripSplitButton();
-            this.toolStripProgressBarUpload = new System.Windows.Forms.ToolStripProgressBar();
             this.probeSN = new System.Windows.Forms.ToolStripStatusLabel();
             this.configSN = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
@@ -62,8 +62,11 @@
             this.comboBoxApGain = new System.Windows.Forms.ComboBox();
             this.tabPageChannelOptions = new System.Windows.Forms.TabPage();
             this.panelChannelOptions = new System.Windows.Forms.Panel();
-            this.buttonZoomIn100 = new System.Windows.Forms.Button();
-            this.buttonZoomIn10 = new System.Windows.Forms.Button();
+            this.buttonJumpTo0 = new System.Windows.Forms.Button();
+            this.buttonJumpTo10 = new System.Windows.Forms.Button();
+            this.buttonResetZoom = new System.Windows.Forms.Button();
+            this.buttonZoomOut = new System.Windows.Forms.Button();
+            this.buttonZoomIn = new System.Windows.Forms.Button();
             this.tabPagePropertyGrid = new System.Windows.Forms.TabPage();
             this.propertyGrid = new Bonsai.Design.PropertyGrid();
             this.tabPageChannels = new System.Windows.Forms.TabPage();
@@ -72,17 +75,25 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOkay = new System.Windows.Forms.Button();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
-            this.buttonZoomOut100 = new System.Windows.Forms.Button();
-            this.buttonZoomOut10 = new System.Windows.Forms.Button();
-            this.buttonResetZoom = new System.Windows.Forms.Button();
-            toolStripStatusLabelProbe = new System.Windows.Forms.ToolStripStatusLabel();
-            toolStripStatusLabelConfigSN = new System.Windows.Forms.ToolStripStatusLabel();
+            this.buttonJumpTo1 = new System.Windows.Forms.Button();
+            this.buttonJumpTo3 = new System.Windows.Forms.Button();
+            this.buttonJumpTo2 = new System.Windows.Forms.Button();
+            this.buttonJumpTo5 = new System.Windows.Forms.Button();
+            this.buttonJumpTo4 = new System.Windows.Forms.Button();
+            this.buttonJumpTo7 = new System.Windows.Forms.Button();
+            this.buttonJumpTo6 = new System.Windows.Forms.Button();
+            this.buttonJumpTo8 = new System.Windows.Forms.Button();
+            this.buttonJumpTo9 = new System.Windows.Forms.Button();
+            toolStripStatusLabelGainCalSN = new System.Windows.Forms.ToolStripStatusLabel();
+            toolStripStatusLabelAdcCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             apGain = new System.Windows.Forms.Label();
             lfpGain = new System.Windows.Forms.Label();
             Reference = new System.Windows.Forms.Label();
             spikeFilter = new System.Windows.Forms.Label();
             gainCalibrationFile = new System.Windows.Forms.Label();
             adcCalibrationFile = new System.Windows.Forms.Label();
+            label1 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -104,17 +115,17 @@
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
-            // toolStripStatusLabelProbe
+            // toolStripStatusLabelGainCalSN
             // 
-            toolStripStatusLabelProbe.Name = "toolStripStatusLabelProbe";
-            toolStripStatusLabelProbe.Size = new System.Drawing.Size(91, 25);
-            toolStripStatusLabelProbe.Text = "Probe SN:";
+            toolStripStatusLabelGainCalSN.Name = "toolStripStatusLabelGainCalSN";
+            toolStripStatusLabelGainCalSN.Size = new System.Drawing.Size(112, 25);
+            toolStripStatusLabelGainCalSN.Text = "Gain Cal. SN:";
             // 
-            // toolStripStatusLabelConfigSN
+            // toolStripStatusLabelAdcCalSN
             // 
-            toolStripStatusLabelConfigSN.Name = "toolStripStatusLabelConfigSN";
-            toolStripStatusLabelConfigSN.Size = new System.Drawing.Size(97, 25);
-            toolStripStatusLabelConfigSN.Text = "Config. SN";
+            toolStripStatusLabelAdcCalSN.Name = "toolStripStatusLabelAdcCalSN";
+            toolStripStatusLabelAdcCalSN.Size = new System.Drawing.Size(109, 25);
+            toolStripStatusLabelAdcCalSN.Text = "ADC Cal. SN";
             // 
             // apGain
             // 
@@ -172,13 +183,31 @@
             adcCalibrationFile.TabIndex = 11;
             adcCalibrationFile.Text = "ADC Calibration File";
             // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(20, 16);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(66, 20);
+            label1.TabIndex = 5;
+            label1.Text = "Jump to";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(161, 16);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(50, 20);
+            label2.TabIndex = 6;
+            label2.Text = "Zoom";
+            // 
             // menuStrip
             // 
             this.menuStrip.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1130, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1130, 36);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -186,11 +215,9 @@
             // 
             this.statusStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripSplitButtonUpload,
-            this.toolStripProgressBarUpload,
-            toolStripStatusLabelProbe,
+            toolStripStatusLabelGainCalSN,
             this.probeSN,
-            toolStripStatusLabelConfigSN,
+            toolStripStatusLabelAdcCalSN,
             this.configSN,
             this.toolStripStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 702);
@@ -198,21 +225,6 @@
             this.statusStrip.Size = new System.Drawing.Size(1130, 32);
             this.statusStrip.TabIndex = 1;
             this.statusStrip.Text = "statusStrip1";
-            // 
-            // toolStripSplitButtonUpload
-            // 
-            this.toolStripSplitButtonUpload.DropDownButtonWidth = 0;
-            this.toolStripSplitButtonUpload.Image = global::OpenEphys.Onix.Design.Properties.Resources.UploadImage;
-            this.toolStripSplitButtonUpload.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.toolStripSplitButtonUpload.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripSplitButtonUpload.Name = "toolStripSplitButtonUpload";
-            this.toolStripSplitButtonUpload.Size = new System.Drawing.Size(99, 29);
-            this.toolStripSplitButtonUpload.Text = "Upload";
-            // 
-            // toolStripProgressBarUpload
-            // 
-            this.toolStripProgressBarUpload.Name = "toolStripProgressBarUpload";
-            this.toolStripProgressBarUpload.Size = new System.Drawing.Size(100, 24);
             // 
             // probeSN
             // 
@@ -237,7 +249,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -248,8 +260,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1130, 678);
-            this.splitContainer1.SplitterDistance = 626;
+            this.splitContainer1.Size = new System.Drawing.Size(1130, 666);
+            this.splitContainer1.SplitterDistance = 614;
             this.splitContainer1.TabIndex = 2;
             // 
             // tabControlProbe
@@ -261,7 +273,7 @@
             this.tabControlProbe.Location = new System.Drawing.Point(0, 0);
             this.tabControlProbe.Name = "tabControlProbe";
             this.tabControlProbe.SelectedIndex = 0;
-            this.tabControlProbe.Size = new System.Drawing.Size(1130, 626);
+            this.tabControlProbe.Size = new System.Drawing.Size(1130, 614);
             this.tabControlProbe.TabIndex = 0;
             // 
             // tabPageProbe
@@ -270,7 +282,7 @@
             this.tabPageProbe.Location = new System.Drawing.Point(4, 29);
             this.tabPageProbe.Name = "tabPageProbe";
             this.tabPageProbe.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProbe.Size = new System.Drawing.Size(1122, 593);
+            this.tabPageProbe.Size = new System.Drawing.Size(1122, 581);
             this.tabPageProbe.TabIndex = 0;
             this.tabPageProbe.Text = "Probe";
             this.tabPageProbe.UseVisualStyleBackColor = true;
@@ -289,7 +301,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panel2);
-            this.splitContainer2.Size = new System.Drawing.Size(1116, 587);
+            this.splitContainer2.Size = new System.Drawing.Size(1116, 575);
             this.splitContainer2.SplitterDistance = 858;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -298,7 +310,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(858, 587);
+            this.panelProbe.Size = new System.Drawing.Size(858, 575);
             this.panelProbe.TabIndex = 0;
             // 
             // panel2
@@ -307,7 +319,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(254, 587);
+            this.panel2.Size = new System.Drawing.Size(254, 575);
             this.panel2.TabIndex = 0;
             // 
             // tabControlOptions
@@ -319,7 +331,7 @@
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(254, 587);
+            this.tabControlOptions.Size = new System.Drawing.Size(254, 575);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabPageOptions
@@ -432,43 +444,84 @@
             this.tabPageChannelOptions.Controls.Add(this.panelChannelOptions);
             this.tabPageChannelOptions.Location = new System.Drawing.Point(4, 29);
             this.tabPageChannelOptions.Name = "tabPageChannelOptions";
-            this.tabPageChannelOptions.Size = new System.Drawing.Size(246, 554);
+            this.tabPageChannelOptions.Size = new System.Drawing.Size(246, 542);
             this.tabPageChannelOptions.TabIndex = 2;
             this.tabPageChannelOptions.Text = "Channels";
             this.tabPageChannelOptions.UseVisualStyleBackColor = true;
             // 
             // panelChannelOptions
             // 
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo9);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo8);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo7);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo6);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo5);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo4);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo3);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo2);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo1);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo0);
+            this.panelChannelOptions.Controls.Add(this.buttonJumpTo10);
+            this.panelChannelOptions.Controls.Add(label2);
+            this.panelChannelOptions.Controls.Add(label1);
             this.panelChannelOptions.Controls.Add(this.buttonResetZoom);
-            this.panelChannelOptions.Controls.Add(this.buttonZoomOut100);
-            this.panelChannelOptions.Controls.Add(this.buttonZoomOut10);
-            this.panelChannelOptions.Controls.Add(this.buttonZoomIn100);
-            this.panelChannelOptions.Controls.Add(this.buttonZoomIn10);
+            this.panelChannelOptions.Controls.Add(this.buttonZoomOut);
+            this.panelChannelOptions.Controls.Add(this.buttonZoomIn);
             this.panelChannelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelChannelOptions.Location = new System.Drawing.Point(0, 0);
             this.panelChannelOptions.Name = "panelChannelOptions";
-            this.panelChannelOptions.Size = new System.Drawing.Size(246, 554);
+            this.panelChannelOptions.Size = new System.Drawing.Size(246, 542);
             this.panelChannelOptions.TabIndex = 0;
             // 
-            // buttonZoomIn100
+            // buttonJumpTo0
             // 
-            this.buttonZoomIn100.Location = new System.Drawing.Point(16, 79);
-            this.buttonZoomIn100.Name = "buttonZoomIn100";
-            this.buttonZoomIn100.Size = new System.Drawing.Size(96, 57);
-            this.buttonZoomIn100.TabIndex = 1;
-            this.buttonZoomIn100.Text = "Zoom In x100";
-            this.buttonZoomIn100.UseVisualStyleBackColor = true;
-            this.buttonZoomIn100.Click += new System.EventHandler(this.ButtonZoomClick);
+            this.buttonJumpTo0.Location = new System.Drawing.Point(24, 499);
+            this.buttonJumpTo0.Name = "buttonJumpTo0";
+            this.buttonJumpTo0.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo0.TabIndex = 8;
+            this.buttonJumpTo0.Text = "0";
+            this.buttonJumpTo0.UseVisualStyleBackColor = true;
+            this.buttonJumpTo0.Click += new System.EventHandler(this.ButtonClick);
             // 
-            // buttonZoomIn10
+            // buttonJumpTo10
             // 
-            this.buttonZoomIn10.Location = new System.Drawing.Point(16, 16);
-            this.buttonZoomIn10.Name = "buttonZoomIn10";
-            this.buttonZoomIn10.Size = new System.Drawing.Size(96, 57);
-            this.buttonZoomIn10.TabIndex = 0;
-            this.buttonZoomIn10.Text = "Zoom In x10";
-            this.buttonZoomIn10.UseVisualStyleBackColor = true;
-            this.buttonZoomIn10.Click += new System.EventHandler(this.ButtonZoomClick);
+            this.buttonJumpTo10.Location = new System.Drawing.Point(24, 49);
+            this.buttonJumpTo10.Name = "buttonJumpTo10";
+            this.buttonJumpTo10.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo10.TabIndex = 7;
+            this.buttonJumpTo10.Text = "10";
+            this.buttonJumpTo10.UseVisualStyleBackColor = true;
+            this.buttonJumpTo10.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonResetZoom
+            // 
+            this.buttonResetZoom.Location = new System.Drawing.Point(140, 129);
+            this.buttonResetZoom.Name = "buttonResetZoom";
+            this.buttonResetZoom.Size = new System.Drawing.Size(96, 34);
+            this.buttonResetZoom.TabIndex = 4;
+            this.buttonResetZoom.Text = "Reset Zoom";
+            this.buttonResetZoom.UseVisualStyleBackColor = true;
+            this.buttonResetZoom.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonZoomOut
+            // 
+            this.buttonZoomOut.Location = new System.Drawing.Point(140, 89);
+            this.buttonZoomOut.Name = "buttonZoomOut";
+            this.buttonZoomOut.Size = new System.Drawing.Size(96, 34);
+            this.buttonZoomOut.TabIndex = 3;
+            this.buttonZoomOut.Text = "Zoom Out";
+            this.buttonZoomOut.UseVisualStyleBackColor = true;
+            this.buttonZoomOut.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonZoomIn
+            // 
+            this.buttonZoomIn.Location = new System.Drawing.Point(140, 49);
+            this.buttonZoomIn.Name = "buttonZoomIn";
+            this.buttonZoomIn.Size = new System.Drawing.Size(96, 34);
+            this.buttonZoomIn.TabIndex = 2;
+            this.buttonZoomIn.Text = "Zoom In";
+            this.buttonZoomIn.UseVisualStyleBackColor = true;
+            this.buttonZoomIn.Click += new System.EventHandler(this.ButtonClick);
             // 
             // tabPagePropertyGrid
             // 
@@ -553,35 +606,95 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
             // 
-            // buttonZoomOut100
+            // buttonJumpTo1
             // 
-            this.buttonZoomOut100.Location = new System.Drawing.Point(129, 79);
-            this.buttonZoomOut100.Name = "buttonZoomOut100";
-            this.buttonZoomOut100.Size = new System.Drawing.Size(96, 57);
-            this.buttonZoomOut100.TabIndex = 3;
-            this.buttonZoomOut100.Text = "Zoom Out x100";
-            this.buttonZoomOut100.UseVisualStyleBackColor = true;
-            this.buttonZoomOut100.Click += new System.EventHandler(this.ButtonZoomClick);
+            this.buttonJumpTo1.Location = new System.Drawing.Point(24, 454);
+            this.buttonJumpTo1.Name = "buttonJumpTo1";
+            this.buttonJumpTo1.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo1.TabIndex = 9;
+            this.buttonJumpTo1.Text = "1";
+            this.buttonJumpTo1.UseVisualStyleBackColor = true;
+            this.buttonJumpTo1.Click += new System.EventHandler(this.ButtonClick);
             // 
-            // buttonZoomOut10
+            // buttonJumpTo3
             // 
-            this.buttonZoomOut10.Location = new System.Drawing.Point(129, 16);
-            this.buttonZoomOut10.Name = "buttonZoomOut10";
-            this.buttonZoomOut10.Size = new System.Drawing.Size(96, 57);
-            this.buttonZoomOut10.TabIndex = 2;
-            this.buttonZoomOut10.Text = "Zoom Out x10";
-            this.buttonZoomOut10.UseVisualStyleBackColor = true;
-            this.buttonZoomOut10.Click += new System.EventHandler(this.ButtonZoomClick);
+            this.buttonJumpTo3.Location = new System.Drawing.Point(24, 364);
+            this.buttonJumpTo3.Name = "buttonJumpTo3";
+            this.buttonJumpTo3.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo3.TabIndex = 11;
+            this.buttonJumpTo3.Text = "3";
+            this.buttonJumpTo3.UseVisualStyleBackColor = true;
+            this.buttonJumpTo3.Click += new System.EventHandler(this.ButtonClick);
             // 
-            // buttonResetZoom
+            // buttonJumpTo2
             // 
-            this.buttonResetZoom.Location = new System.Drawing.Point(58, 153);
-            this.buttonResetZoom.Name = "buttonResetZoom";
-            this.buttonResetZoom.Size = new System.Drawing.Size(124, 37);
-            this.buttonResetZoom.TabIndex = 4;
-            this.buttonResetZoom.Text = "Reset Zoom";
-            this.buttonResetZoom.UseVisualStyleBackColor = true;
-            this.buttonResetZoom.Click += new System.EventHandler(this.ButtonClick);
+            this.buttonJumpTo2.Location = new System.Drawing.Point(24, 409);
+            this.buttonJumpTo2.Name = "buttonJumpTo2";
+            this.buttonJumpTo2.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo2.TabIndex = 10;
+            this.buttonJumpTo2.Text = "2";
+            this.buttonJumpTo2.UseVisualStyleBackColor = true;
+            this.buttonJumpTo2.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo5
+            // 
+            this.buttonJumpTo5.Location = new System.Drawing.Point(24, 274);
+            this.buttonJumpTo5.Name = "buttonJumpTo5";
+            this.buttonJumpTo5.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo5.TabIndex = 13;
+            this.buttonJumpTo5.Text = "5";
+            this.buttonJumpTo5.UseVisualStyleBackColor = true;
+            this.buttonJumpTo5.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo4
+            // 
+            this.buttonJumpTo4.Location = new System.Drawing.Point(24, 319);
+            this.buttonJumpTo4.Name = "buttonJumpTo4";
+            this.buttonJumpTo4.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo4.TabIndex = 12;
+            this.buttonJumpTo4.Text = "4";
+            this.buttonJumpTo4.UseVisualStyleBackColor = true;
+            this.buttonJumpTo4.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo7
+            // 
+            this.buttonJumpTo7.Location = new System.Drawing.Point(24, 184);
+            this.buttonJumpTo7.Name = "buttonJumpTo7";
+            this.buttonJumpTo7.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo7.TabIndex = 15;
+            this.buttonJumpTo7.Text = "7";
+            this.buttonJumpTo7.UseVisualStyleBackColor = true;
+            this.buttonJumpTo7.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo6
+            // 
+            this.buttonJumpTo6.Location = new System.Drawing.Point(24, 229);
+            this.buttonJumpTo6.Name = "buttonJumpTo6";
+            this.buttonJumpTo6.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo6.TabIndex = 14;
+            this.buttonJumpTo6.Text = "6";
+            this.buttonJumpTo6.UseVisualStyleBackColor = true;
+            this.buttonJumpTo6.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo8
+            // 
+            this.buttonJumpTo8.Location = new System.Drawing.Point(24, 139);
+            this.buttonJumpTo8.Name = "buttonJumpTo8";
+            this.buttonJumpTo8.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo8.TabIndex = 16;
+            this.buttonJumpTo8.Text = "8";
+            this.buttonJumpTo8.UseVisualStyleBackColor = true;
+            this.buttonJumpTo8.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo9
+            // 
+            this.buttonJumpTo9.Location = new System.Drawing.Point(24, 94);
+            this.buttonJumpTo9.Name = "buttonJumpTo9";
+            this.buttonJumpTo9.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo9.TabIndex = 17;
+            this.buttonJumpTo9.Text = "9";
+            this.buttonJumpTo9.UseVisualStyleBackColor = true;
+            this.buttonJumpTo9.Click += new System.EventHandler(this.ButtonClick);
             // 
             // NeuropixelsV1eDialog
             // 
@@ -615,6 +728,7 @@
             this.panelOptions.PerformLayout();
             this.tabPageChannelOptions.ResumeLayout(false);
             this.panelChannelOptions.ResumeLayout(false);
+            this.panelChannelOptions.PerformLayout();
             this.tabPagePropertyGrid.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -633,11 +747,9 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.ToolStripSplitButton toolStripSplitButtonUpload;
         private System.Windows.Forms.Panel panelProbe;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOkay;
-        private System.Windows.Forms.ToolStripProgressBar toolStripProgressBarUpload;
         private System.Windows.Forms.ToolStripStatusLabel probeSN;
         private System.Windows.Forms.ToolStripStatusLabel configSN;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatus;
@@ -658,10 +770,19 @@
         private System.Windows.Forms.TabPage tabPageChannelOptions;
         private System.Windows.Forms.Panel panelChannelOptions;
         private System.Windows.Forms.CheckBox checkBoxSpikeFilter;
-        private System.Windows.Forms.Button buttonZoomIn100;
-        private System.Windows.Forms.Button buttonZoomIn10;
-        private System.Windows.Forms.Button buttonZoomOut100;
-        private System.Windows.Forms.Button buttonZoomOut10;
+        private System.Windows.Forms.Button buttonZoomIn;
         private System.Windows.Forms.Button buttonResetZoom;
+        private System.Windows.Forms.Button buttonJumpTo10;
+        private System.Windows.Forms.Button buttonZoomOut;
+        private System.Windows.Forms.Button buttonJumpTo0;
+        private System.Windows.Forms.Button buttonJumpTo8;
+        private System.Windows.Forms.Button buttonJumpTo7;
+        private System.Windows.Forms.Button buttonJumpTo6;
+        private System.Windows.Forms.Button buttonJumpTo5;
+        private System.Windows.Forms.Button buttonJumpTo4;
+        private System.Windows.Forms.Button buttonJumpTo3;
+        private System.Windows.Forms.Button buttonJumpTo2;
+        private System.Windows.Forms.Button buttonJumpTo1;
+        private System.Windows.Forms.Button buttonJumpTo9;
     }
 }

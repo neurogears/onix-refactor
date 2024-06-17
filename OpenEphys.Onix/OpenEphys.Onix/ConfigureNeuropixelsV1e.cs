@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Reactive.Disposables;
 using System.Threading;
@@ -201,66 +201,5 @@ namespace OpenEphys.Onix
             {
             }
         }
-    }
-
-    [Flags]
-    public enum NeuropixelsV1CalibrationRegisterValues : uint
-    {
-        CAL_OFF = 0,
-        OSC_ACTIVE = 1 << 4, // 0 = external osc inactive, 1 = activate the external calibration oscillator
-        ADC_CAL = 1 << 5, // Enable ADC calibration
-        CH_CAL = 1 << 6, // Enable channel gain calibration
-        PIX_CAL = 1 << 7, // Enable pixel + channel gain calibration
-
-        // Useful combinations
-        OSC_ACTIVE_AND_ADC_CAL = OSC_ACTIVE | ADC_CAL,
-        OSC_ACTIVE_AND_CH_CAL = OSC_ACTIVE | CH_CAL,
-        OSC_ACTIVE_AND_PIX_CAL = OSC_ACTIVE | PIX_CAL,
-
-    };
-
-    [Flags]
-    public enum NeuropixelsV1RecordRegisterValues : uint
-    {
-        RESET_ALL = 1 << 5, // 1 = Set analog SR chains to default values
-        DIG_ENABLE = 1 << 6, // 0 = Reset the MUX, ADC, and PSB counter, 1 = Disable reset
-        CH_ENABLE = 1 << 7, // 0 = Reset channel pseudo-registers, 1 = Disable reset
-
-        // Useful combinations
-        SR_RESET = RESET_ALL | CH_ENABLE | DIG_ENABLE,
-        DIG_CH_RESET = 0,  // Yes, this is actually correct
-        ACTIVE = DIG_ENABLE | CH_ENABLE,
-    };
-
-    [Flags]
-    public enum NeuropixelsV1OperationRegisterValues : uint
-    {
-        TEST = 1 << 3, // Enable Test mode
-        DIG_TEST = 1 << 4, // Enable Digital Test mode
-        CALIBRATE = 1 << 5, // Enable calibration mode
-        RECORD = 1 << 6, // Enable recording mode
-        POWER_DOWN = 1 << 7, // Enable power down mode
-
-        // Useful combinations
-        RECORD_AND_DIG_TEST = RECORD | DIG_TEST,
-        RECORD_AND_CALIBRATE = RECORD | CALIBRATE,
-    };
-
-    public enum NeuropixelsV1ReferenceSource : byte
-    {
-        Ext = 0b001,
-        Tip = 0b010
-    }
-
-    public enum NeuropixelsV1Gain : byte
-    {
-        x50 = 0b000,
-        x125 = 0b001,
-        x250 = 0b010,
-        x500 = 0b011,
-        x1000 = 0b100,
-        x1500 = 0b101,
-        x2000 = 0b110,
-        x3000 = 0b111
     }
 }

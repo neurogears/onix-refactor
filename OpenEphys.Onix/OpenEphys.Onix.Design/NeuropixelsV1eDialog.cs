@@ -40,7 +40,7 @@ namespace OpenEphys.Onix.Design
             comboBoxLfpGain.SelectedItem = ConfigureNode.LfpAmplifierGain;
             comboBoxLfpGain.SelectedIndexChanged += SelectedIndexChanged;
 
-            comboBoxReference.DataSource = Enum.GetValues(typeof(NeuropixelsV1Reference));
+            comboBoxReference.DataSource = Enum.GetValues(typeof(NeuropixelsV1ReferenceSource));
             comboBoxReference.SelectedItem = ConfigureNode.Reference;
             comboBoxReference.SelectedIndexChanged += SelectedIndexChanged;
 
@@ -85,7 +85,7 @@ namespace OpenEphys.Onix.Design
                 }
                 else if (comboBox.Name == nameof(comboBoxReference))
                 {
-                    ConfigureNode.Reference = (NeuropixelsV1Reference)comboBox.SelectedItem;
+                    ConfigureNode.Reference = (NeuropixelsV1ReferenceSource)comboBox.SelectedItem;
                 }
             }
             else if (sender is CheckBox checkBox && checkBox != null)

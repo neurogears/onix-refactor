@@ -35,7 +35,7 @@ namespace OpenEphys.Onix
         public int Offset { get; set; } = 0;
         public int Threshold { get; set; } = 512;
     }
-    public enum NeuropixelsV1Reference : byte
+    public enum NeuropixelsV1ReferenceSource : byte
     {
         Ext = 0b001,
         Tip = 0b010

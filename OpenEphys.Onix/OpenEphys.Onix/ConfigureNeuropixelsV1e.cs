@@ -1,16 +1,34 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Reactive.Disposables;
+using System.Text;
 using System.Threading;
+using System.Xml.Serialization;
 using Bonsai;
+using Newtonsoft.Json;
 
 namespace OpenEphys.Onix
 {
+    [Editor("OpenEphys.Onix.Design.NeuropixelsV1eEditor, OpenEphys.Onix.Design", typeof(ComponentEditor))]
     public class ConfigureNeuropixelsV1e : SingleDeviceFactory
     {
         public ConfigureNeuropixelsV1e()
             : base(typeof(NeuropixelsV1e))
         {
+        }
+
+        public ConfigureNeuropixelsV1e(ConfigureNeuropixelsV1e configureNeuropixelsV1e)
+            : base(typeof(NeuropixelsV1e))
+        {
+            Enable = configureNeuropixelsV1e.Enable;
+            EnableLed = configureNeuropixelsV1e.EnableLed;
+            SpikeAmplifierGain = configureNeuropixelsV1e.SpikeAmplifierGain;
+            LfpAmplifierGain = configureNeuropixelsV1e.LfpAmplifierGain;
+            Reference = configureNeuropixelsV1e.Reference;
+            SpikeFilter = configureNeuropixelsV1e.SpikeFilter;
+            GainCalibrationFile = configureNeuropixelsV1e.GainCalibrationFile;
+            AdcCalibrationFile = configureNeuropixelsV1e.AdcCalibrationFile;
+            ChannelConfiguration = configureNeuropixelsV1e.ChannelConfiguration;
         }
 
         [Category(ConfigurationCategory)]
@@ -37,15 +55,39 @@ namespace OpenEphys.Onix
         [Description("If true, activates a 300 Hz high-pass filter in the spike-band data stream.")]
         public bool SpikeFilter { get; set; } = true;
 
+        [Category(ConfigurationCategory)]
         [FileNameFilter("Gain calibration files (*_gainCalValues.csv)|*_gainCalValues.csv")]
         [Description("Path to the NRIC1384 gain calibration file.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string GainCalibrationFile { get; set; }
 
+        [Category(ConfigurationCategory)]
         [FileNameFilter("ADC calibration files (*_ADCCalibration.csv)|*_ADCCalibration.csv")]
         [Description("Path to the NRIC1384 ADC calibration file.")]
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string AdcCalibrationFile { get; set; }
+
+        [XmlIgnore]
+        [Category(ConfigurationCategory)]
+        [Description("Defines the shape of the probe, and which contacts are currently selected for streaming")]
+        public NeuropixelsV1eProbeGroup ChannelConfiguration { get; set; } = new();
+
+        [Browsable(false)]
+        [Externalizable(false)]
+        [XmlElement(nameof(ChannelConfiguration))]
+        public string ChannelConfigurationString
+        {
+            get
+            {
+                var jsonString = JsonConvert.SerializeObject(ChannelConfiguration);
+                return Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
+            }
+            set
+            {
+                var jsonString = Encoding.UTF8.GetString(Convert.FromBase64String(value));
+                ChannelConfiguration = JsonConvert.DeserializeObject<NeuropixelsV1eProbeGroup>(jsonString);
+            }
+        }
 
         public override IObservable<ContextTask> Process(IObservable<ContextTask> source)
         {

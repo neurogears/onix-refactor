@@ -7,42 +7,22 @@ namespace OpenEphys.Onix
     public class ConfigureNeuropixelsV1eHeadstage : HubDeviceFactory
     {
         PortName port;
-        readonly ConfigureNeuropixels1fHeadstageLinkController LinkController = new();
+        readonly ConfigureNeuropixelsV1LinkController LinkController = new();
 
         public ConfigureNeuropixelsV1eHeadstage()
         {
-            // TODO: The issue with this headstage is that its locking voltage is far, far lower than the voltage required for full
-            // functionality. Locking occurs at around 2V on the headstage (enough to turn 1.8V on). Full functionality is at 5.0 volts.
-            // Whats worse: the port voltage can only go down to 3.3V, which means that its very hard to find the true lowest voltage
-            // for a lock and then add a large offset to that.
             Port = PortName.PortA;
-            LinkController.HubConfiguration = HubConfiguration.Standard;
+            LinkController.HubConfiguration = HubConfiguration.Passthrough;
         }
 
         [Category(ConfigurationCategory)]
         [TypeConverter(typeof(HubDeviceConverter))]
-        public ConfigureNeuropixelsV1e NeuropixelsV1A { get; set; } = new();
+        public ConfigureNeuropixelsV1e NeuropixelsV1 { get; set; } = new();
 
+        // TODO: There may be an interaction with Neuropixels I2C here that prevents proper configuration if this is started too soon after config takes place
         [Category(ConfigurationCategory)]
         [TypeConverter(typeof(HubDeviceConverter))]
-        public ConfigureNeuropixelsV1e NeuropixelsV1B { get; set; } = new();
-
-        [Category(ConfigurationCategory)]
-        [TypeConverter(typeof(HubDeviceConverter))]
-        public ConfigureBno055 Bno055 { get; set; } = new();
-
-        [Category(ConfigurationCategory)]
-        [TypeConverter(typeof(HubDeviceConverter))]
-        public ConfigureTS4231 TS4231 { get; set; } = new() { Enable = false };
-
-        internal override void UpdateDeviceNames()
-        {
-            LinkController.DeviceName = GetFullDeviceName(nameof(LinkController));
-            NeuropixelsV1A.DeviceName = GetFullDeviceName(nameof(NeuropixelsV1A));
-            NeuropixelsV1B.DeviceName = GetFullDeviceName(nameof(NeuropixelsV1B));
-            Bno055.DeviceName = GetFullDeviceName(nameof(Bno055));
-            TS4231.DeviceName = GetFullDeviceName(nameof(TS4231));
-        }
+        public ConfigureNeuropixelsV1eBno055 Bno055 { get; set; } = new();
 
         public PortName Port
         {
@@ -52,16 +32,14 @@ namespace OpenEphys.Onix
                 port = value;
                 var offset = (uint)port << 8;
                 LinkController.DeviceAddress = (uint)port;
-                NeuropixelsV1A.DeviceAddress = offset + 0;
-                NeuropixelsV1B.DeviceAddress = offset + 1;
-                Bno055.DeviceAddress = offset + 2;
-                TS4231.DeviceAddress = offset + 3;
+                NeuropixelsV1.DeviceAddress = offset + 0;
+                Bno055.DeviceAddress = offset + 1;
             }
         }
 
-         [Description("If defined, overrides automated voltage discovery and applies " +
-        "the specified voltage to the headstage. Warning: this device requires 5.0V to 5.5V " +
-        "for proper operation. Higher voltages can damage the headstage.")]
+        [Description("If defined, overrides automated voltage discovery and applies " +
+            "the specified voltage to the headstage. Warning: this device requires 3.8V to 5.5V " +
+            "for proper operation. Higher voltages can damage the headstage.")]
         public double? PortVoltage
         {
             get => LinkController.PortVoltage;
@@ -71,13 +49,11 @@ namespace OpenEphys.Onix
         internal override IEnumerable<IDeviceConfiguration> GetDevices()
         {
             yield return LinkController;
-            yield return NeuropixelsV1A;
-            yield return NeuropixelsV1B;
+            yield return NeuropixelsV1;
             yield return Bno055;
-            yield return TS4231;
         }
 
-        class ConfigureNeuropixels1fHeadstageLinkController : ConfigureFmcLinkController
+        class ConfigureNeuropixelsV1LinkController : ConfigureFmcLinkController
         {
 
             public double? PortVoltage { get; set; } = null;
@@ -88,8 +64,8 @@ namespace OpenEphys.Onix
 
                 if (PortVoltage == null)
                 {
-                    const double MinVoltage = 5.0;
-                    const double MaxVoltage = 7.5;
+                    const double MinVoltage = 3.3;
+                    const double MaxVoltage = 5.5;
                     const double VoltageOffset = 1.0;
                     const double VoltageIncrement = 0.2;
 
@@ -108,6 +84,11 @@ namespace OpenEphys.Onix
                 {
                     SetVoltage(device, (double)PortVoltage);
                 }
+
+                // NB: The headstage needs an additional reset after power on
+                // to provide its device table
+                device.Context.Reset();
+                Thread.Sleep(200);
 
                 if (CheckLinkState(device))
                 {

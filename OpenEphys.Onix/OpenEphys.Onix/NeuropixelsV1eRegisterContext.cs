@@ -7,11 +7,11 @@ namespace OpenEphys.Onix
 {
     class NeuropixelsV1eRegisterContext : I2CRegisterContext
     {
-        readonly double[] ApGainCorrection = new double[NeuropixelsV1.ChannelCount];
-        readonly double[] LfpGainCorrection = new double[NeuropixelsV1.ChannelCount];
-        readonly NeuropixelsV1Adc[] Adcs = new NeuropixelsV1Adc[NeuropixelsV1.AdcCount];
+        public double ApGainCorrection { get; }
+        public double LfpGainCorrection { get; }
+        public ushort[] AdcThresholds { get; }
+        public ushort[] AdcOffsets { get; }
 
-        // TODO: Shank configuration consts
         const int ShankConfigurationBitCount = 968;
         const int BaseConfigurationBitCount = 2448;
         const int BaseConfigurationConfigOffset = 576;
@@ -23,42 +23,40 @@ namespace OpenEphys.Onix
         const int ShankBitTip2 = 483;
         const int InternalReferenceChannel = 191;
 
-        readonly DeviceContext device;
+        readonly NeuropixelsV1eAdc[] Adcs = new NeuropixelsV1eAdc[NeuropixelsV1e.AdcCount];
         readonly BitArray ShankConfig = new(ShankConfigurationBitCount, false);
-        readonly BitArray[] BaseConfigs = { new BitArray(BaseConfigurationBitCount, false),   // Ch 0, 2, 4, ...
-                                            new BitArray(BaseConfigurationBitCount, false) }; // Ch 1, 3, 5, ...
+        readonly BitArray[] BaseConfigs = { new(BaseConfigurationBitCount, false),   // Ch 0, 2, 4, ...
+                                            new(BaseConfigurationBitCount, false) }; // Ch 1, 3, 5, ...
 
-        public NeuropixelsV1eRegisterContext(DeviceContext deviceContext, NeuropixelsV1Gain apGain, NeuropixelsV1Gain lfpGain, NeuropixelsV1Reference refSource, bool apFilter, string gainCalibrationFile, string adcCalibrationFile)
-            : base(deviceContext, NeuropixelsV1e.I2cAddress)
+        // TODO: accept and apply channel config type
+        public NeuropixelsV1eRegisterContext(DeviceContext deviceContext, uint i2cAddress, 
+            NeuropixelsV1Gain apGain, NeuropixelsV1Gain lfpGain, NeuropixelsV1ReferenceSource refSource, 
+            bool apFilter, string gainCalibrationFile, string adcCalibrationFile)
+            : base(deviceContext, i2cAddress)
         {
-            device = deviceContext;
-
             if (gainCalibrationFile == null || adcCalibrationFile == null)
             {
                 throw new ArgumentException("Calibraiton files must be specified.");
             }
 
             System.IO.StreamReader gainFile = new(gainCalibrationFile);
-            var sn = UInt64.Parse(gainFile.ReadLine());
+            var sn = ulong.Parse(gainFile.ReadLine());
 
             System.IO.StreamReader adcFile = new(adcCalibrationFile);
-            if (sn != UInt64.Parse(adcFile.ReadLine()))
+            if (sn != ulong.Parse(adcFile.ReadLine()))
                 throw new ArgumentException("Calibraiton file serial numbers do not match.");
 
             // parse gain correction file
-            for (int i = 0; i < NeuropixelsV1.ChannelCount; i++)
-            {
-                var gainCorrections = gainFile.ReadLine().Split(',').Skip(1);
+            var gainCorrections = gainFile.ReadLine().Split(',').Skip(1);
 
-                if (gainCorrections.Count() != 2 * NumberOfGains)
-                    throw new ArgumentException("Incorrectly formmatted gain correction calibration file.");
+            if (gainCorrections.Count() != 2 * NumberOfGains)
+                throw new ArgumentException("Incorrectly formmatted gain correction calibration file.");
 
-                ApGainCorrection[i] = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), apGain)));
-                LfpGainCorrection[i] = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), lfpGain) + 8));
-            }
+            ApGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), apGain)));
+            LfpGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), lfpGain) + 8));
 
             // parse ADC calibration file
-            for (var i = 0; i < NeuropixelsV1.AdcCount; i++)
+            for (var i = 0; i < NeuropixelsV1e.AdcCount; i++)
             {
                 var adcCal = adcFile.ReadLine().Split(',').Skip(1);
                 if (adcCal.Count() != NumberOfGains)
@@ -66,7 +64,7 @@ namespace OpenEphys.Onix
                     throw new ArgumentException("Incorrectly formmatted ADC calibration file.");
                 }
 
-                Adcs[i] = new NeuropixelsV1Adc
+                Adcs[i] = new NeuropixelsV1eAdc
                 {
                     CompP = int.Parse(adcCal.ElementAt(0)),
                     CompN = int.Parse(adcCal.ElementAt(1)),
@@ -79,8 +77,44 @@ namespace OpenEphys.Onix
                 };
             }
 
-            // create shift-register bit arrays
-            for (int i = 0; i < NeuropixelsV1.ChannelCount; i++)
+            AdcThresholds = Adcs.ToList().Select(a => (ushort)a.Threshold).ToArray();
+            AdcOffsets = Adcs.ToList().Select(a => (ushort)a.Offset).ToArray();
+
+            switch (refSource)
+            {
+                case NeuropixelsV1ReferenceSource.Ext:
+                    {
+                        ShankConfig[ShankBitExt1] = true;
+                        ShankConfig[ShankBitExt2] = true;
+                        break;
+                    }
+                case NeuropixelsV1ReferenceSource.Tip:
+                    {
+                        ShankConfig[ShankBitTip1] = true;
+                        ShankConfig[ShankBitTip2] = true;
+                        break;
+                    }
+            }
+
+            // Update active channels
+            for (int i = 0; i < NeuropixelsV1e.ChannelCount; i++)
+            {
+                // Reference bits always remain zero
+                if (i == InternalReferenceChannel)
+                {
+                    continue;
+                }
+
+                var e = i; // TODO: Electrode map
+
+                int bitIndex = e % 2 == 0 ?
+                    485 + ((int)e / 2) : // even electrode
+                    482 - ((int)e / 2);  // odd electrode
+                ShankConfig[bitIndex] = true;
+            }
+
+            // create base shift-register bit arrays
+            for (int i = 0; i < NeuropixelsV1e.ChannelCount; i++)
             {
                 var configIdx = i % 2;
 
@@ -186,37 +220,37 @@ namespace OpenEphys.Onix
             }
         }
 
-        internal void InitializeProbe()
+        public void InitializeProbe()
         {
-            // turn off calibration mode
+            // get probe set up to receive configuration
             WriteByte(NeuropixelsV1e.CAL_MOD, (uint)NeuropixelsV1CalibrationRegisterValues.CAL_OFF);
+            WriteByte(NeuropixelsV1e.TEST_CONFIG1, 0);
+            WriteByte(NeuropixelsV1e.TEST_CONFIG2, 0);
+            WriteByte(NeuropixelsV1e.TEST_CONFIG3, 0);
+            WriteByte(NeuropixelsV1e.TEST_CONFIG4, 0);
+            WriteByte(NeuropixelsV1e.TEST_CONFIG5, 0);
             WriteByte(NeuropixelsV1e.SYNC, 0);
-
-            // perform digital and channel reset
-            WriteByte(NeuropixelsV1e.REC_MOD, (uint)NeuropixelsV1RecordRegisterValues.DIG_CH_RESET);
-
-            // change operation state to Recording
-            WriteByte(NeuropixelsV1e.OP_MODE, (uint)NeuropixelsV1OperationRegisterValues.RECORD);
-
-            // start acquisition
             WriteByte(NeuropixelsV1e.REC_MOD, (uint)NeuropixelsV1RecordRegisterValues.ACTIVE);
+            WriteByte(NeuropixelsV1e.OP_MODE, (uint)NeuropixelsV1OperationRegisterValues.RECORD);
         }
 
-        internal void WriteShiftRegisters()
+        // TODO: There is an issue getting these SR write sequences to complete correctly.
+        // We have a suspicion it is due to the nature of the MCLK signal and that this
+        // headstage needs either a different oscillator with even more drive strength or
+        // a clock buffer (second might be easiest).
+        public void WriteConfiguration()
         {
-            // TODO: Shank configuration
             // shank
             // NB: no read check because of ASIC bug
-            // var shankBytes = BitArrayToBytes(ShankConfig);
-            //
-            // WriteByte(NeuropixelsV1f.SR_LENGTH1, (uint)shankBytes.Length % 0x100);
-            // WriteByte(NeuropixelsV1f.SR_LENGTH2, (uint)shankBytes.Length / 0x100);
-            //
-            // foreach (var b in shankBytes)
-            // {
-            //     WriteByte(NeuropixelsV1f.SR_CHAIN1, b);
-            // }
+            var shankBytes = BitArrayToBytes(ShankConfig);
 
+            WriteByte(NeuropixelsV1e.SR_LENGTH1, (uint)shankBytes.Length % 0x100);
+            WriteByte(NeuropixelsV1e.SR_LENGTH2, (uint)shankBytes.Length / 0x100);
+
+            foreach (var b in shankBytes)
+            {
+               WriteByte(NeuropixelsV1e.SR_CHAIN1, b);
+            }
 
             // base
             for (int i = 0; i < BaseConfigs.Length; i++)
@@ -225,6 +259,16 @@ namespace OpenEphys.Onix
 
                 for (int j = 0; j < 2; j++)
                 {
+                    // TODO: HACK HACK HACK
+                    // If we do not do this, the ShiftRegisterSuccess check below will always fail
+                    // on whatever the second shift register write sequnece regardless of order or
+                    // contents. Could be increased current draw during internal process causes MCLK
+                    // to droop and mess up internal state. Or that MCLK is just not good enough to
+                    // prevent metastability in some logic in the ASIC that is only entered in between
+                    // SR accesses.
+                    WriteByte(NeuropixelsV1e.SOFT_RESET, 0xFF);
+                    WriteByte(NeuropixelsV1e.SOFT_RESET, 0x00);
+
                     var baseBytes = BitArrayToBytes(BaseConfigs[i]);
 
                     WriteByte(NeuropixelsV1e.SR_LENGTH1, (uint)baseBytes.Length % 0x100);
@@ -241,18 +285,16 @@ namespace OpenEphys.Onix
                     throw new WorkflowException($"Shift register {srAddress} status check failed.");
                 }
             }
-
-            // Adc correction parameters
-            for (uint i = 0; i < Adcs.Length; i+=2)
-            {
-                device.WriteRegister(NeuropixelsV1e.ADC01_00_OFF_THRESH + i, (uint)(Adcs[i+1].Offset << 26 | Adcs[i+1].Threshold << 16 | Adcs[i].Offset << 10 | Adcs[i].Threshold));
-            }
-            for (uint i = 0; i < NeuropixelsV1.ChannelCount; i++)
-            {
-                device.WriteRegister(NeuropixelsV1e.CHAN001_000_LFPGAIN, (uint)(LfpGainCorrection[i] * (1 << 14)));
-                device.WriteRegister(NeuropixelsV1e.CHAN001_000_APGAIN, (uint)(ApGainCorrection[i] * (1 << 14)));
-            }
         }
+
+        public void StartAcquisition()
+        {
+            // TODO: Hack inside settings.WriteShiftRegisters() above puts probe in reset set that needs to be
+            // undone here
+            WriteByte(NeuropixelsV1e.OP_MODE, (uint)NeuropixelsV1OperationRegisterValues.RECORD);
+            WriteByte(NeuropixelsV1e.REC_MOD, (uint)NeuropixelsV1RecordRegisterValues.ACTIVE);
+        }
+
 
         // Bits go into the shift registers MSB first
         // This creates a *bit-reversed* byte array from a bit array

@@ -24,52 +24,50 @@ namespace OpenEphys.Onix
 
         public Mat LfpData { get; }
 
-
-        internal static unsafe void CopyAmplifierBuffer(ushort* amplifierData, int[] frameCountBuffer, ushort[,] spikeBuffer, ushort[,] lfpBuffer, int index)
+        internal static unsafe void CopyAmplifierBuffer(ushort* amplifierData, int[] frameCountBuffer, ushort[,] spikeBuffer, ushort[,] lfpBuffer, int index, double apGainCorrection, double lfpGainCorrection, ushort[] thresholds, ushort[] offsets)
         {
 
-            var frameCountStartIndex = index * NeuropixelsV1.FramesPerSuperframe;
-            frameCountBuffer[frameCountStartIndex] = (amplifierData[FrameCounterMsbIndex] << 10) | (amplifierData[FrameCounterLsbIndex] << 0);
+            var frameCountStartIndex = index * NeuropixelsV1e.FramesPerSuperFrame;
+            frameCountBuffer[frameCountStartIndex] =   (amplifierData[31] << 10) | (amplifierData[39] << 0);
 
             // Single LFP frame
             // The period of ADC data within data array is 36 words
-            var lfpBufferIndex = index / NeuropixelsV1.FramesPerRoundRobin;
-            var lfpFrameIndex = index % NeuropixelsV1.FramesPerRoundRobin;
+            var lfpBufferIndex = index / 12;
+            var lfpFrameIndex = index % 12;
 
-            for (int k = 0; k < NeuropixelsV1.AdcCount; k++)
+            for (int k = 0; k < NeuropixelsV1e.AdcCount; k++)
             {
-                // TODO: Why would I not do this bit shift ont the FPGA??
-                lfpBuffer[RawToChannel[k, lfpFrameIndex], lfpBufferIndex] = (ushort)(amplifierData[AdcToFrameIndex[k]] >> 5); // Q11.5 -> Q11.0
+                var a = amplifierData[adcToFrameIndex[k]];
+                lfpBuffer[RawToChannel[k, lfpFrameIndex], lfpBufferIndex] = (ushort)(a > thresholds[k] ? a - offsets[k] : a);
             }
+
 
             // Loop over 12 AP frames within each "super-frame"
-            for (int i = 0; i < NeuropixelsV1.FramesPerRoundRobin; i++)
+            for (int i = 0; i < NeuropixelsV1e.FramesPerRoundRobin; i++)
             {
                 // The period of ADC data within data array is 36 words
-                var adcDataOffset = (i + 1) * NeuropixelsV1e.WordsPerFrame;
+                var adcDataOffset = (i + 1) * NeuropixelsV1e.FrameWords;
 
-                for (int k = 0; k < NeuropixelsV1.AdcCount; k++)
+                for (int k = 0; k < NeuropixelsV1e.AdcCount; k++)
                 {
-                    spikeBuffer[RawToChannel[k, i], index] = (ushort)(amplifierData[AdcToFrameIndex[k] + adcDataOffset] >> 5); // Q11.5 -> Q11.0
+                    var a = amplifierData[adcToFrameIndex[k] + adcDataOffset];
+                    spikeBuffer[RawToChannel[k, i], index] = (ushort)(a > thresholds[k] ? a - offsets[k] : a);
                 }
 
-                frameCountBuffer[frameCountStartIndex + i + 1] = (amplifierData[adcDataOffset + FrameCounterMsbIndex] << 10) | (amplifierData[adcDataOffset + FrameCounterLsbIndex] << 0);
+                frameCountBuffer[frameCountStartIndex + i + 1] = (amplifierData[adcDataOffset + 31] << 10) | (amplifierData[adcDataOffset + 39] << 0);
             }
         }
-
-        const int FrameCounterMsbIndex = 28;
-        const int FrameCounterLsbIndex = 35;
 
         // ADC to frame index
         // Input: ADC index
         // Output: index of ADC's data within a frame
-        static readonly int[] AdcToFrameIndex = {1, 8, 15, 22, 29,
-                                                 2, 9, 16, 23, 30,
-                                                 3, 10, 17, 24, 31,
-                                                 4, 11, 18, 25, 32,
-                                                 5, 12, 19, 26, 33,
-                                                 6, 13, 20, 27, 34,
-                                                 7, 14};
+        static readonly int[] adcToFrameIndex = {1, 9 , 17, 25, 33,
+                                                 2, 10, 18, 26, 34,
+                                                 3, 11, 19, 27, 35,
+                                                 4, 12, 20, 28, 36,
+                                                 5, 13, 21, 29, 37,
+                                                 6, 14, 22, 30, 38,
+                                                 7, 15 };
 
         // ADC to channel
         // First dimension: ADC index
@@ -111,9 +109,10 @@ namespace OpenEphys.Onix
     }
 
     [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    unsafe struct NeuropixelsV1fPayload
+    unsafe struct NeuropixelsV1ePayload
     {
-        public fixed ushort AmplifierData[NeuropixelsV1e.WordsPerFrame * NeuropixelsV1.FramesPerSuperframe];
         public ulong HubClock;
+        public ushort ProbeIndex;
+        public fixed ushort AmplifierData[NeuropixelsV1e.FrameWords * NeuropixelsV1e.FramesPerSuperFrame];
     }
 }

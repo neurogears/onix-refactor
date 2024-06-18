@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections;
+using System.IO;
 using System.Linq;
 using Bonsai;
 
@@ -36,21 +37,21 @@ namespace OpenEphys.Onix
         {
             if (gainCalibrationFile == null || adcCalibrationFile == null)
             {
-                throw new ArgumentException("Calibraiton files must be specified.");
+                throw new ArgumentException("Calibration files must be specified.");
             }
 
-            System.IO.StreamReader gainFile = new(gainCalibrationFile);
+            StreamReader gainFile = new(gainCalibrationFile);
             var sn = ulong.Parse(gainFile.ReadLine());
 
-            System.IO.StreamReader adcFile = new(adcCalibrationFile);
+            StreamReader adcFile = new(adcCalibrationFile);
             if (sn != ulong.Parse(adcFile.ReadLine()))
-                throw new ArgumentException("Calibraiton file serial numbers do not match.");
+                throw new ArgumentException("Calibration file serial numbers do not match.");
 
             // parse gain correction file
             var gainCorrections = gainFile.ReadLine().Split(',').Skip(1);
 
             if (gainCorrections.Count() != 2 * NumberOfGains)
-                throw new ArgumentException("Incorrectly formmatted gain correction calibration file.");
+                throw new ArgumentException("Incorrectly formatted gain correction calibration file.");
 
             ApGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), apGain)));
             LfpGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), lfpGain) + 8));

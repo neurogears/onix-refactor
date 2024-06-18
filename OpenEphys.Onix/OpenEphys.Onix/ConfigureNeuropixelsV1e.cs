@@ -121,7 +121,7 @@ namespace OpenEphys.Onix
                     throw new InvalidOperationException("Probe serial number could not be read.");
 
                 // program shift registers
-                var probeControl = new NeuropixelsV1eRegisterContext(device, NeuropixelsV1e.ProbeAddress, SpikeAmplifierGain, LfpAmplifierGain, Reference, SpikeFilter, GainCalibrationFile, AdcCalibrationFile);
+                var probeControl = new NeuropixelsV1eRegisterContext(device, NeuropixelsV1e.ProbeAddress, SpikeAmplifierGain, LfpAmplifierGain, Reference, SpikeFilter, GainCalibrationFile, AdcCalibrationFile, ChannelConfiguration);
                 probeControl.InitializeProbe();
                 probeControl.WriteConfiguration();
                 probeControl.StartAcquisition();
@@ -132,7 +132,7 @@ namespace OpenEphys.Onix
                     TurnOnLed(serializer, NeuropixelsV1e.DefaultGPO32Config);
                 }
 
-                var deviceInfo = new NeuropixesV1eDeviceInfo(context, DeviceType, deviceAddress, probeControl);
+                var deviceInfo = new NeuropixelsV1eDeviceInfo(context, DeviceType, deviceAddress, probeControl);
                 var disposable = DeviceManager.RegisterDevice(deviceName, deviceInfo);
                 var shutdown = Disposable.Create(() =>
                 {

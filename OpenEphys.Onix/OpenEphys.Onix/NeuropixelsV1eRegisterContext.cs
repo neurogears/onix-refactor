@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.IO;
 using System.Linq;
@@ -8,31 +8,23 @@ namespace OpenEphys.Onix
 {
     class NeuropixelsV1eRegisterContext : I2CRegisterContext
     {
-        public double ApGainCorrection { get; }
-        public double LfpGainCorrection { get; }
+        public readonly double ApGainCorrection;
+        public readonly double LfpGainCorrection;
         public ushort[] AdcThresholds { get; }
         public ushort[] AdcOffsets { get; }
 
-        const int ShankConfigurationBitCount = 968;
         const int BaseConfigurationBitCount = 2448;
         const int BaseConfigurationConfigOffset = 576;
-        const int NumberOfGains = 8;
         const uint ShiftRegisterSuccess = 1 << 7;
-        const int ShankBitExt1 = 965;
-        const int ShankBitExt2 = 2;
-        const int ShankBitTip1 = 484;
-        const int ShankBitTip2 = 483;
-        const int InternalReferenceChannel = 191;
 
-        readonly NeuropixelsV1eAdc[] Adcs = new NeuropixelsV1eAdc[NeuropixelsV1e.AdcCount];
-        readonly BitArray ShankConfig = new(ShankConfigurationBitCount, false);
+        readonly NeuropixelsV1Adc[] Adcs = new NeuropixelsV1Adc[NeuropixelsV1e.AdcCount];
+        readonly BitArray ShankConfig;
         readonly BitArray[] BaseConfigs = { new(BaseConfigurationBitCount, false),   // Ch 0, 2, 4, ...
                                             new(BaseConfigurationBitCount, false) }; // Ch 1, 3, 5, ...
 
-        // TODO: accept and apply channel config type
         public NeuropixelsV1eRegisterContext(DeviceContext deviceContext, uint i2cAddress, 
             NeuropixelsV1Gain apGain, NeuropixelsV1Gain lfpGain, NeuropixelsV1ReferenceSource refSource, 
-            bool apFilter, string gainCalibrationFile, string adcCalibrationFile)
+            bool apFilter, string gainCalibrationFile, string adcCalibrationFile, NeuropixelsV1eProbeGroup channelConfiguration)
             : base(deviceContext, i2cAddress)
         {
             if (gainCalibrationFile == null || adcCalibrationFile == null)
@@ -48,71 +40,16 @@ namespace OpenEphys.Onix
                 throw new ArgumentException("Calibration file serial numbers do not match.");
 
             // parse gain correction file
-            var gainCorrections = gainFile.ReadLine().Split(',').Skip(1);
-
-            if (gainCorrections.Count() != 2 * NumberOfGains)
-                throw new ArgumentException("Incorrectly formatted gain correction calibration file.");
-
-            ApGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), apGain)));
-            LfpGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), lfpGain) + 8));
+            NeuropixelsV1.ParseGainCalibrationFile(gainFile, apGain, lfpGain, ref ApGainCorrection, ref LfpGainCorrection);
 
             // parse ADC calibration file
-            for (var i = 0; i < NeuropixelsV1e.AdcCount; i++)
-            {
-                var adcCal = adcFile.ReadLine().Split(',').Skip(1);
-                if (adcCal.Count() != NumberOfGains)
-                {
-                    throw new ArgumentException("Incorrectly formmatted ADC calibration file.");
-                }
-
-                Adcs[i] = new NeuropixelsV1eAdc
-                {
-                    CompP = int.Parse(adcCal.ElementAt(0)),
-                    CompN = int.Parse(adcCal.ElementAt(1)),
-                    Slope = int.Parse(adcCal.ElementAt(2)),
-                    Coarse = int.Parse(adcCal.ElementAt(3)),
-                    Fine = int.Parse(adcCal.ElementAt(4)),
-                    Cfix = int.Parse(adcCal.ElementAt(5)),
-                    Offset = int.Parse(adcCal.ElementAt(6)),
-                    Threshold = int.Parse(adcCal.ElementAt(7))
-                };
-            }
+            Adcs = NeuropixelsV1.ParseAdcCalibrationFile(adcFile);
 
             AdcThresholds = Adcs.ToList().Select(a => (ushort)a.Threshold).ToArray();
             AdcOffsets = Adcs.ToList().Select(a => (ushort)a.Offset).ToArray();
 
-            switch (refSource)
-            {
-                case NeuropixelsV1ReferenceSource.Ext:
-                    {
-                        ShankConfig[ShankBitExt1] = true;
-                        ShankConfig[ShankBitExt2] = true;
-                        break;
-                    }
-                case NeuropixelsV1ReferenceSource.Tip:
-                    {
-                        ShankConfig[ShankBitTip1] = true;
-                        ShankConfig[ShankBitTip2] = true;
-                        break;
-                    }
-            }
-
             // Update active channels
-            for (int i = 0; i < NeuropixelsV1e.ChannelCount; i++)
-            {
-                // Reference bits always remain zero
-                if (i == InternalReferenceChannel)
-                {
-                    continue;
-                }
-
-                var e = i; // TODO: Electrode map
-
-                int bitIndex = e % 2 == 0 ?
-                    485 + ((int)e / 2) : // even electrode
-                    482 - ((int)e / 2);  // odd electrode
-                ShankConfig[bitIndex] = true;
-            }
+            ShankConfig = NeuropixelsV1.MakeShankBits(channelConfiguration, refSource);
 
             // create base shift-register bit arrays
             for (int i = 0; i < NeuropixelsV1e.ChannelCount; i++)

@@ -60,6 +60,8 @@ namespace OpenEphys.Onix.Design
 
             textBoxGainCalibrationFile.TextChanged += FileTextChanged;
             textBoxGainCalibrationFile.Text = ConfigureNode.GainCalibrationFile;
+
+            CheckStatus();
         }
 
         private void FileTextChanged(object sender, EventArgs e)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reactive.Linq;
 using oni;
 
 namespace OpenEphys.Onix
@@ -42,6 +43,11 @@ namespace OpenEphys.Onix
         public static DeviceContext GetPassthroughDeviceContext(this DeviceContext device, int id)
         {
             return GetPassthroughDeviceContext(device.Context, device.Address, id);
+        }
+
+        public static IObservable<Frame> GetDeviceFrames(this ContextTask source, uint deviceAddress)
+        {
+            return source.GroupedFrames.Where(deviceFrames => deviceFrames.Key == deviceAddress).Merge();
         }
     }
 }

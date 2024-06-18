@@ -26,9 +26,9 @@ namespace OpenEphys.Onix
                 {
                     var device = deviceInfo.GetDeviceContext(typeof(NeuropixelsV2e));
                     var passthrough = device.GetPassthroughDeviceContext(DS90UB9x.ID);
-                    var probeData = device.Context.FrameReceived.Where(frame =>
-                        frame.DeviceAddress == passthrough.Address &&
-                        NeuropixelsV2eDataFrame.GetProbeIndex(frame) == (int)ProbeIndex);
+                    var probeData = device.Context
+                        .GetDeviceFrames(passthrough.Address)
+                        .Where(frame => NeuropixelsV2eBetaDataFrame.GetProbeIndex(frame) == (int)ProbeIndex);
                     return Observable.Create<NeuropixelsV2eDataFrame>(observer =>
                     {
                         var sampleIndex = 0;

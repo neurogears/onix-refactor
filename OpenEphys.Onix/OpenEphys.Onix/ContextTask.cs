@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reactive.Disposables;
+using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Threading;
 using System.Threading.Tasks;
@@ -39,6 +39,7 @@ namespace OpenEphys.Onix
 
         // NOTE: There was a GC memory leak around here
         internal Subject<oni.Frame> FrameReceived = new();
+        internal IConnectableObservable<IGroupedObservable<uint, oni.Frame>> GroupedFrames;
 
         public static readonly string DefaultDriver = "riffa";
         public static readonly int DefaultIndex = 0;
@@ -48,13 +49,14 @@ namespace OpenEphys.Onix
         private readonly object writeLock = new();
         private readonly object regLock = new();
         private readonly object disposeLock = new();
-        private bool running = false;
+        private IDisposable running;
 
         private readonly string contextDriver = DefaultDriver;
         private readonly int contextIndex = DefaultIndex;
 
         public ContextTask(string driver, int index)
         {
+            GroupedFrames = FrameReceived.GroupBy(frame => frame.DeviceAddress).Replay();
             contextDriver = driver;
             contextIndex = index;
             Initialize();
@@ -86,14 +88,18 @@ namespace OpenEphys.Onix
         }
 
         public uint SystemClockHz { get; private set; }
+        
         public uint AcquisitionClockHz { get; private set; }
+        
         public uint MaxReadFrameSize { get; private set; }
+        
         public uint MaxWriteFrameSize { get; private set; }
+
         public Dictionary<uint, oni.Device> DeviceTable { get; private set; }
 
         void AssertConfigurationContext()
         {
-            if (running)
+            if (running != null)
             {
                 throw new InvalidOperationException("Configuration cannot be changed while acquisition context is running.");
             }
@@ -169,7 +175,8 @@ namespace OpenEphys.Onix
         {
             lock (regLock)
             {
-                if (running) return;
+                if (running != null) return;
+                running = GroupedFrames.Connect();
 
                 // NB: Configure context before starting acquisition
                 ContextConfiguration = ConfigureContext();
@@ -247,8 +254,6 @@ namespace OpenEphys.Onix
                 CollectFramesToken,
                 TaskCreationOptions.LongRunning,
                 TaskScheduler.Default);
-
-                running = true;
             }
         }
 
@@ -256,7 +261,7 @@ namespace OpenEphys.Onix
         {
             lock (regLock)
             {
-                if (!running) return;
+                if (running == null) return;
                 if ((distributeFrames != null || readFrames != null) && !distributeFrames.IsCanceled)
                 {
                     CollectFramesTokenSource.Cancel();
@@ -274,7 +279,8 @@ namespace OpenEphys.Onix
                 FrameQueue?.Dispose();
                 FrameQueue = null;
                 ctx.Stop();
-                running = false;
+                running.Dispose();
+                running = null;
 
                 ContextConfiguration?.Dispose();
             }

@@ -18,8 +18,8 @@ namespace OpenEphys.Onix
                 disposable => disposable.Subject.SelectMany(deviceInfo =>
                 {
                     var device = deviceInfo.GetDeviceContext(typeof(Heartbeat));
-                    return deviceInfo.Context.FrameReceived
-                        .Where(frame => frame.DeviceAddress == device.Address)
+                    return deviceInfo.Context
+                        .GetDeviceFrames(device.Address)
                         .Select(frame => new ManagedFrame<ushort>(frame));
                 }));
         }

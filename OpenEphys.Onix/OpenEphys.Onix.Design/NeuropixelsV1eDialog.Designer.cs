@@ -40,8 +40,8 @@
             System.Windows.Forms.Label label2;
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
-            this.probeSN = new System.Windows.Forms.ToolStripStatusLabel();
-            this.configSN = new System.Windows.Forms.ToolStripStatusLabel();
+            this.gainCalibrationSN = new System.Windows.Forms.ToolStripStatusLabel();
+            this.adcCalibrationSN = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlProbe = new System.Windows.Forms.TabControl();
@@ -60,8 +60,17 @@
             this.comboBoxReference = new System.Windows.Forms.ComboBox();
             this.comboBoxLfpGain = new System.Windows.Forms.ComboBox();
             this.comboBoxApGain = new System.Windows.Forms.ComboBox();
-            this.tabPageChannelOptions = new System.Windows.Forms.TabPage();
+            this.tabPageContactsOptions = new System.Windows.Forms.TabPage();
             this.panelChannelOptions = new System.Windows.Forms.Panel();
+            this.buttonJumpTo9 = new System.Windows.Forms.Button();
+            this.buttonJumpTo8 = new System.Windows.Forms.Button();
+            this.buttonJumpTo7 = new System.Windows.Forms.Button();
+            this.buttonJumpTo6 = new System.Windows.Forms.Button();
+            this.buttonJumpTo5 = new System.Windows.Forms.Button();
+            this.buttonJumpTo4 = new System.Windows.Forms.Button();
+            this.buttonJumpTo3 = new System.Windows.Forms.Button();
+            this.buttonJumpTo2 = new System.Windows.Forms.Button();
+            this.buttonJumpTo1 = new System.Windows.Forms.Button();
             this.buttonJumpTo0 = new System.Windows.Forms.Button();
             this.buttonJumpTo10 = new System.Windows.Forms.Button();
             this.buttonResetZoom = new System.Windows.Forms.Button();
@@ -69,21 +78,18 @@
             this.buttonZoomIn = new System.Windows.Forms.Button();
             this.tabPagePropertyGrid = new System.Windows.Forms.TabPage();
             this.propertyGrid = new Bonsai.Design.PropertyGrid();
-            this.tabPageChannels = new System.Windows.Forms.TabPage();
+            this.tabPageContacts = new System.Windows.Forms.TabPage();
+            this.dataGridViewContacts = new System.Windows.Forms.DataGridView();
             this.tabPageADCs = new System.Windows.Forms.TabPage();
+            this.dataGridViewAdcs = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOkay = new System.Windows.Forms.Button();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
-            this.buttonJumpTo1 = new System.Windows.Forms.Button();
-            this.buttonJumpTo3 = new System.Windows.Forms.Button();
-            this.buttonJumpTo2 = new System.Windows.Forms.Button();
-            this.buttonJumpTo5 = new System.Windows.Forms.Button();
-            this.buttonJumpTo4 = new System.Windows.Forms.Button();
-            this.buttonJumpTo7 = new System.Windows.Forms.Button();
-            this.buttonJumpTo6 = new System.Windows.Forms.Button();
-            this.buttonJumpTo8 = new System.Windows.Forms.Button();
-            this.buttonJumpTo9 = new System.Windows.Forms.Button();
+            this.labelApGainCorrection = new System.Windows.Forms.Label();
+            this.textBoxApGainCorrection = new System.Windows.Forms.TextBox();
+            this.textBoxLfpGainCorrection = new System.Windows.Forms.TextBox();
+            this.labelLfpGainCorrection = new System.Windows.Forms.Label();
             toolStripStatusLabelGainCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusLabelAdcCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             apGain = new System.Windows.Forms.Label();
@@ -109,28 +115,32 @@
             this.tabControlOptions.SuspendLayout();
             this.tabPageOptions.SuspendLayout();
             this.panelOptions.SuspendLayout();
-            this.tabPageChannelOptions.SuspendLayout();
+            this.tabPageContactsOptions.SuspendLayout();
             this.panelChannelOptions.SuspendLayout();
             this.tabPagePropertyGrid.SuspendLayout();
+            this.tabPageContacts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewContacts)).BeginInit();
+            this.tabPageADCs.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStripStatusLabelGainCalSN
             // 
             toolStripStatusLabelGainCalSN.Name = "toolStripStatusLabelGainCalSN";
-            toolStripStatusLabelGainCalSN.Size = new System.Drawing.Size(112, 25);
-            toolStripStatusLabelGainCalSN.Text = "Gain Cal. SN:";
+            toolStripStatusLabelGainCalSN.Size = new System.Drawing.Size(117, 25);
+            toolStripStatusLabelGainCalSN.Text = "Gain Cal. SN: ";
             // 
             // toolStripStatusLabelAdcCalSN
             // 
             toolStripStatusLabelAdcCalSN.Name = "toolStripStatusLabelAdcCalSN";
-            toolStripStatusLabelAdcCalSN.Size = new System.Drawing.Size(109, 25);
-            toolStripStatusLabelAdcCalSN.Text = "ADC Cal. SN";
+            toolStripStatusLabelAdcCalSN.Size = new System.Drawing.Size(118, 25);
+            toolStripStatusLabelAdcCalSN.Text = "ADC Cal. SN: ";
             // 
             // apGain
             // 
             apGain.AutoSize = true;
-            apGain.Location = new System.Drawing.Point(13, 30);
+            apGain.Location = new System.Drawing.Point(13, 17);
             apGain.Name = "apGain";
             apGain.Size = new System.Drawing.Size(68, 20);
             apGain.TabIndex = 0;
@@ -139,7 +149,7 @@
             // lfpGain
             // 
             lfpGain.AutoSize = true;
-            lfpGain.Location = new System.Drawing.Point(13, 88);
+            lfpGain.Location = new System.Drawing.Point(13, 97);
             lfpGain.Name = "lfpGain";
             lfpGain.Size = new System.Drawing.Size(76, 20);
             lfpGain.TabIndex = 2;
@@ -148,7 +158,7 @@
             // Reference
             // 
             Reference.AutoSize = true;
-            Reference.Location = new System.Drawing.Point(13, 147);
+            Reference.Location = new System.Drawing.Point(13, 187);
             Reference.Name = "Reference";
             Reference.Size = new System.Drawing.Size(84, 20);
             Reference.TabIndex = 4;
@@ -157,7 +167,7 @@
             // spikeFilter
             // 
             spikeFilter.AutoSize = true;
-            spikeFilter.Location = new System.Drawing.Point(13, 202);
+            spikeFilter.Location = new System.Drawing.Point(13, 230);
             spikeFilter.Name = "spikeFilter";
             spikeFilter.Size = new System.Drawing.Size(88, 20);
             spikeFilter.TabIndex = 6;
@@ -166,7 +176,7 @@
             // gainCalibrationFile
             // 
             gainCalibrationFile.AutoSize = true;
-            gainCalibrationFile.Location = new System.Drawing.Point(13, 247);
+            gainCalibrationFile.Location = new System.Drawing.Point(13, 275);
             gainCalibrationFile.MaximumSize = new System.Drawing.Size(200, 45);
             gainCalibrationFile.Name = "gainCalibrationFile";
             gainCalibrationFile.Size = new System.Drawing.Size(151, 20);
@@ -176,7 +186,7 @@
             // adcCalibrationFile
             // 
             adcCalibrationFile.AutoSize = true;
-            adcCalibrationFile.Location = new System.Drawing.Point(13, 354);
+            adcCalibrationFile.Location = new System.Drawing.Point(13, 382);
             adcCalibrationFile.MaximumSize = new System.Drawing.Size(200, 45);
             adcCalibrationFile.Name = "adcCalibrationFile";
             adcCalibrationFile.Size = new System.Drawing.Size(151, 20);
@@ -207,7 +217,7 @@
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1130, 36);
+            this.menuStrip.Size = new System.Drawing.Size(1130, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -216,9 +226,9 @@
             this.statusStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             toolStripStatusLabelGainCalSN,
-            this.probeSN,
+            this.gainCalibrationSN,
             toolStripStatusLabelAdcCalSN,
-            this.configSN,
+            this.adcCalibrationSN,
             this.toolStripStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 702);
             this.statusStrip.Name = "statusStrip";
@@ -226,18 +236,19 @@
             this.statusStrip.TabIndex = 1;
             this.statusStrip.Text = "statusStrip1";
             // 
-            // probeSN
+            // gainCalibrationSN
             // 
-            this.probeSN.AutoSize = false;
-            this.probeSN.Name = "probeSN";
-            this.probeSN.Size = new System.Drawing.Size(200, 25);
-            this.probeSN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.gainCalibrationSN.AutoSize = false;
+            this.gainCalibrationSN.Name = "gainCalibrationSN";
+            this.gainCalibrationSN.Size = new System.Drawing.Size(150, 25);
+            this.gainCalibrationSN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // configSN
+            // adcCalibrationSN
             // 
-            this.configSN.AutoSize = false;
-            this.configSN.Name = "configSN";
-            this.configSN.Size = new System.Drawing.Size(200, 25);
+            this.adcCalibrationSN.AutoSize = false;
+            this.adcCalibrationSN.Name = "adcCalibrationSN";
+            this.adcCalibrationSN.Size = new System.Drawing.Size(150, 25);
+            this.adcCalibrationSN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // toolStripStatus
             // 
@@ -249,7 +260,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -260,20 +271,20 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1130, 666);
-            this.splitContainer1.SplitterDistance = 614;
+            this.splitContainer1.Size = new System.Drawing.Size(1130, 678);
+            this.splitContainer1.SplitterDistance = 626;
             this.splitContainer1.TabIndex = 2;
             // 
             // tabControlProbe
             // 
             this.tabControlProbe.Controls.Add(this.tabPageProbe);
-            this.tabControlProbe.Controls.Add(this.tabPageChannels);
+            this.tabControlProbe.Controls.Add(this.tabPageContacts);
             this.tabControlProbe.Controls.Add(this.tabPageADCs);
             this.tabControlProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlProbe.Location = new System.Drawing.Point(0, 0);
             this.tabControlProbe.Name = "tabControlProbe";
             this.tabControlProbe.SelectedIndex = 0;
-            this.tabControlProbe.Size = new System.Drawing.Size(1130, 614);
+            this.tabControlProbe.Size = new System.Drawing.Size(1130, 626);
             this.tabControlProbe.TabIndex = 0;
             // 
             // tabPageProbe
@@ -282,7 +293,7 @@
             this.tabPageProbe.Location = new System.Drawing.Point(4, 29);
             this.tabPageProbe.Name = "tabPageProbe";
             this.tabPageProbe.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProbe.Size = new System.Drawing.Size(1122, 581);
+            this.tabPageProbe.Size = new System.Drawing.Size(1122, 593);
             this.tabPageProbe.TabIndex = 0;
             this.tabPageProbe.Text = "Probe";
             this.tabPageProbe.UseVisualStyleBackColor = true;
@@ -301,7 +312,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panel2);
-            this.splitContainer2.Size = new System.Drawing.Size(1116, 575);
+            this.splitContainer2.Size = new System.Drawing.Size(1116, 587);
             this.splitContainer2.SplitterDistance = 858;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -310,7 +321,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(858, 575);
+            this.panelProbe.Size = new System.Drawing.Size(858, 587);
             this.panelProbe.TabIndex = 0;
             // 
             // panel2
@@ -319,19 +330,19 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(254, 575);
+            this.panel2.Size = new System.Drawing.Size(254, 587);
             this.panel2.TabIndex = 0;
             // 
             // tabControlOptions
             // 
             this.tabControlOptions.Controls.Add(this.tabPageOptions);
-            this.tabControlOptions.Controls.Add(this.tabPageChannelOptions);
+            this.tabControlOptions.Controls.Add(this.tabPageContactsOptions);
             this.tabControlOptions.Controls.Add(this.tabPagePropertyGrid);
             this.tabControlOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(254, 575);
+            this.tabControlOptions.Size = new System.Drawing.Size(254, 587);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabPageOptions
@@ -347,6 +358,10 @@
             // 
             // panelOptions
             // 
+            this.panelOptions.Controls.Add(this.textBoxLfpGainCorrection);
+            this.panelOptions.Controls.Add(this.labelLfpGainCorrection);
+            this.panelOptions.Controls.Add(this.textBoxApGainCorrection);
+            this.panelOptions.Controls.Add(this.labelApGainCorrection);
             this.panelOptions.Controls.Add(this.checkBoxSpikeFilter);
             this.panelOptions.Controls.Add(this.buttonAdcCalibrationFile);
             this.panelOptions.Controls.Add(this.textBoxAdcCalibrationFile);
@@ -370,7 +385,7 @@
             // checkBoxSpikeFilter
             // 
             this.checkBoxSpikeFilter.AutoSize = true;
-            this.checkBoxSpikeFilter.Location = new System.Drawing.Point(118, 202);
+            this.checkBoxSpikeFilter.Location = new System.Drawing.Point(118, 230);
             this.checkBoxSpikeFilter.Name = "checkBoxSpikeFilter";
             this.checkBoxSpikeFilter.Size = new System.Drawing.Size(94, 24);
             this.checkBoxSpikeFilter.TabIndex = 14;
@@ -379,7 +394,7 @@
             // 
             // buttonAdcCalibrationFile
             // 
-            this.buttonAdcCalibrationFile.Location = new System.Drawing.Point(43, 409);
+            this.buttonAdcCalibrationFile.Location = new System.Drawing.Point(43, 437);
             this.buttonAdcCalibrationFile.Name = "buttonAdcCalibrationFile";
             this.buttonAdcCalibrationFile.Size = new System.Drawing.Size(141, 32);
             this.buttonAdcCalibrationFile.TabIndex = 13;
@@ -389,7 +404,7 @@
             // 
             // textBoxAdcCalibrationFile
             // 
-            this.textBoxAdcCalibrationFile.Location = new System.Drawing.Point(17, 377);
+            this.textBoxAdcCalibrationFile.Location = new System.Drawing.Point(17, 405);
             this.textBoxAdcCalibrationFile.Name = "textBoxAdcCalibrationFile";
             this.textBoxAdcCalibrationFile.ReadOnly = true;
             this.textBoxAdcCalibrationFile.Size = new System.Drawing.Size(207, 26);
@@ -398,7 +413,7 @@
             // 
             // buttonGainCalibrationFile
             // 
-            this.buttonGainCalibrationFile.Location = new System.Drawing.Point(43, 302);
+            this.buttonGainCalibrationFile.Location = new System.Drawing.Point(43, 330);
             this.buttonGainCalibrationFile.Name = "buttonGainCalibrationFile";
             this.buttonGainCalibrationFile.Size = new System.Drawing.Size(141, 32);
             this.buttonGainCalibrationFile.TabIndex = 10;
@@ -408,7 +423,7 @@
             // 
             // textBoxGainCalibrationFile
             // 
-            this.textBoxGainCalibrationFile.Location = new System.Drawing.Point(17, 270);
+            this.textBoxGainCalibrationFile.Location = new System.Drawing.Point(17, 298);
             this.textBoxGainCalibrationFile.Name = "textBoxGainCalibrationFile";
             this.textBoxGainCalibrationFile.ReadOnly = true;
             this.textBoxGainCalibrationFile.Size = new System.Drawing.Size(207, 26);
@@ -418,7 +433,7 @@
             // comboBoxReference
             // 
             this.comboBoxReference.FormattingEnabled = true;
-            this.comboBoxReference.Location = new System.Drawing.Point(102, 144);
+            this.comboBoxReference.Location = new System.Drawing.Point(102, 184);
             this.comboBoxReference.Name = "comboBoxReference";
             this.comboBoxReference.Size = new System.Drawing.Size(121, 28);
             this.comboBoxReference.TabIndex = 5;
@@ -426,7 +441,7 @@
             // comboBoxLfpGain
             // 
             this.comboBoxLfpGain.FormattingEnabled = true;
-            this.comboBoxLfpGain.Location = new System.Drawing.Point(102, 85);
+            this.comboBoxLfpGain.Location = new System.Drawing.Point(102, 94);
             this.comboBoxLfpGain.Name = "comboBoxLfpGain";
             this.comboBoxLfpGain.Size = new System.Drawing.Size(121, 28);
             this.comboBoxLfpGain.TabIndex = 3;
@@ -434,20 +449,20 @@
             // comboBoxApGain
             // 
             this.comboBoxApGain.FormattingEnabled = true;
-            this.comboBoxApGain.Location = new System.Drawing.Point(102, 27);
+            this.comboBoxApGain.Location = new System.Drawing.Point(102, 14);
             this.comboBoxApGain.Name = "comboBoxApGain";
             this.comboBoxApGain.Size = new System.Drawing.Size(121, 28);
             this.comboBoxApGain.TabIndex = 1;
             // 
-            // tabPageChannelOptions
+            // tabPageContactsOptions
             // 
-            this.tabPageChannelOptions.Controls.Add(this.panelChannelOptions);
-            this.tabPageChannelOptions.Location = new System.Drawing.Point(4, 29);
-            this.tabPageChannelOptions.Name = "tabPageChannelOptions";
-            this.tabPageChannelOptions.Size = new System.Drawing.Size(246, 542);
-            this.tabPageChannelOptions.TabIndex = 2;
-            this.tabPageChannelOptions.Text = "Channels";
-            this.tabPageChannelOptions.UseVisualStyleBackColor = true;
+            this.tabPageContactsOptions.Controls.Add(this.panelChannelOptions);
+            this.tabPageContactsOptions.Location = new System.Drawing.Point(4, 29);
+            this.tabPageContactsOptions.Name = "tabPageContactsOptions";
+            this.tabPageContactsOptions.Size = new System.Drawing.Size(246, 542);
+            this.tabPageContactsOptions.TabIndex = 2;
+            this.tabPageContactsOptions.Text = "Contacts";
+            this.tabPageContactsOptions.UseVisualStyleBackColor = true;
             // 
             // panelChannelOptions
             // 
@@ -472,6 +487,96 @@
             this.panelChannelOptions.Name = "panelChannelOptions";
             this.panelChannelOptions.Size = new System.Drawing.Size(246, 542);
             this.panelChannelOptions.TabIndex = 0;
+            // 
+            // buttonJumpTo9
+            // 
+            this.buttonJumpTo9.Location = new System.Drawing.Point(24, 94);
+            this.buttonJumpTo9.Name = "buttonJumpTo9";
+            this.buttonJumpTo9.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo9.TabIndex = 17;
+            this.buttonJumpTo9.Text = "9";
+            this.buttonJumpTo9.UseVisualStyleBackColor = true;
+            this.buttonJumpTo9.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo8
+            // 
+            this.buttonJumpTo8.Location = new System.Drawing.Point(24, 139);
+            this.buttonJumpTo8.Name = "buttonJumpTo8";
+            this.buttonJumpTo8.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo8.TabIndex = 16;
+            this.buttonJumpTo8.Text = "8";
+            this.buttonJumpTo8.UseVisualStyleBackColor = true;
+            this.buttonJumpTo8.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo7
+            // 
+            this.buttonJumpTo7.Location = new System.Drawing.Point(24, 184);
+            this.buttonJumpTo7.Name = "buttonJumpTo7";
+            this.buttonJumpTo7.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo7.TabIndex = 15;
+            this.buttonJumpTo7.Text = "7";
+            this.buttonJumpTo7.UseVisualStyleBackColor = true;
+            this.buttonJumpTo7.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo6
+            // 
+            this.buttonJumpTo6.Location = new System.Drawing.Point(24, 229);
+            this.buttonJumpTo6.Name = "buttonJumpTo6";
+            this.buttonJumpTo6.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo6.TabIndex = 14;
+            this.buttonJumpTo6.Text = "6";
+            this.buttonJumpTo6.UseVisualStyleBackColor = true;
+            this.buttonJumpTo6.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo5
+            // 
+            this.buttonJumpTo5.Location = new System.Drawing.Point(24, 274);
+            this.buttonJumpTo5.Name = "buttonJumpTo5";
+            this.buttonJumpTo5.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo5.TabIndex = 13;
+            this.buttonJumpTo5.Text = "5";
+            this.buttonJumpTo5.UseVisualStyleBackColor = true;
+            this.buttonJumpTo5.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo4
+            // 
+            this.buttonJumpTo4.Location = new System.Drawing.Point(24, 319);
+            this.buttonJumpTo4.Name = "buttonJumpTo4";
+            this.buttonJumpTo4.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo4.TabIndex = 12;
+            this.buttonJumpTo4.Text = "4";
+            this.buttonJumpTo4.UseVisualStyleBackColor = true;
+            this.buttonJumpTo4.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo3
+            // 
+            this.buttonJumpTo3.Location = new System.Drawing.Point(24, 364);
+            this.buttonJumpTo3.Name = "buttonJumpTo3";
+            this.buttonJumpTo3.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo3.TabIndex = 11;
+            this.buttonJumpTo3.Text = "3";
+            this.buttonJumpTo3.UseVisualStyleBackColor = true;
+            this.buttonJumpTo3.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo2
+            // 
+            this.buttonJumpTo2.Location = new System.Drawing.Point(24, 409);
+            this.buttonJumpTo2.Name = "buttonJumpTo2";
+            this.buttonJumpTo2.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo2.TabIndex = 10;
+            this.buttonJumpTo2.Text = "2";
+            this.buttonJumpTo2.UseVisualStyleBackColor = true;
+            this.buttonJumpTo2.Click += new System.EventHandler(this.ButtonClick);
+            // 
+            // buttonJumpTo1
+            // 
+            this.buttonJumpTo1.Location = new System.Drawing.Point(24, 454);
+            this.buttonJumpTo1.Name = "buttonJumpTo1";
+            this.buttonJumpTo1.Size = new System.Drawing.Size(54, 34);
+            this.buttonJumpTo1.TabIndex = 9;
+            this.buttonJumpTo1.Text = "1";
+            this.buttonJumpTo1.UseVisualStyleBackColor = true;
+            this.buttonJumpTo1.Click += new System.EventHandler(this.ButtonClick);
             // 
             // buttonJumpTo0
             // 
@@ -529,7 +634,7 @@
             this.tabPagePropertyGrid.Location = new System.Drawing.Point(4, 29);
             this.tabPagePropertyGrid.Name = "tabPagePropertyGrid";
             this.tabPagePropertyGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePropertyGrid.Size = new System.Drawing.Size(246, 554);
+            this.tabPagePropertyGrid.Size = new System.Drawing.Size(246, 542);
             this.tabPagePropertyGrid.TabIndex = 1;
             this.tabPagePropertyGrid.Text = "Property Grid";
             this.tabPagePropertyGrid.UseVisualStyleBackColor = true;
@@ -539,27 +644,51 @@
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(3, 3);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(240, 548);
+            this.propertyGrid.Size = new System.Drawing.Size(240, 536);
             this.propertyGrid.TabIndex = 0;
             // 
-            // tabPageChannels
+            // tabPageContacts
             // 
-            this.tabPageChannels.Location = new System.Drawing.Point(4, 29);
-            this.tabPageChannels.Name = "tabPageChannels";
-            this.tabPageChannels.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageChannels.Size = new System.Drawing.Size(1122, 593);
-            this.tabPageChannels.TabIndex = 1;
-            this.tabPageChannels.Text = "Channels";
-            this.tabPageChannels.UseVisualStyleBackColor = true;
+            this.tabPageContacts.Controls.Add(this.dataGridViewContacts);
+            this.tabPageContacts.Location = new System.Drawing.Point(4, 29);
+            this.tabPageContacts.Name = "tabPageContacts";
+            this.tabPageContacts.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageContacts.Size = new System.Drawing.Size(1122, 581);
+            this.tabPageContacts.TabIndex = 1;
+            this.tabPageContacts.Text = "Contacts";
+            this.tabPageContacts.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewContacts
+            // 
+            this.dataGridViewContacts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewContacts.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewContacts.Location = new System.Drawing.Point(3, 3);
+            this.dataGridViewContacts.Name = "dataGridViewContacts";
+            this.dataGridViewContacts.RowHeadersWidth = 62;
+            this.dataGridViewContacts.RowTemplate.Height = 28;
+            this.dataGridViewContacts.Size = new System.Drawing.Size(1116, 575);
+            this.dataGridViewContacts.TabIndex = 0;
             // 
             // tabPageADCs
             // 
+            this.tabPageADCs.Controls.Add(this.dataGridViewAdcs);
             this.tabPageADCs.Location = new System.Drawing.Point(4, 29);
             this.tabPageADCs.Name = "tabPageADCs";
-            this.tabPageADCs.Size = new System.Drawing.Size(1122, 593);
+            this.tabPageADCs.Size = new System.Drawing.Size(1122, 581);
             this.tabPageADCs.TabIndex = 2;
             this.tabPageADCs.Text = "ADCs";
             this.tabPageADCs.UseVisualStyleBackColor = true;
+            // 
+            // dataGridViewAdcs
+            // 
+            this.dataGridViewAdcs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridViewAdcs.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridViewAdcs.Location = new System.Drawing.Point(0, 0);
+            this.dataGridViewAdcs.Name = "dataGridViewAdcs";
+            this.dataGridViewAdcs.RowHeadersWidth = 62;
+            this.dataGridViewAdcs.RowTemplate.Height = 28;
+            this.dataGridViewAdcs.Size = new System.Drawing.Size(1122, 581);
+            this.dataGridViewAdcs.TabIndex = 0;
             // 
             // panel1
             // 
@@ -606,95 +735,43 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
             // 
-            // buttonJumpTo1
+            // labelApGainCorrection
             // 
-            this.buttonJumpTo1.Location = new System.Drawing.Point(24, 454);
-            this.buttonJumpTo1.Name = "buttonJumpTo1";
-            this.buttonJumpTo1.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo1.TabIndex = 9;
-            this.buttonJumpTo1.Text = "1";
-            this.buttonJumpTo1.UseVisualStyleBackColor = true;
-            this.buttonJumpTo1.Click += new System.EventHandler(this.ButtonClick);
+            this.labelApGainCorrection.AutoSize = true;
+            this.labelApGainCorrection.Location = new System.Drawing.Point(13, 47);
+            this.labelApGainCorrection.Name = "labelApGainCorrection";
+            this.labelApGainCorrection.Size = new System.Drawing.Size(82, 20);
+            this.labelApGainCorrection.TabIndex = 15;
+            this.labelApGainCorrection.Text = "Correction";
+            this.labelApGainCorrection.Visible = false;
             // 
-            // buttonJumpTo3
+            // textBoxApGainCorrection
             // 
-            this.buttonJumpTo3.Location = new System.Drawing.Point(24, 364);
-            this.buttonJumpTo3.Name = "buttonJumpTo3";
-            this.buttonJumpTo3.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo3.TabIndex = 11;
-            this.buttonJumpTo3.Text = "3";
-            this.buttonJumpTo3.UseVisualStyleBackColor = true;
-            this.buttonJumpTo3.Click += new System.EventHandler(this.ButtonClick);
+            this.textBoxApGainCorrection.Location = new System.Drawing.Point(101, 48);
+            this.textBoxApGainCorrection.Name = "textBoxApGainCorrection";
+            this.textBoxApGainCorrection.ReadOnly = true;
+            this.textBoxApGainCorrection.Size = new System.Drawing.Size(123, 26);
+            this.textBoxApGainCorrection.TabIndex = 16;
+            this.textBoxApGainCorrection.Visible = false;
             // 
-            // buttonJumpTo2
+            // textBoxLfpGainCorrection
             // 
-            this.buttonJumpTo2.Location = new System.Drawing.Point(24, 409);
-            this.buttonJumpTo2.Name = "buttonJumpTo2";
-            this.buttonJumpTo2.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo2.TabIndex = 10;
-            this.buttonJumpTo2.Text = "2";
-            this.buttonJumpTo2.UseVisualStyleBackColor = true;
-            this.buttonJumpTo2.Click += new System.EventHandler(this.ButtonClick);
+            this.textBoxLfpGainCorrection.Location = new System.Drawing.Point(100, 130);
+            this.textBoxLfpGainCorrection.Name = "textBoxLfpGainCorrection";
+            this.textBoxLfpGainCorrection.ReadOnly = true;
+            this.textBoxLfpGainCorrection.Size = new System.Drawing.Size(123, 26);
+            this.textBoxLfpGainCorrection.TabIndex = 18;
+            this.textBoxLfpGainCorrection.Visible = false;
             // 
-            // buttonJumpTo5
+            // labelLfpGainCorrection
             // 
-            this.buttonJumpTo5.Location = new System.Drawing.Point(24, 274);
-            this.buttonJumpTo5.Name = "buttonJumpTo5";
-            this.buttonJumpTo5.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo5.TabIndex = 13;
-            this.buttonJumpTo5.Text = "5";
-            this.buttonJumpTo5.UseVisualStyleBackColor = true;
-            this.buttonJumpTo5.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo4
-            // 
-            this.buttonJumpTo4.Location = new System.Drawing.Point(24, 319);
-            this.buttonJumpTo4.Name = "buttonJumpTo4";
-            this.buttonJumpTo4.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo4.TabIndex = 12;
-            this.buttonJumpTo4.Text = "4";
-            this.buttonJumpTo4.UseVisualStyleBackColor = true;
-            this.buttonJumpTo4.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo7
-            // 
-            this.buttonJumpTo7.Location = new System.Drawing.Point(24, 184);
-            this.buttonJumpTo7.Name = "buttonJumpTo7";
-            this.buttonJumpTo7.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo7.TabIndex = 15;
-            this.buttonJumpTo7.Text = "7";
-            this.buttonJumpTo7.UseVisualStyleBackColor = true;
-            this.buttonJumpTo7.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo6
-            // 
-            this.buttonJumpTo6.Location = new System.Drawing.Point(24, 229);
-            this.buttonJumpTo6.Name = "buttonJumpTo6";
-            this.buttonJumpTo6.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo6.TabIndex = 14;
-            this.buttonJumpTo6.Text = "6";
-            this.buttonJumpTo6.UseVisualStyleBackColor = true;
-            this.buttonJumpTo6.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo8
-            // 
-            this.buttonJumpTo8.Location = new System.Drawing.Point(24, 139);
-            this.buttonJumpTo8.Name = "buttonJumpTo8";
-            this.buttonJumpTo8.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo8.TabIndex = 16;
-            this.buttonJumpTo8.Text = "8";
-            this.buttonJumpTo8.UseVisualStyleBackColor = true;
-            this.buttonJumpTo8.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo9
-            // 
-            this.buttonJumpTo9.Location = new System.Drawing.Point(24, 94);
-            this.buttonJumpTo9.Name = "buttonJumpTo9";
-            this.buttonJumpTo9.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo9.TabIndex = 17;
-            this.buttonJumpTo9.Text = "9";
-            this.buttonJumpTo9.UseVisualStyleBackColor = true;
-            this.buttonJumpTo9.Click += new System.EventHandler(this.ButtonClick);
+            this.labelLfpGainCorrection.AutoSize = true;
+            this.labelLfpGainCorrection.Location = new System.Drawing.Point(12, 129);
+            this.labelLfpGainCorrection.Name = "labelLfpGainCorrection";
+            this.labelLfpGainCorrection.Size = new System.Drawing.Size(82, 20);
+            this.labelLfpGainCorrection.TabIndex = 17;
+            this.labelLfpGainCorrection.Text = "Correction";
+            this.labelLfpGainCorrection.Visible = false;
             // 
             // NeuropixelsV1eDialog
             // 
@@ -726,10 +803,14 @@
             this.tabPageOptions.ResumeLayout(false);
             this.panelOptions.ResumeLayout(false);
             this.panelOptions.PerformLayout();
-            this.tabPageChannelOptions.ResumeLayout(false);
+            this.tabPageContactsOptions.ResumeLayout(false);
             this.panelChannelOptions.ResumeLayout(false);
             this.panelChannelOptions.PerformLayout();
             this.tabPagePropertyGrid.ResumeLayout(false);
+            this.tabPageContacts.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewContacts)).EndInit();
+            this.tabPageADCs.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).EndInit();
             this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -743,15 +824,15 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl tabControlProbe;
         private System.Windows.Forms.TabPage tabPageProbe;
-        private System.Windows.Forms.TabPage tabPageChannels;
+        private System.Windows.Forms.TabPage tabPageContacts;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panelProbe;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOkay;
-        private System.Windows.Forms.ToolStripStatusLabel probeSN;
-        private System.Windows.Forms.ToolStripStatusLabel configSN;
+        private System.Windows.Forms.ToolStripStatusLabel gainCalibrationSN;
+        private System.Windows.Forms.ToolStripStatusLabel adcCalibrationSN;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatus;
         private System.Windows.Forms.TabPage tabPageADCs;
         private System.Windows.Forms.LinkLabel linkLabelDocumentation;
@@ -767,7 +848,7 @@
         private System.Windows.Forms.Button buttonGainCalibrationFile;
         private System.Windows.Forms.Button buttonAdcCalibrationFile;
         private System.Windows.Forms.TextBox textBoxAdcCalibrationFile;
-        private System.Windows.Forms.TabPage tabPageChannelOptions;
+        private System.Windows.Forms.TabPage tabPageContactsOptions;
         private System.Windows.Forms.Panel panelChannelOptions;
         private System.Windows.Forms.CheckBox checkBoxSpikeFilter;
         private System.Windows.Forms.Button buttonZoomIn;
@@ -784,5 +865,11 @@
         private System.Windows.Forms.Button buttonJumpTo2;
         private System.Windows.Forms.Button buttonJumpTo1;
         private System.Windows.Forms.Button buttonJumpTo9;
+        private System.Windows.Forms.DataGridView dataGridViewContacts;
+        private System.Windows.Forms.DataGridView dataGridViewAdcs;
+        private System.Windows.Forms.Label labelApGainCorrection;
+        private System.Windows.Forms.TextBox textBoxApGainCorrection;
+        private System.Windows.Forms.TextBox textBoxLfpGainCorrection;
+        private System.Windows.Forms.Label labelLfpGainCorrection;
     }
 }

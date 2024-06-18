@@ -39,6 +39,8 @@ namespace OpenEphys.Onix.Design
             const int MinorTickIncrement = 10;
             const int MinorTickLength = 5;
 
+            var fontSize = CalculateFontSize();
+
             var x = MaxX(zedGraphChannels.GraphPane.GraphObjList) + 10;
             var minY = MinY(zedGraphChannels.GraphPane.GraphObjList);
             var maxY = MaxY(zedGraphChannels.GraphPane.GraphObjList);
@@ -58,6 +60,7 @@ namespace OpenEphys.Onix.Design
 
                 TextObj textObj = new($"{i} µm", majorTickLocation.X + 10, majorTickLocation.Y);
                 textObj.FontSpec.Border.IsVisible = false;
+                textObj.FontSpec.Size = fontSize;
                 zedGraphChannels.GraphPane.GraphObjList.Add(textObj);
 
                 var countMinorTicks = 1;

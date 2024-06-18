@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -31,8 +31,17 @@ namespace OpenEphys.Onix.Design
         /// </summary>
         public ProbeGroup ChannelConfiguration;
 
-        readonly Color InactiveContactColor = Color.DarkGray;
-        readonly Color ActiveContactColor = Color.LightYellow;
+        readonly Color InactiveContactFill = Color.DarkGray;
+        readonly Color ActiveContactFill = Color.LightYellow;
+
+        readonly Color DeselectedContactBorder = Color.LightGray;
+        readonly Color SelectedContactBorder = Color.YellowGreen;
+
+        PointD clickStart = new(0.0, 0.0);
+
+        const string SelectionAreaTag = "Selection";
+
+        readonly bool[] SelectedChannels = null;
 
         /// <summary>
         /// Constructs the dialog window using the given probe group, and plots all contacts after loading.
@@ -49,8 +58,15 @@ namespace OpenEphys.Onix.Design
             }
             else
             {
-                ChannelConfiguration = DefaultChannelLayout();
+                ChannelConfiguration = probeGroup;
             }
+
+            SelectedChannels = new bool[ChannelConfiguration.NumberOfContacts];
+
+            zedGraphChannels.MouseDownEvent += MouseDownEvent;
+            zedGraphChannels.MouseMoveEvent += MouseMoveEvent;
+            zedGraphChannels.MouseUpEvent += MouseUpEvent;
+            zedGraphChannels.MouseClick += MouseClickEvent;
 
             InitializeZedGraphChannels();
             DrawChannels();
@@ -97,7 +113,7 @@ namespace OpenEphys.Onix.Design
                     sender.GraphPane.YAxis.Scale.Max += diff / 2;
                     sender.GraphPane.YAxis.Scale.Min -= diff / 2;
                 }
-                else if (rangeX < rangeY) 
+                else if (rangeX < rangeY)
                 {
                     var diff = rangeY - rangeX;
 
@@ -139,7 +155,7 @@ namespace OpenEphys.Onix.Design
             {
                 var channelConfiguration = DesignHelper.DeserializeString<ProbeGroup>(File.ReadAllText(ofd.FileName));
 
-                if (channelConfiguration == null || channelConfiguration.NumContacts != 32)
+                if (channelConfiguration == null || channelConfiguration.NumberOfContacts != 32)
                 {
                     MessageBox.Show("Error opening the JSON file. Incorrect number of contacts.");
                     return;
@@ -159,6 +175,8 @@ namespace OpenEphys.Onix.Design
             if (ChannelConfiguration == null)
                 return;
 
+            var fontSize = CalculateFontSize();
+
             zedGraphChannels.GraphPane.GraphObjList.Clear();
 
             for (int i = 0; i < ChannelConfiguration.Probes.Count(); i++)
@@ -175,15 +193,16 @@ namespace OpenEphys.Onix.Design
                 {
                     Contact contact = ChannelConfiguration.Probes.ElementAt(i).GetContact(j);
 
-                    Color color = contact.DeviceId == -1 ? InactiveContactColor : ActiveContactColor;
-                    string id =   contact.DeviceId == -1 ? "Off"                : contact.DeviceId.ToString();
+                    Color fillColor = contact.DeviceId == -1 ? InactiveContactFill : ActiveContactFill;
+                    Color borderColor = SelectedChannels[contact.Index] ? SelectedContactBorder : DeselectedContactBorder;
+                    string id = contact.DeviceId == -1 ? "Off" : contact.DeviceId.ToString();
 
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
                         var size = contact.ShapeParams.Radius.Value * 2;
 
                         EllipseObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, Color.DarkGray, color)
+                            size, size, borderColor, fillColor)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, contact.Index)
@@ -196,11 +215,13 @@ namespace OpenEphys.Onix.Design
                         var size = contact.ShapeParams.Width.Value;
 
                         BoxObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, Color.DarkGray, color)
+                            size, size, borderColor, fillColor)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, contact.Index)
                         };
+
+                        contactObj.Border.Width = 3;
 
                         zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
                     }
@@ -218,6 +239,7 @@ namespace OpenEphys.Onix.Design
                     textObj.FontSpec.IsBold = true;
                     textObj.FontSpec.Border.IsVisible = false;
                     textObj.FontSpec.Fill.IsVisible = false;
+                    textObj.FontSpec.Size = fontSize;
 
                     zedGraphChannels.GraphPane.GraphObjList.Add(textObj);
                 }
@@ -530,5 +552,166 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();
         }
+
+        private bool MouseDownEvent(ZedGraphControl sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                clickStart = TransformPixelsToCoordinates(e.Location, sender.GraphPane);
+            }
+
+            return false;
+        }
+
+        private bool MouseMoveEvent(ZedGraphControl sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (sender.Cursor != Cursors.Cross)
+                {
+                    sender.Cursor = Cursors.Cross;
+                }
+
+                BoxObj oldArea = (BoxObj)sender.GraphPane.GraphObjList[SelectionAreaTag];
+                if (oldArea != null)
+                {
+                    sender.GraphPane.GraphObjList.Remove(oldArea);
+                }
+
+                var mouseLocation = TransformPixelsToCoordinates(e.Location, sender.GraphPane);
+
+                BoxObj selectionArea = new(
+                    mouseLocation.X < clickStart.X ? mouseLocation.X : clickStart.X,
+                    mouseLocation.Y > clickStart.Y ? mouseLocation.Y : clickStart.Y,
+                    Math.Abs(mouseLocation.X - clickStart.X),
+                    Math.Abs(mouseLocation.Y - clickStart.Y));
+                selectionArea.Border.Color = Color.DarkSlateGray;
+                selectionArea.Fill.IsVisible = false;
+                selectionArea.ZOrder = ZOrder.A_InFront;
+                selectionArea.Tag = SelectionAreaTag;
+
+                sender.GraphPane.GraphObjList.Add(selectionArea);
+                sender.Refresh();
+
+                return true;
+            }
+            else if (e.Button == MouseButtons.None)
+            {
+                sender.Cursor = Cursors.Arrow;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool MouseUpEvent(ZedGraphControl sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (sender.GraphPane.GraphObjList[SelectionAreaTag] is BoxObj selectionArea && selectionArea != null && ChannelConfiguration != null)
+                {
+                    RectangleF rect = selectionArea.Location.Rect;
+
+                    if (!rect.IsEmpty)
+                    {
+                        for(int i = 0; i < ChannelConfiguration.NumberOfContacts; i++)
+                        {
+                            if (sender.GraphPane.GraphObjList[string.Format(ContactStringFormat, i)] is BoxObj contact && contact != null)
+                            {
+                                if (Contains(rect, contact.Location))
+                                {
+                                    SetSelectedContact(contact.Tag as string, true);
+                                }
+                            }
+                        }
+                    }
+
+                    sender.GraphPane.GraphObjList.Remove(selectionArea);
+                }
+
+                DrawChannels();
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void MouseClickEvent(object sender, MouseEventArgs e)
+        {
+            if (e.Button != MouseButtons.Left || zedGraphChannels.GraphPane.GraphObjList[SelectionAreaTag] is BoxObj)
+                return;
+
+            PointF mouseClick = new(e.X, e.Y);
+
+            if (zedGraphChannels.GraphPane.FindNearestObject(mouseClick, CreateGraphics(), out object nearestObject, out int _))
+            {
+                if (nearestObject is TextObj textObj)
+                {
+                    ToggleSelectedContact(textObj.Tag as string);
+                }
+                else if (nearestObject is BoxObj boxObj)
+                {
+                    ToggleSelectedContact(boxObj.Tag as string);
+                }
+            }
+        }
+
+        private void ToggleSelectedContact(string tag)
+        {
+            SetSelectedContact(tag, !GetContactStatus(tag));
+        }
+
+        private void SetSelectedContact(string tag, bool status)
+        {
+            string[] words = tag.Split('_');
+            if (int.TryParse(words[1], out int num))
+            {
+                SelectedChannels[num] = status;
+            }
+            else
+            {
+                throw new ArgumentException($"Invalid channel tag \"{tag}\" found");
+            }
+        }
+
+        private bool GetContactStatus(string tag)
+        {
+            string[] words = tag.Split('_');
+            if (int.TryParse(words[1], out int num))
+            {
+                return SelectedChannels[num];
+            }
+
+            throw new ArgumentException($"Invalid channel tag \"{tag}\" found");
+        }
+
+        private static PointD TransformPixelsToCoordinates(Point pixels, GraphPane graphPane)
+        {
+            graphPane.ReverseTransform(pixels, out double x, out double y);
+
+            return new PointD(x, y);
+        }
+
+        private bool Contains(RectangleF rect, Location location)
+        {
+            if (!rect.IsEmpty)
+            {
+                if (location != null)
+                {
+                    var x = location.X + location.Width / 2;
+                    var y = location.Y - location.Height / 2;
+
+                    if (x >= rect.X && x <= rect.X + rect.Width && y <= rect.Y && y >= rect.Y - rect.Height)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
     }
 }

@@ -1,11 +1,19 @@
 ﻿using System;
+using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
+using ZedGraph;
 
 namespace OpenEphys.Onix.Design
 {
     public partial class NeuropixelsV1eDialog : Form
     {
         readonly NeuropixelsV1eChannelConfigurationDialog channelConfigurationDialog;
+
+        NeuropixelsV1Adc[] Adcs;
+
+        double ApGainCorrection = default;
+        double LfpGainCorrection = default;
 
         public ConfigureNeuropixelsV1e ConfigureNode
         {
@@ -47,13 +55,11 @@ namespace OpenEphys.Onix.Design
             checkBoxSpikeFilter.Checked = ConfigureNode.SpikeFilter;
             checkBoxSpikeFilter.CheckedChanged += SelectedIndexChanged;
 
-            textBoxAdcCalibrationFile.Text = ConfigureNode.AdcCalibrationFile;
             textBoxAdcCalibrationFile.TextChanged += FileTextChanged;
+            textBoxAdcCalibrationFile.Text = ConfigureNode.AdcCalibrationFile;
 
-            textBoxGainCalibrationFile.Text = ConfigureNode.GainCalibrationFile;
             textBoxGainCalibrationFile.TextChanged += FileTextChanged;
-
-            CheckStatus();
+            textBoxGainCalibrationFile.Text = ConfigureNode.GainCalibrationFile;
         }
 
         private void FileTextChanged(object sender, EventArgs e)
@@ -63,10 +69,51 @@ namespace OpenEphys.Onix.Design
                 if (textBox.Name == nameof(textBoxGainCalibrationFile))
                 {
                     ConfigureNode.GainCalibrationFile = textBox.Text;
+                    ParseGainCalibrationFile();
                 }
                 else if (textBox.Name == nameof(textBoxAdcCalibrationFile))
-                { 
+                {
                     ConfigureNode.AdcCalibrationFile = textBox.Text;
+                    ParseAdcCalibrationFile();
+                }
+            }
+
+            CheckStatus();
+        }
+
+        private void ParseAdcCalibrationFile()
+        {
+            if (ConfigureNode.AdcCalibrationFile != null && ConfigureNode.AdcCalibrationFile != "")
+            {
+                if (File.Exists(ConfigureNode.AdcCalibrationFile))
+                {
+                    StreamReader adcFile = new(ConfigureNode.AdcCalibrationFile);
+
+                    adcCalibrationSN.Text = ulong.Parse(adcFile.ReadLine()).ToString();
+
+                    Adcs = NeuropixelsV1.ParseAdcCalibrationFile(adcFile);
+
+                    dataGridViewAdcs.DataSource = Adcs;
+
+                    adcFile.Close();
+                }
+            }
+        }
+
+        private void ParseGainCalibrationFile()
+        {
+            if (ConfigureNode.GainCalibrationFile != null && ConfigureNode.GainCalibrationFile != "")
+            {
+                if (File.Exists(ConfigureNode.GainCalibrationFile))
+                {
+                    StreamReader gainCalibrationFile = new(ConfigureNode.GainCalibrationFile);
+
+                    gainCalibrationSN.Text = ulong.Parse(gainCalibrationFile.ReadLine()).ToString();
+
+                    NeuropixelsV1.ParseGainCalibrationFile(gainCalibrationFile, ConfigureNode.SpikeAmplifierGain,
+                        ConfigureNode.LfpAmplifierGain, ref ApGainCorrection, ref LfpGainCorrection);
+
+                    gainCalibrationFile.Close();
                 }
             }
         }
@@ -78,10 +125,22 @@ namespace OpenEphys.Onix.Design
                 if (comboBox.Name == nameof(comboBoxApGain))
                 {
                     ConfigureNode.SpikeAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
+                    ParseGainCalibrationFile();
+
+                    if (ApGainCorrection != default && LfpGainCorrection != default)
+                    {
+                        ShowCorrectionValues();
+                    }
                 }
                 else if (comboBox.Name == nameof(comboBoxLfpGain))
                 {
                     ConfigureNode.LfpAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
+                    ParseGainCalibrationFile();
+
+                    if (ApGainCorrection != default && LfpGainCorrection != default)
+                    {
+                        ShowCorrectionValues();
+                    }
                 }
                 else if (comboBox.Name == nameof(comboBoxReference))
                 {
@@ -99,16 +158,46 @@ namespace OpenEphys.Onix.Design
 
         private void CheckStatus()
         {
-            if (probeSN.Text == "" || configSN.Text == "" || probeSN.Text != configSN.Text)
+            if (gainCalibrationSN.Text == "" || adcCalibrationSN.Text == "" || gainCalibrationSN.Text != adcCalibrationSN.Text)
             {
                 toolStripStatus.Image = Properties.Resources.StatusWarningImage;
                 toolStripStatus.Text = "Serial number mismatch";
+            }
+            else if (!channelConfigurationDialog.GetProbeGroup().ValidateDeviceChannelIndices())
+            {
+                toolStripStatus.Image = Properties.Resources.StatusBlockedImage;
+                toolStripStatus.Text = "Invalid channels selected";
             }
             else
             {
                 toolStripStatus.Image = Properties.Resources.StatusReadyImage;
                 toolStripStatus.Text = "";
             }
+
+            if (ApGainCorrection != default && LfpGainCorrection != default)
+            {
+                labelApGainCorrection.Visible = true;
+                labelLfpGainCorrection.Visible = true;
+
+                ShowCorrectionValues();
+            }
+            else
+            {
+                labelApGainCorrection.Visible = false;
+                labelLfpGainCorrection.Visible = false;
+
+                textBoxApGainCorrection.Visible = false;
+                textBoxLfpGainCorrection.Visible = false;
+            }
+        }
+
+        private void ShowCorrectionValues()
+        {
+            textBoxApGainCorrection.Text = ApGainCorrection.ToString();
+            textBoxLfpGainCorrection.Text = LfpGainCorrection.ToString();
+
+            textBoxApGainCorrection.Visible = true;
+            textBoxLfpGainCorrection.Visible = true;
         }
 
         private void LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
@@ -256,6 +345,11 @@ namespace OpenEphys.Onix.Design
         {
             channelConfigurationDialog.MoveToVerticalPosition(relativePosition);
             channelConfigurationDialog.RefreshZedGraph();
+        }
+
+        public NeuropixelsV1eProbeGroup GetProbeGroup()
+        {
+            return (NeuropixelsV1eProbeGroup)channelConfigurationDialog.GetProbeGroup();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -70,6 +70,11 @@ namespace OpenEphys.Onix.Design
         /// </example>
         /// <returns>Returns an object that inherits from <see cref="ProbeGroup"/></returns>
         public abstract ProbeGroup DefaultChannelLayout();
+
+        public ProbeGroup GetProbeGroup()
+        {
+            return ChannelConfiguration;
+        }
 
         /// <summary>
         /// After every zoom event, check that the axis liimits are equal to maintain the equal

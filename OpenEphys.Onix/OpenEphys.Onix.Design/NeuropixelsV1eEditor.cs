@@ -25,7 +25,7 @@ namespace OpenEphys.Onix.Design
                         configureNeuropixelsV1e.SpikeFilter = editorDialog.ConfigureNode.SpikeFilter;
                         configureNeuropixelsV1e.GainCalibrationFile = editorDialog.ConfigureNode.GainCalibrationFile;
                         configureNeuropixelsV1e.AdcCalibrationFile = editorDialog.ConfigureNode.AdcCalibrationFile;
-                        configureNeuropixelsV1e.ChannelConfiguration = editorDialog.ConfigureNode.ChannelConfiguration;
+                        configureNeuropixelsV1e.ChannelConfiguration = editorDialog.GetProbeGroup();
 
                         return true;
                     }

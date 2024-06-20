@@ -100,10 +100,10 @@ namespace OpenEphys.Onix
         public double AP;
         public double LFP;
 
-        public GainCorrection(double AP, double LFP)
+        public GainCorrection(double ap, double lfp)
         {
-            this.AP = AP;
-            this.LFP = LFP;
+            AP = ap;
+            LFP = lfp;
         }
     }
 }

@@ -78,8 +78,6 @@
             this.buttonZoomIn = new System.Windows.Forms.Button();
             this.tabPagePropertyGrid = new System.Windows.Forms.TabPage();
             this.propertyGrid = new Bonsai.Design.PropertyGrid();
-            this.tabPageContacts = new System.Windows.Forms.TabPage();
-            this.dataGridViewContacts = new System.Windows.Forms.DataGridView();
             this.tabPageADCs = new System.Windows.Forms.TabPage();
             this.dataGridViewAdcs = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -118,8 +116,6 @@
             this.tabPageContactsOptions.SuspendLayout();
             this.panelChannelOptions.SuspendLayout();
             this.tabPagePropertyGrid.SuspendLayout();
-            this.tabPageContacts.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewContacts)).BeginInit();
             this.tabPageADCs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).BeginInit();
             this.panel1.SuspendLayout();
@@ -217,7 +213,7 @@
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1130, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1130, 36);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -260,7 +256,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -271,20 +267,19 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1130, 678);
-            this.splitContainer1.SplitterDistance = 626;
+            this.splitContainer1.Size = new System.Drawing.Size(1130, 666);
+            this.splitContainer1.SplitterDistance = 614;
             this.splitContainer1.TabIndex = 2;
             // 
             // tabControlProbe
             // 
             this.tabControlProbe.Controls.Add(this.tabPageProbe);
-            this.tabControlProbe.Controls.Add(this.tabPageContacts);
             this.tabControlProbe.Controls.Add(this.tabPageADCs);
             this.tabControlProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlProbe.Location = new System.Drawing.Point(0, 0);
             this.tabControlProbe.Name = "tabControlProbe";
             this.tabControlProbe.SelectedIndex = 0;
-            this.tabControlProbe.Size = new System.Drawing.Size(1130, 626);
+            this.tabControlProbe.Size = new System.Drawing.Size(1130, 614);
             this.tabControlProbe.TabIndex = 0;
             // 
             // tabPageProbe
@@ -293,7 +288,7 @@
             this.tabPageProbe.Location = new System.Drawing.Point(4, 29);
             this.tabPageProbe.Name = "tabPageProbe";
             this.tabPageProbe.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProbe.Size = new System.Drawing.Size(1122, 593);
+            this.tabPageProbe.Size = new System.Drawing.Size(1122, 581);
             this.tabPageProbe.TabIndex = 0;
             this.tabPageProbe.Text = "Probe";
             this.tabPageProbe.UseVisualStyleBackColor = true;
@@ -312,7 +307,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panel2);
-            this.splitContainer2.Size = new System.Drawing.Size(1116, 587);
+            this.splitContainer2.Size = new System.Drawing.Size(1116, 575);
             this.splitContainer2.SplitterDistance = 858;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -321,7 +316,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(858, 587);
+            this.panelProbe.Size = new System.Drawing.Size(858, 575);
             this.panelProbe.TabIndex = 0;
             // 
             // panel2
@@ -330,7 +325,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(254, 587);
+            this.panel2.Size = new System.Drawing.Size(254, 575);
             this.panel2.TabIndex = 0;
             // 
             // tabControlOptions
@@ -342,7 +337,7 @@
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(254, 587);
+            this.tabControlOptions.Size = new System.Drawing.Size(254, 575);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabPageOptions
@@ -351,7 +346,7 @@
             this.tabPageOptions.Location = new System.Drawing.Point(4, 29);
             this.tabPageOptions.Name = "tabPageOptions";
             this.tabPageOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOptions.Size = new System.Drawing.Size(246, 554);
+            this.tabPageOptions.Size = new System.Drawing.Size(246, 542);
             this.tabPageOptions.TabIndex = 0;
             this.tabPageOptions.Text = "Options";
             this.tabPageOptions.UseVisualStyleBackColor = true;
@@ -379,7 +374,7 @@
             this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelOptions.Location = new System.Drawing.Point(3, 3);
             this.panelOptions.Name = "panelOptions";
-            this.panelOptions.Size = new System.Drawing.Size(240, 548);
+            this.panelOptions.Size = new System.Drawing.Size(240, 536);
             this.panelOptions.TabIndex = 0;
             // 
             // checkBoxSpikeFilter
@@ -647,28 +642,6 @@
             this.propertyGrid.Size = new System.Drawing.Size(240, 536);
             this.propertyGrid.TabIndex = 0;
             // 
-            // tabPageContacts
-            // 
-            this.tabPageContacts.Controls.Add(this.dataGridViewContacts);
-            this.tabPageContacts.Location = new System.Drawing.Point(4, 29);
-            this.tabPageContacts.Name = "tabPageContacts";
-            this.tabPageContacts.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageContacts.Size = new System.Drawing.Size(1122, 581);
-            this.tabPageContacts.TabIndex = 1;
-            this.tabPageContacts.Text = "Contacts";
-            this.tabPageContacts.UseVisualStyleBackColor = true;
-            // 
-            // dataGridViewContacts
-            // 
-            this.dataGridViewContacts.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridViewContacts.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridViewContacts.Location = new System.Drawing.Point(3, 3);
-            this.dataGridViewContacts.Name = "dataGridViewContacts";
-            this.dataGridViewContacts.RowHeadersWidth = 62;
-            this.dataGridViewContacts.RowTemplate.Height = 28;
-            this.dataGridViewContacts.Size = new System.Drawing.Size(1116, 575);
-            this.dataGridViewContacts.TabIndex = 0;
-            // 
             // tabPageADCs
             // 
             this.tabPageADCs.Controls.Add(this.dataGridViewAdcs);
@@ -807,8 +780,6 @@
             this.panelChannelOptions.ResumeLayout(false);
             this.panelChannelOptions.PerformLayout();
             this.tabPagePropertyGrid.ResumeLayout(false);
-            this.tabPageContacts.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridViewContacts)).EndInit();
             this.tabPageADCs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).EndInit();
             this.panel1.ResumeLayout(false);
@@ -824,7 +795,6 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabControl tabControlProbe;
         private System.Windows.Forms.TabPage tabPageProbe;
-        private System.Windows.Forms.TabPage tabPageContacts;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Panel panel2;
@@ -865,7 +835,6 @@
         private System.Windows.Forms.Button buttonJumpTo2;
         private System.Windows.Forms.Button buttonJumpTo1;
         private System.Windows.Forms.Button buttonJumpTo9;
-        private System.Windows.Forms.DataGridView dataGridViewContacts;
         private System.Windows.Forms.DataGridView dataGridViewAdcs;
         private System.Windows.Forms.Label labelApGainCorrection;
         private System.Windows.Forms.TextBox textBoxApGainCorrection;

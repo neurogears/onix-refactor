@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using ZedGraph;
 using System;
 using OpenEphys.ProbeInterface;
+using System.Collections.Generic;
 
 namespace OpenEphys.Onix.Design
 {
@@ -31,8 +32,11 @@ namespace OpenEphys.Onix.Design
         /// </summary>
         public ProbeGroup ChannelConfiguration;
 
+        internal List<int> ReferenceContacts = new();
+
         readonly Color InactiveContactFill = Color.DarkGray;
         readonly Color ActiveContactFill = Color.LightYellow;
+        readonly Color ReferenceContactFill = Color.Black;
 
         readonly Color DeselectedContactBorder = Color.LightGray;
         readonly Color SelectedContactBorder = Color.YellowGreen;
@@ -193,9 +197,15 @@ namespace OpenEphys.Onix.Design
                 {
                     Contact contact = ChannelConfiguration.Probes.ElementAt(i).GetContact(j);
 
-                    Color fillColor = contact.DeviceId == -1 ? InactiveContactFill : ActiveContactFill;
+                    bool inactiveContact = contact.DeviceId == -1;
+
+                    Color fillColor = inactiveContact ? InactiveContactFill : ActiveContactFill;
+
+                    if (!inactiveContact && ReferenceContacts.Any(x => x == contact.Index))
+                        fillColor = ReferenceContactFill;
+
                     Color borderColor = SelectedChannels[contact.Index] ? SelectedContactBorder : DeselectedContactBorder;
-                    string id = contact.DeviceId == -1 ? "Off" : contact.DeviceId.ToString();
+                    string id = inactiveContact ? "Off" : contact.DeviceId.ToString();
 
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using OpenEphys.ProbeInterface;
 using Newtonsoft.Json;
-using Bonsai;
 
 namespace OpenEphys.Onix
 {

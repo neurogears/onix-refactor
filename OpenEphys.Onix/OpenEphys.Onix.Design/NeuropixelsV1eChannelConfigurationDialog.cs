@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using OpenEphys.ProbeInterface;
 using ZedGraph;
@@ -17,6 +18,11 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.ZoomButtons2 = MouseButtons.None;
 
             zedGraphChannels.ZoomStepFraction = 0.5;
+
+            ReferenceContacts = new List<int> { 191, 575, 959 };
+
+            DrawChannels();
+            RefreshZedGraph();
         }
 
         public override ProbeGroup DefaultChannelLayout()

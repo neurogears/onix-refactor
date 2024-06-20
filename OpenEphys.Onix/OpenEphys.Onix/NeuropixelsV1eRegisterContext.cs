@@ -41,7 +41,9 @@ namespace OpenEphys.Onix
                 throw new ArgumentException("Calibration file serial numbers do not match.");
 
             // parse gain correction file
-            NeuropixelsV1Helper.ParseGainCalibrationFile(gainFile, apGain, lfpGain, ref ApGainCorrection, ref LfpGainCorrection);
+            var gainCorrection = NeuropixelsV1Helper.ParseGainCalibrationFile(gainFile, apGain, lfpGain);
+            ApGainCorrection = gainCorrection.AP;
+            LfpGainCorrection = gainCorrection.LFP;
 
             // parse ADC calibration file
             Adcs = NeuropixelsV1Helper.ParseAdcCalibrationFile(adcFile);

@@ -94,4 +94,16 @@ namespace OpenEphys.Onix
         RECORD_AND_DIG_TEST = RECORD | DIG_TEST,
         RECORD_AND_CALIBRATE = RECORD | CALIBRATE,
     };
+
+    public struct GainCorrection
+    {
+        public double AP;
+        public double LFP;
+
+        public GainCorrection(double AP, double LFP)
+        {
+            this.AP = AP;
+            this.LFP = LFP;
+        }
+    }
 }

@@ -83,15 +83,17 @@ namespace OpenEphys.Onix
             return adcs;
         }
 
-        public static void ParseGainCalibrationFile(StreamReader file, NeuropixelsV1Gain apGain, NeuropixelsV1Gain lfpGain, ref double ApGainCorrection, ref double LfpGainCorrection)
+        public static GainCorrection ParseGainCalibrationFile(StreamReader file, NeuropixelsV1Gain apGain, NeuropixelsV1Gain lfpGain)
         {
             var gainCorrections = file.ReadLine().Split(',').Skip(1);
 
             if (gainCorrections.Count() != 2 * NumberOfGains)
                 throw new ArgumentException("Incorrectly formatted gain correction calibration file.");
 
-            ApGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), apGain)));
-            LfpGainCorrection = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), lfpGain) + 8));
+            var ap = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), apGain)));
+            var lfp = double.Parse(gainCorrections.ElementAt(Array.IndexOf(Enum.GetValues(typeof(NeuropixelsV1Gain)), lfpGain) + 8));
+
+            return new GainCorrection(ap, lfp);
         }
     }
 }

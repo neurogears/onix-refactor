@@ -110,8 +110,10 @@ namespace OpenEphys.Onix.Design
 
                     gainCalibrationSN.Text = ulong.Parse(gainCalibrationFile.ReadLine()).ToString();
 
-                    NeuropixelsV1Helper.ParseGainCalibrationFile(gainCalibrationFile, ConfigureNode.SpikeAmplifierGain,
-                        ConfigureNode.LfpAmplifierGain, ref ApGainCorrection, ref LfpGainCorrection);
+                    var gainCorrection = NeuropixelsV1Helper.ParseGainCalibrationFile(gainCalibrationFile, ConfigureNode.SpikeAmplifierGain, ConfigureNode.LfpAmplifierGain);
+
+                    ApGainCorrection = gainCorrection.AP;
+                    LfpGainCorrection = gainCorrection.LFP;
 
                     gainCalibrationFile.Close();
                 }

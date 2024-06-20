@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using ZedGraph;
 
 namespace OpenEphys.Onix.Design
 {
@@ -93,7 +91,7 @@ namespace OpenEphys.Onix.Design
 
                     adcCalibrationSN.Text = ulong.Parse(adcFile.ReadLine()).ToString();
 
-                    Adcs = NeuropixelsV1.ParseAdcCalibrationFile(adcFile);
+                    Adcs = NeuropixelsV1Helper.ParseAdcCalibrationFile(adcFile);
 
                     dataGridViewAdcs.DataSource = Adcs;
 
@@ -112,7 +110,7 @@ namespace OpenEphys.Onix.Design
 
                     gainCalibrationSN.Text = ulong.Parse(gainCalibrationFile.ReadLine()).ToString();
 
-                    NeuropixelsV1.ParseGainCalibrationFile(gainCalibrationFile, ConfigureNode.SpikeAmplifierGain,
+                    NeuropixelsV1Helper.ParseGainCalibrationFile(gainCalibrationFile, ConfigureNode.SpikeAmplifierGain,
                         ConfigureNode.LfpAmplifierGain, ref ApGainCorrection, ref LfpGainCorrection);
 
                     gainCalibrationFile.Close();

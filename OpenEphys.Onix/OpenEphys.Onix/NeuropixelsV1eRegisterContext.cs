@@ -10,6 +10,7 @@ namespace OpenEphys.Onix
     {
         public readonly double ApGainCorrection;
         public readonly double LfpGainCorrection;
+
         public ushort[] AdcThresholds { get; }
         public ushort[] AdcOffsets { get; }
 
@@ -40,16 +41,16 @@ namespace OpenEphys.Onix
                 throw new ArgumentException("Calibration file serial numbers do not match.");
 
             // parse gain correction file
-            NeuropixelsV1.ParseGainCalibrationFile(gainFile, apGain, lfpGain, ref ApGainCorrection, ref LfpGainCorrection);
+            NeuropixelsV1Helper.ParseGainCalibrationFile(gainFile, apGain, lfpGain, ref ApGainCorrection, ref LfpGainCorrection);
 
             // parse ADC calibration file
-            Adcs = NeuropixelsV1.ParseAdcCalibrationFile(adcFile);
+            Adcs = NeuropixelsV1Helper.ParseAdcCalibrationFile(adcFile);
 
             AdcThresholds = Adcs.ToList().Select(a => (ushort)a.Threshold).ToArray();
             AdcOffsets = Adcs.ToList().Select(a => (ushort)a.Offset).ToArray();
 
             // Update active channels
-            ShankConfig = NeuropixelsV1.MakeShankBits(channelConfiguration, refSource);
+            ShankConfig = NeuropixelsV1Helper.MakeShankBits(channelConfiguration, refSource);
 
             // create base shift-register bit arrays
             for (int i = 0; i < NeuropixelsV1e.ChannelCount; i++)

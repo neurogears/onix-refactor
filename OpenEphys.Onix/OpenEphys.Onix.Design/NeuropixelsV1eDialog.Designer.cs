@@ -39,6 +39,7 @@
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label labelSelection;
+            System.Windows.Forms.Label label3;
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.gainCalibrationSN = new System.Windows.Forms.ToolStripStatusLabel();
@@ -73,14 +74,13 @@
             this.buttonResetZoom = new System.Windows.Forms.Button();
             this.buttonZoomOut = new System.Windows.Forms.Button();
             this.buttonZoomIn = new System.Windows.Forms.Button();
-            this.tabPagePropertyGrid = new System.Windows.Forms.TabPage();
-            this.propertyGrid = new Bonsai.Design.PropertyGrid();
             this.tabPageADCs = new System.Windows.Forms.TabPage();
             this.dataGridViewAdcs = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOkay = new System.Windows.Forms.Button();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             toolStripStatusLabelGainCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusLabelAdcCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             apGain = new System.Windows.Forms.Label();
@@ -92,6 +92,7 @@
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             labelSelection = new System.Windows.Forms.Label();
+            label3 = new System.Windows.Forms.Label();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -110,7 +111,6 @@
             this.tabPageContactsOptions.SuspendLayout();
             this.panelChannelOptions.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarProbePosition)).BeginInit();
-            this.tabPagePropertyGrid.SuspendLayout();
             this.tabPageADCs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).BeginInit();
             this.panel1.SuspendLayout();
@@ -327,7 +327,6 @@
             // 
             this.tabControlOptions.Controls.Add(this.tabPageOptions);
             this.tabControlOptions.Controls.Add(this.tabPageContactsOptions);
-            this.tabControlOptions.Controls.Add(this.tabPagePropertyGrid);
             this.tabControlOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Name = "tabControlOptions";
@@ -494,6 +493,8 @@
             // 
             // panelChannelOptions
             // 
+            this.panelChannelOptions.Controls.Add(this.comboBox1);
+            this.panelChannelOptions.Controls.Add(label3);
             this.panelChannelOptions.Controls.Add(this.trackBarProbePosition);
             this.panelChannelOptions.Controls.Add(this.buttonEnableContacts);
             this.panelChannelOptions.Controls.Add(this.buttonClearSelections);
@@ -523,9 +524,9 @@
             // 
             // buttonEnableContacts
             // 
-            this.buttonEnableContacts.Location = new System.Drawing.Point(94, 229);
+            this.buttonEnableContacts.Location = new System.Drawing.Point(140, 229);
             this.buttonEnableContacts.Name = "buttonEnableContacts";
-            this.buttonEnableContacts.Size = new System.Drawing.Size(142, 34);
+            this.buttonEnableContacts.Size = new System.Drawing.Size(96, 56);
             this.buttonEnableContacts.TabIndex = 20;
             this.buttonEnableContacts.Text = "Enable Contacts";
             this.buttonEnableContacts.UseVisualStyleBackColor = true;
@@ -535,9 +536,9 @@
             // 
             this.buttonClearSelections.Location = new System.Drawing.Point(140, 291);
             this.buttonClearSelections.Name = "buttonClearSelections";
-            this.buttonClearSelections.Size = new System.Drawing.Size(96, 34);
+            this.buttonClearSelections.Size = new System.Drawing.Size(96, 59);
             this.buttonClearSelections.TabIndex = 19;
-            this.buttonClearSelections.Text = "Clear";
+            this.buttonClearSelections.Text = "Clear Selection";
             this.buttonClearSelections.UseVisualStyleBackColor = true;
             this.buttonClearSelections.Click += new System.EventHandler(this.ButtonClick);
             // 
@@ -579,25 +580,6 @@
             this.buttonZoomIn.Text = "Zoom In";
             this.buttonZoomIn.UseVisualStyleBackColor = true;
             this.buttonZoomIn.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // tabPagePropertyGrid
-            // 
-            this.tabPagePropertyGrid.Controls.Add(this.propertyGrid);
-            this.tabPagePropertyGrid.Location = new System.Drawing.Point(4, 29);
-            this.tabPagePropertyGrid.Name = "tabPagePropertyGrid";
-            this.tabPagePropertyGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePropertyGrid.Size = new System.Drawing.Size(246, 554);
-            this.tabPagePropertyGrid.TabIndex = 1;
-            this.tabPagePropertyGrid.Text = "Property Grid";
-            this.tabPagePropertyGrid.UseVisualStyleBackColor = true;
-            // 
-            // propertyGrid
-            // 
-            this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGrid.Location = new System.Drawing.Point(3, 3);
-            this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(240, 548);
-            this.propertyGrid.TabIndex = 0;
             // 
             // tabPageADCs
             // 
@@ -665,6 +647,23 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(149, 384);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(63, 20);
+            label3.TabIndex = 23;
+            label3.Text = "Presets";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(134, 420);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(102, 28);
+            this.comboBox1.TabIndex = 24;
+            // 
             // NeuropixelsV1eDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -699,7 +698,6 @@
             this.panelChannelOptions.ResumeLayout(false);
             this.panelChannelOptions.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarProbePosition)).EndInit();
-            this.tabPagePropertyGrid.ResumeLayout(false);
             this.tabPageADCs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).EndInit();
             this.panel1.ResumeLayout(false);
@@ -729,8 +727,6 @@
         private System.Windows.Forms.TabControl tabControlOptions;
         private System.Windows.Forms.TabPage tabPageOptions;
         private System.Windows.Forms.Panel panelOptions;
-        private System.Windows.Forms.TabPage tabPagePropertyGrid;
-        private Bonsai.Design.PropertyGrid propertyGrid;
         private System.Windows.Forms.ComboBox comboBoxReference;
         private System.Windows.Forms.ComboBox comboBoxLfpGain;
         private System.Windows.Forms.ComboBox comboBoxApGain;
@@ -752,5 +748,6 @@
         private System.Windows.Forms.Button buttonClearSelections;
         private System.Windows.Forms.Button buttonEnableContacts;
         private System.Windows.Forms.TrackBar trackBarProbePosition;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }

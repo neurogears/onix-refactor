@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Bonsai.Reactive;
 using OpenEphys.ProbeInterface;
 
 namespace OpenEphys.Onix.Design
@@ -16,11 +15,7 @@ namespace OpenEphys.Onix.Design
         double ApGainCorrection = default;
         double LfpGainCorrection = default;
 
-        public ConfigureNeuropixelsV1e ConfigureNode
-        {
-            get { return (ConfigureNeuropixelsV1e)propertyGrid.SelectedObject; }
-            set { propertyGrid.SelectedObject = value; }
-        }
+        public ConfigureNeuropixelsV1e ConfigureNode { get; set; }
 
         public NeuropixelsV1eDialog(ConfigureNeuropixelsV1e configureNode)
         {
@@ -302,8 +297,6 @@ namespace OpenEphys.Onix.Design
                     EnableContact(probeIndex, i);
                 }
             }
-
-            var probe = channelConfiguration.GetProbeGroup().Probes.ElementAt(probeIndex);
         }
 
         private void EnableContact(int probeNumber, int contactNumber) 

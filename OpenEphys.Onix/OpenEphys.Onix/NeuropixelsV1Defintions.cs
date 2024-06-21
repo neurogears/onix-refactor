@@ -6,6 +6,7 @@ namespace OpenEphys.Onix
     {
         public const int AdcCount = 32;
         public const int ChannelCount = 384;
+        public const int ElectrodeCount = 960;
         public const int FramesPerRoundRobin = 12;
         public const int FramesPerSuperframe = 13;
         public const int SuperframesPerUltraframe = 12;

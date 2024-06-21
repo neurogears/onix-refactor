@@ -23,8 +23,6 @@ namespace OpenEphys.Onix
 
             List<int> deviceChannelIds = channelConfiguration.GetDeviceChannelIndices().ToList();
 
-            // TODO: validate channel combinations here, reference the same logic in GUI
-
             for (int i = 0; i < deviceChannelIds.Count; i++)
             {
                 if (i == InternalReferenceChannel || deviceChannelIds.ElementAt(i) == -1) continue;

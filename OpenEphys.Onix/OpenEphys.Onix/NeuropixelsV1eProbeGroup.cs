@@ -11,9 +11,6 @@ namespace OpenEphys.Onix
     [GeneratedCode("Bonsai.Sgen", "0.3.0.0 (Newtonsoft.Json v13.0.0.0)")]
     public class NeuropixelsV1eProbeGroup : ProbeGroup
     {
-        private const int ChannelCount = 384;
-        private const int ElectrodeCount = 960;
-
         public NeuropixelsV1eProbeGroup()
             : base("probeinterface", "0.2.21",
                   new List<Probe>()
@@ -22,14 +19,14 @@ namespace OpenEphys.Onix
                           ProbeSiUnits.Um,
                           new ProbeAnnotations("Neuropixels 1.0e", "IMEC"),
                           new ContactAnnotations(new string[0]),
-                          DefaultContactPositions(ElectrodeCount),
-                          Probe.DefaultContactPlaneAxes(ElectrodeCount),
-                          Probe.DefaultContactShapes(ElectrodeCount, ContactShape.Square),
-                          Probe.DefaultSquareParams(ElectrodeCount, 12.0f),
+                          DefaultContactPositions(NeuropixelsV1.ElectrodeCount),
+                          Probe.DefaultContactPlaneAxes(NeuropixelsV1.ElectrodeCount),
+                          Probe.DefaultContactShapes(NeuropixelsV1.ElectrodeCount, ContactShape.Square),
+                          Probe.DefaultSquareParams(NeuropixelsV1.ElectrodeCount, 12.0f),
                           DefaultProbePlanarContour(),
-                          DefaultDeviceChannelIndices(ChannelCount, ElectrodeCount),
-                          Probe.DefaultContactIds(ElectrodeCount),
-                          DefaultShankIds(ElectrodeCount))
+                          DefaultDeviceChannelIndices(NeuropixelsV1.ChannelCount, NeuropixelsV1.ElectrodeCount),
+                          Probe.DefaultContactIds(NeuropixelsV1.ElectrodeCount),
+                          DefaultShankIds(NeuropixelsV1.ElectrodeCount))
                   }.ToArray())
         {
         }

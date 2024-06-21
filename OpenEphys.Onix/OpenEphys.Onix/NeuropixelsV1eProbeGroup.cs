@@ -63,28 +63,14 @@ namespace OpenEphys.Onix
             return contactPositions;
         }
 
-        private static float ContactPositionX(int index)
+        private static float ContactPositionX(int index) => (index % 4) switch
         {
-            bool even = index % 2 == 0;
-            bool twoOrThree = (index / 2) % 2 == 0;
-
-            if (even && !twoOrThree)
-            {
-                return 27.0f;
-            }
-            else if (!even && !twoOrThree)
-            {
-                return 59.0f;
-            }
-            else if (even && twoOrThree)
-            {
-                return 11.0f;
-            }
-            else
-            {
-                return 43.0f;
-            }
-        }
+            0 => 27.0f,
+            1 => 59.0f,
+            2 => 11.0f,
+            3 => 43.0f,
+            _ => throw new ArgumentException("Invalid index given.")
+        };
 
         /// <summary>
         /// Generates a default planar contour for the probe, based on the given probe index

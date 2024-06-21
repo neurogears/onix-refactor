@@ -1,12 +1,15 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
+using Bonsai.Reactive;
+using OpenEphys.ProbeInterface;
 
 namespace OpenEphys.Onix.Design
 {
     public partial class NeuropixelsV1eDialog : Form
     {
-        readonly NeuropixelsV1eChannelConfigurationDialog channelConfigurationDialog;
+        readonly NeuropixelsV1eChannelConfigurationDialog channelConfiguration;
 
         NeuropixelsV1Adc[] Adcs;
 
@@ -25,7 +28,7 @@ namespace OpenEphys.Onix.Design
 
             ConfigureNode = new(configureNode);
 
-            channelConfigurationDialog = new(ConfigureNode.ChannelConfiguration)
+            channelConfiguration = new(ConfigureNode.ChannelConfiguration)
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
@@ -33,10 +36,12 @@ namespace OpenEphys.Onix.Design
                 Parent = this,
             };
 
-            panelProbe.Controls.Add(channelConfigurationDialog);
-            this.AddMenuItemsFromDialog(channelConfigurationDialog, "Channel Configuration");
+            panelProbe.Controls.Add(channelConfiguration);
+            this.AddMenuItemsFromDialog(channelConfiguration, "Channel Configuration");
 
-            channelConfigurationDialog.Show();
+            channelConfiguration.OnZoom += UpdateTrackBarLocation;
+
+            channelConfiguration.Show();
 
             comboBoxApGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
             comboBoxApGain.SelectedItem = ConfigureNode.SpikeAmplifierGain;
@@ -165,7 +170,7 @@ namespace OpenEphys.Onix.Design
                 toolStripStatus.Image = Properties.Resources.StatusWarningImage;
                 toolStripStatus.Text = "Serial number mismatch";
             }
-            else if (!channelConfigurationDialog.GetProbeGroup().ValidateDeviceChannelIndices())
+            else if (!channelConfiguration.GetProbeGroup().ValidateDeviceChannelIndices())
             {
                 toolStripStatus.Image = Properties.Resources.StatusBlockedImage;
                 toolStripStatus.Text = "Invalid channels selected";
@@ -268,62 +273,132 @@ namespace OpenEphys.Onix.Design
                 {
                     ResetZoom();
                 }
-                else if (button.Name == nameof(buttonJumpTo0))
+                else if (button.Name == nameof(buttonClearSelections))
                 {
-                    MoveToVerticalPosition(0f);
+                    channelConfiguration.SetAllSelections(false);
+                    channelConfiguration.DrawChannels();
+                    channelConfiguration.RefreshZedGraph();
                 }
-                else if (button.Name == nameof(buttonJumpTo1))
+                else if (button.Name == nameof(buttonEnableContacts))
                 {
-                    MoveToVerticalPosition(0.1f);
-                }
-                else if (button.Name == nameof(buttonJumpTo2))
-                {
-                    MoveToVerticalPosition(0.2f);
-                }
-                else if (button.Name == nameof(buttonJumpTo3))
-                {
-                    MoveToVerticalPosition(0.3f);
-                }
-                else if (button.Name == nameof(buttonJumpTo4))
-                {
-                    MoveToVerticalPosition(0.4f);
-                }
-                else if (button.Name == nameof(buttonJumpTo5))
-                {
-                    MoveToVerticalPosition(0.5f);
-                }
-                else if (button.Name == nameof(buttonJumpTo6))
-                {
-                    MoveToVerticalPosition(0.6f);
-                }
-                else if (button.Name == nameof(buttonJumpTo7))
-                {
-                    MoveToVerticalPosition(0.7f);
-                }
-                else if (button.Name == nameof(buttonJumpTo8))
-                {
-                    MoveToVerticalPosition(0.8f);
-                }
-                else if (button.Name == nameof(buttonJumpTo9))
-                {
-                    MoveToVerticalPosition(0.9f);
-                }
-                else if (button.Name == nameof(buttonJumpTo10))
-                {
-                    MoveToVerticalPosition(1f);
+                    EnableSelectedContacts();
+                    channelConfiguration.SetAllSelections(false);
+                    channelConfiguration.DrawChannels();
+                    channelConfiguration.RefreshZedGraph();
                 }
             }
         }
 
+        private void EnableSelectedContacts()
+        {
+            const int probeIndex = 0;
+
+            var selectedContacts = channelConfiguration.SelectedContacts;
+
+            for (int i = 0; i < selectedContacts.Length; i++)
+            {
+                if (selectedContacts[i])
+                {
+                    EnableContact(probeIndex, i);
+                }
+            }
+
+            var probe = channelConfiguration.GetProbeGroup().Probes.ElementAt(probeIndex);
+        }
+
+        private void EnableContact(int probeNumber, int contactNumber) 
+        {
+            var probe = channelConfiguration.GetProbeGroup().Probes.ElementAt(probeNumber);
+
+            if (probe.DeviceChannelIndices[contactNumber] != -1)
+                return;
+
+            var contact = probe.GetContact(contactNumber);
+
+            const int BankA_Start = 0;
+            const int BankA_End = 383;
+            const int BankB_Start = 384;
+            const int BankB_End = 767;
+            const int BankC_Start = 768;
+            const int BankC_End = 959;
+
+            if (contact.Index >= BankA_Start && contact.Index <= BankA_End)
+            {
+                var index = contact.Index + BankB_Start;
+
+                if (probe.DeviceChannelIndices[index] != -1)
+                {
+                    SwapIndices(probe, contact.Index, index);
+                    return;
+                }
+
+                index = contact.Index + BankC_Start;
+
+                if (index > BankC_End)
+                    return;
+
+                if (probe.DeviceChannelIndices[index] != -1)
+                {
+                    SwapIndices(probe, contact.Index, index);
+                    return;
+                }
+            }
+            else if (contact.Index >= BankB_Start && contact.Index <= BankB_End)
+            {
+                var index = contact.Index - BankB_Start;
+
+                if (probe.DeviceChannelIndices[index] != -1)
+                {
+                    SwapIndices(probe, contact.Index, index);
+                    return;
+                }
+
+                index = contact.Index - BankB_Start + BankC_Start;
+
+                if (index > BankC_End)
+                    return;
+
+                if (probe.DeviceChannelIndices[index] != -1)
+                {
+                    SwapIndices(probe, contact.Index, index);
+                    return;
+                }
+            }
+            else if (contact.Index >= BankC_Start && contact.Index <= BankC_End)
+            {
+                var index = contact.Index - BankC_Start;
+
+                if (probe.DeviceChannelIndices[index] != -1)
+                {
+                    SwapIndices(probe, contact.Index, index);
+                    return;
+                }
+
+                index = contact.Index - BankC_Start + BankB_Start;
+
+                if (index > BankC_End)
+                    return;
+
+                if (probe.DeviceChannelIndices[index] != -1)
+                {
+                    SwapIndices(probe, contact.Index, index);
+                    return;
+                }
+            }
+        }
+
+        private static void SwapIndices(Probe probe, int currentIndex, int offsetIndex)
+        {
+            (probe.DeviceChannelIndices[currentIndex], probe.DeviceChannelIndices[offsetIndex]) = (probe.DeviceChannelIndices[offsetIndex], probe.DeviceChannelIndices[currentIndex]);
+        }
         private void ZoomIn(double zoom)
         {
             if (zoom <= 1)
             {
                 throw new ArgumentOutOfRangeException($"Argument {nameof(zoom)} must be greater than 1.0 to zoom in");
             }
-
-            channelConfigurationDialog.ManualZoom(zoom);
-            channelConfigurationDialog.RefreshZedGraph();
+            channelConfiguration.ManualZoom(zoom);
+            channelConfiguration.RefreshZedGraph();
         }
 
         private void ZoomOut(double zoom)
@@ -332,26 +407,41 @@ namespace OpenEphys.Onix.Design
             {
                 throw new ArgumentOutOfRangeException($"Argument {nameof(zoom)} must be less than 1.0 to zoom out");
             }
-
-            channelConfigurationDialog.ManualZoom(zoom);
-            channelConfigurationDialog.RefreshZedGraph();
+            channelConfiguration.ManualZoom(zoom);
+            channelConfiguration.RefreshZedGraph();
         }
 
         private void ResetZoom()
         {
-            channelConfigurationDialog.ResetZoom();
-            channelConfigurationDialog.RefreshZedGraph();
+            channelConfiguration.ResetZoom();
+            channelConfiguration.RefreshZedGraph();
         }
 
         private void MoveToVerticalPosition(float relativePosition)
         {
-            channelConfigurationDialog.MoveToVerticalPosition(relativePosition);
-            channelConfigurationDialog.RefreshZedGraph();
+            channelConfiguration.MoveToVerticalPosition(relativePosition);
+            channelConfiguration.RefreshZedGraph();
         }
 
         public NeuropixelsV1eProbeGroup GetProbeGroup()
         {
-            return (NeuropixelsV1eProbeGroup)channelConfigurationDialog.GetProbeGroup();
+            return (NeuropixelsV1eProbeGroup)channelConfiguration.GetProbeGroup();
+        }
+
+        private void TrackBarScroll(object sender, EventArgs e)
+        {
+            if (sender is TrackBar trackBar && trackBar != null)
+            {
+                if (trackBar.Name == nameof(trackBarProbePosition))
+                {
+                    MoveToVerticalPosition(trackBar.Value / 100.0f);
+                }
+            }
+        }
+
+        private void UpdateTrackBarLocation(object sender, EventArgs e)
+        {
+            trackBarProbePosition.Value = (int)(channelConfiguration.GetRelativeVerticalPosition() * 100);
         }
     }
 }

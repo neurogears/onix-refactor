@@ -38,6 +38,7 @@
             System.Windows.Forms.Label adcCalibrationFile;
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label2;
+            System.Windows.Forms.Label labelSelection;
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.gainCalibrationSN = new System.Windows.Forms.ToolStripStatusLabel();
@@ -52,6 +53,10 @@
             this.tabControlOptions = new System.Windows.Forms.TabControl();
             this.tabPageOptions = new System.Windows.Forms.TabPage();
             this.panelOptions = new System.Windows.Forms.Panel();
+            this.textBoxLfpGainCorrection = new System.Windows.Forms.TextBox();
+            this.labelLfpGainCorrection = new System.Windows.Forms.Label();
+            this.textBoxApGainCorrection = new System.Windows.Forms.TextBox();
+            this.labelApGainCorrection = new System.Windows.Forms.Label();
             this.checkBoxSpikeFilter = new System.Windows.Forms.CheckBox();
             this.buttonAdcCalibrationFile = new System.Windows.Forms.Button();
             this.textBoxAdcCalibrationFile = new System.Windows.Forms.TextBox();
@@ -62,17 +67,9 @@
             this.comboBoxApGain = new System.Windows.Forms.ComboBox();
             this.tabPageContactsOptions = new System.Windows.Forms.TabPage();
             this.panelChannelOptions = new System.Windows.Forms.Panel();
-            this.buttonJumpTo9 = new System.Windows.Forms.Button();
-            this.buttonJumpTo8 = new System.Windows.Forms.Button();
-            this.buttonJumpTo7 = new System.Windows.Forms.Button();
-            this.buttonJumpTo6 = new System.Windows.Forms.Button();
-            this.buttonJumpTo5 = new System.Windows.Forms.Button();
-            this.buttonJumpTo4 = new System.Windows.Forms.Button();
-            this.buttonJumpTo3 = new System.Windows.Forms.Button();
-            this.buttonJumpTo2 = new System.Windows.Forms.Button();
-            this.buttonJumpTo1 = new System.Windows.Forms.Button();
-            this.buttonJumpTo0 = new System.Windows.Forms.Button();
-            this.buttonJumpTo10 = new System.Windows.Forms.Button();
+            this.trackBarProbePosition = new System.Windows.Forms.TrackBar();
+            this.buttonEnableContacts = new System.Windows.Forms.Button();
+            this.buttonClearSelections = new System.Windows.Forms.Button();
             this.buttonResetZoom = new System.Windows.Forms.Button();
             this.buttonZoomOut = new System.Windows.Forms.Button();
             this.buttonZoomIn = new System.Windows.Forms.Button();
@@ -84,10 +81,6 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOkay = new System.Windows.Forms.Button();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
-            this.labelApGainCorrection = new System.Windows.Forms.Label();
-            this.textBoxApGainCorrection = new System.Windows.Forms.TextBox();
-            this.textBoxLfpGainCorrection = new System.Windows.Forms.TextBox();
-            this.labelLfpGainCorrection = new System.Windows.Forms.Label();
             toolStripStatusLabelGainCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusLabelAdcCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             apGain = new System.Windows.Forms.Label();
@@ -98,6 +91,7 @@
             adcCalibrationFile = new System.Windows.Forms.Label();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
+            labelSelection = new System.Windows.Forms.Label();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -115,6 +109,7 @@
             this.panelOptions.SuspendLayout();
             this.tabPageContactsOptions.SuspendLayout();
             this.panelChannelOptions.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarProbePosition)).BeginInit();
             this.tabPagePropertyGrid.SuspendLayout();
             this.tabPageADCs.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).BeginInit();
@@ -213,7 +208,7 @@
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1130, 36);
+            this.menuStrip.Size = new System.Drawing.Size(1130, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -256,7 +251,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -267,8 +262,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1130, 666);
-            this.splitContainer1.SplitterDistance = 614;
+            this.splitContainer1.Size = new System.Drawing.Size(1130, 678);
+            this.splitContainer1.SplitterDistance = 626;
             this.splitContainer1.TabIndex = 2;
             // 
             // tabControlProbe
@@ -279,7 +274,7 @@
             this.tabControlProbe.Location = new System.Drawing.Point(0, 0);
             this.tabControlProbe.Name = "tabControlProbe";
             this.tabControlProbe.SelectedIndex = 0;
-            this.tabControlProbe.Size = new System.Drawing.Size(1130, 614);
+            this.tabControlProbe.Size = new System.Drawing.Size(1130, 626);
             this.tabControlProbe.TabIndex = 0;
             // 
             // tabPageProbe
@@ -288,7 +283,7 @@
             this.tabPageProbe.Location = new System.Drawing.Point(4, 29);
             this.tabPageProbe.Name = "tabPageProbe";
             this.tabPageProbe.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProbe.Size = new System.Drawing.Size(1122, 581);
+            this.tabPageProbe.Size = new System.Drawing.Size(1122, 593);
             this.tabPageProbe.TabIndex = 0;
             this.tabPageProbe.Text = "Probe";
             this.tabPageProbe.UseVisualStyleBackColor = true;
@@ -307,7 +302,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panel2);
-            this.splitContainer2.Size = new System.Drawing.Size(1116, 575);
+            this.splitContainer2.Size = new System.Drawing.Size(1116, 587);
             this.splitContainer2.SplitterDistance = 858;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -316,7 +311,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(858, 575);
+            this.panelProbe.Size = new System.Drawing.Size(858, 587);
             this.panelProbe.TabIndex = 0;
             // 
             // panel2
@@ -325,7 +320,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(254, 575);
+            this.panel2.Size = new System.Drawing.Size(254, 587);
             this.panel2.TabIndex = 0;
             // 
             // tabControlOptions
@@ -337,7 +332,7 @@
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(254, 575);
+            this.tabControlOptions.Size = new System.Drawing.Size(254, 587);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabPageOptions
@@ -346,7 +341,7 @@
             this.tabPageOptions.Location = new System.Drawing.Point(4, 29);
             this.tabPageOptions.Name = "tabPageOptions";
             this.tabPageOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOptions.Size = new System.Drawing.Size(246, 542);
+            this.tabPageOptions.Size = new System.Drawing.Size(246, 554);
             this.tabPageOptions.TabIndex = 0;
             this.tabPageOptions.Text = "Options";
             this.tabPageOptions.UseVisualStyleBackColor = true;
@@ -374,8 +369,46 @@
             this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelOptions.Location = new System.Drawing.Point(3, 3);
             this.panelOptions.Name = "panelOptions";
-            this.panelOptions.Size = new System.Drawing.Size(240, 536);
+            this.panelOptions.Size = new System.Drawing.Size(240, 548);
             this.panelOptions.TabIndex = 0;
+            // 
+            // textBoxLfpGainCorrection
+            // 
+            this.textBoxLfpGainCorrection.Location = new System.Drawing.Point(100, 130);
+            this.textBoxLfpGainCorrection.Name = "textBoxLfpGainCorrection";
+            this.textBoxLfpGainCorrection.ReadOnly = true;
+            this.textBoxLfpGainCorrection.Size = new System.Drawing.Size(123, 26);
+            this.textBoxLfpGainCorrection.TabIndex = 18;
+            this.textBoxLfpGainCorrection.Visible = false;
+            // 
+            // labelLfpGainCorrection
+            // 
+            this.labelLfpGainCorrection.AutoSize = true;
+            this.labelLfpGainCorrection.Location = new System.Drawing.Point(12, 129);
+            this.labelLfpGainCorrection.Name = "labelLfpGainCorrection";
+            this.labelLfpGainCorrection.Size = new System.Drawing.Size(82, 20);
+            this.labelLfpGainCorrection.TabIndex = 17;
+            this.labelLfpGainCorrection.Text = "Correction";
+            this.labelLfpGainCorrection.Visible = false;
+            // 
+            // textBoxApGainCorrection
+            // 
+            this.textBoxApGainCorrection.Location = new System.Drawing.Point(101, 48);
+            this.textBoxApGainCorrection.Name = "textBoxApGainCorrection";
+            this.textBoxApGainCorrection.ReadOnly = true;
+            this.textBoxApGainCorrection.Size = new System.Drawing.Size(123, 26);
+            this.textBoxApGainCorrection.TabIndex = 16;
+            this.textBoxApGainCorrection.Visible = false;
+            // 
+            // labelApGainCorrection
+            // 
+            this.labelApGainCorrection.AutoSize = true;
+            this.labelApGainCorrection.Location = new System.Drawing.Point(13, 47);
+            this.labelApGainCorrection.Name = "labelApGainCorrection";
+            this.labelApGainCorrection.Size = new System.Drawing.Size(82, 20);
+            this.labelApGainCorrection.TabIndex = 15;
+            this.labelApGainCorrection.Text = "Correction";
+            this.labelApGainCorrection.Visible = false;
             // 
             // checkBoxSpikeFilter
             // 
@@ -454,24 +487,17 @@
             this.tabPageContactsOptions.Controls.Add(this.panelChannelOptions);
             this.tabPageContactsOptions.Location = new System.Drawing.Point(4, 29);
             this.tabPageContactsOptions.Name = "tabPageContactsOptions";
-            this.tabPageContactsOptions.Size = new System.Drawing.Size(246, 542);
+            this.tabPageContactsOptions.Size = new System.Drawing.Size(246, 554);
             this.tabPageContactsOptions.TabIndex = 2;
             this.tabPageContactsOptions.Text = "Contacts";
             this.tabPageContactsOptions.UseVisualStyleBackColor = true;
             // 
             // panelChannelOptions
             // 
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo9);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo8);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo7);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo6);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo5);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo4);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo3);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo2);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo1);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo0);
-            this.panelChannelOptions.Controls.Add(this.buttonJumpTo10);
+            this.panelChannelOptions.Controls.Add(this.trackBarProbePosition);
+            this.panelChannelOptions.Controls.Add(this.buttonEnableContacts);
+            this.panelChannelOptions.Controls.Add(this.buttonClearSelections);
+            this.panelChannelOptions.Controls.Add(labelSelection);
             this.panelChannelOptions.Controls.Add(label2);
             this.panelChannelOptions.Controls.Add(label1);
             this.panelChannelOptions.Controls.Add(this.buttonResetZoom);
@@ -480,118 +506,49 @@
             this.panelChannelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelChannelOptions.Location = new System.Drawing.Point(0, 0);
             this.panelChannelOptions.Name = "panelChannelOptions";
-            this.panelChannelOptions.Size = new System.Drawing.Size(246, 542);
+            this.panelChannelOptions.Size = new System.Drawing.Size(246, 554);
             this.panelChannelOptions.TabIndex = 0;
             // 
-            // buttonJumpTo9
+            // trackBarProbePosition
             // 
-            this.buttonJumpTo9.Location = new System.Drawing.Point(24, 94);
-            this.buttonJumpTo9.Name = "buttonJumpTo9";
-            this.buttonJumpTo9.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo9.TabIndex = 17;
-            this.buttonJumpTo9.Text = "9";
-            this.buttonJumpTo9.UseVisualStyleBackColor = true;
-            this.buttonJumpTo9.Click += new System.EventHandler(this.ButtonClick);
+            this.trackBarProbePosition.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.trackBarProbePosition.Location = new System.Drawing.Point(17, 39);
+            this.trackBarProbePosition.Maximum = 100;
+            this.trackBarProbePosition.Name = "trackBarProbePosition";
+            this.trackBarProbePosition.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.trackBarProbePosition.Size = new System.Drawing.Size(69, 494);
+            this.trackBarProbePosition.TabIndex = 22;
+            this.trackBarProbePosition.Scroll += new System.EventHandler(this.TrackBarScroll);
             // 
-            // buttonJumpTo8
+            // buttonEnableContacts
             // 
-            this.buttonJumpTo8.Location = new System.Drawing.Point(24, 139);
-            this.buttonJumpTo8.Name = "buttonJumpTo8";
-            this.buttonJumpTo8.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo8.TabIndex = 16;
-            this.buttonJumpTo8.Text = "8";
-            this.buttonJumpTo8.UseVisualStyleBackColor = true;
-            this.buttonJumpTo8.Click += new System.EventHandler(this.ButtonClick);
+            this.buttonEnableContacts.Location = new System.Drawing.Point(94, 229);
+            this.buttonEnableContacts.Name = "buttonEnableContacts";
+            this.buttonEnableContacts.Size = new System.Drawing.Size(142, 34);
+            this.buttonEnableContacts.TabIndex = 20;
+            this.buttonEnableContacts.Text = "Enable Contacts";
+            this.buttonEnableContacts.UseVisualStyleBackColor = true;
+            this.buttonEnableContacts.Click += new System.EventHandler(this.ButtonClick);
             // 
-            // buttonJumpTo7
+            // buttonClearSelections
             // 
-            this.buttonJumpTo7.Location = new System.Drawing.Point(24, 184);
-            this.buttonJumpTo7.Name = "buttonJumpTo7";
-            this.buttonJumpTo7.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo7.TabIndex = 15;
-            this.buttonJumpTo7.Text = "7";
-            this.buttonJumpTo7.UseVisualStyleBackColor = true;
-            this.buttonJumpTo7.Click += new System.EventHandler(this.ButtonClick);
+            this.buttonClearSelections.Location = new System.Drawing.Point(140, 291);
+            this.buttonClearSelections.Name = "buttonClearSelections";
+            this.buttonClearSelections.Size = new System.Drawing.Size(96, 34);
+            this.buttonClearSelections.TabIndex = 19;
+            this.buttonClearSelections.Text = "Clear";
+            this.buttonClearSelections.UseVisualStyleBackColor = true;
+            this.buttonClearSelections.Click += new System.EventHandler(this.ButtonClick);
             // 
-            // buttonJumpTo6
+            // labelSelection
             // 
-            this.buttonJumpTo6.Location = new System.Drawing.Point(24, 229);
-            this.buttonJumpTo6.Name = "buttonJumpTo6";
-            this.buttonJumpTo6.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo6.TabIndex = 14;
-            this.buttonJumpTo6.Text = "6";
-            this.buttonJumpTo6.UseVisualStyleBackColor = true;
-            this.buttonJumpTo6.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo5
-            // 
-            this.buttonJumpTo5.Location = new System.Drawing.Point(24, 274);
-            this.buttonJumpTo5.Name = "buttonJumpTo5";
-            this.buttonJumpTo5.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo5.TabIndex = 13;
-            this.buttonJumpTo5.Text = "5";
-            this.buttonJumpTo5.UseVisualStyleBackColor = true;
-            this.buttonJumpTo5.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo4
-            // 
-            this.buttonJumpTo4.Location = new System.Drawing.Point(24, 319);
-            this.buttonJumpTo4.Name = "buttonJumpTo4";
-            this.buttonJumpTo4.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo4.TabIndex = 12;
-            this.buttonJumpTo4.Text = "4";
-            this.buttonJumpTo4.UseVisualStyleBackColor = true;
-            this.buttonJumpTo4.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo3
-            // 
-            this.buttonJumpTo3.Location = new System.Drawing.Point(24, 364);
-            this.buttonJumpTo3.Name = "buttonJumpTo3";
-            this.buttonJumpTo3.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo3.TabIndex = 11;
-            this.buttonJumpTo3.Text = "3";
-            this.buttonJumpTo3.UseVisualStyleBackColor = true;
-            this.buttonJumpTo3.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo2
-            // 
-            this.buttonJumpTo2.Location = new System.Drawing.Point(24, 409);
-            this.buttonJumpTo2.Name = "buttonJumpTo2";
-            this.buttonJumpTo2.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo2.TabIndex = 10;
-            this.buttonJumpTo2.Text = "2";
-            this.buttonJumpTo2.UseVisualStyleBackColor = true;
-            this.buttonJumpTo2.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo1
-            // 
-            this.buttonJumpTo1.Location = new System.Drawing.Point(24, 454);
-            this.buttonJumpTo1.Name = "buttonJumpTo1";
-            this.buttonJumpTo1.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo1.TabIndex = 9;
-            this.buttonJumpTo1.Text = "1";
-            this.buttonJumpTo1.UseVisualStyleBackColor = true;
-            this.buttonJumpTo1.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo0
-            // 
-            this.buttonJumpTo0.Location = new System.Drawing.Point(24, 499);
-            this.buttonJumpTo0.Name = "buttonJumpTo0";
-            this.buttonJumpTo0.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo0.TabIndex = 8;
-            this.buttonJumpTo0.Text = "0";
-            this.buttonJumpTo0.UseVisualStyleBackColor = true;
-            this.buttonJumpTo0.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // buttonJumpTo10
-            // 
-            this.buttonJumpTo10.Location = new System.Drawing.Point(24, 49);
-            this.buttonJumpTo10.Name = "buttonJumpTo10";
-            this.buttonJumpTo10.Size = new System.Drawing.Size(54, 34);
-            this.buttonJumpTo10.TabIndex = 7;
-            this.buttonJumpTo10.Text = "10";
-            this.buttonJumpTo10.UseVisualStyleBackColor = true;
-            this.buttonJumpTo10.Click += new System.EventHandler(this.ButtonClick);
+            labelSelection.AutoSize = true;
+            labelSelection.Location = new System.Drawing.Point(149, 191);
+            labelSelection.Name = "labelSelection";
+            labelSelection.Size = new System.Drawing.Size(75, 20);
+            labelSelection.TabIndex = 18;
+            labelSelection.Text = "Selection";
             // 
             // buttonResetZoom
             // 
@@ -599,7 +556,7 @@
             this.buttonResetZoom.Name = "buttonResetZoom";
             this.buttonResetZoom.Size = new System.Drawing.Size(96, 34);
             this.buttonResetZoom.TabIndex = 4;
-            this.buttonResetZoom.Text = "Reset Zoom";
+            this.buttonResetZoom.Text = "Reset";
             this.buttonResetZoom.UseVisualStyleBackColor = true;
             this.buttonResetZoom.Click += new System.EventHandler(this.ButtonClick);
             // 
@@ -629,7 +586,7 @@
             this.tabPagePropertyGrid.Location = new System.Drawing.Point(4, 29);
             this.tabPagePropertyGrid.Name = "tabPagePropertyGrid";
             this.tabPagePropertyGrid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePropertyGrid.Size = new System.Drawing.Size(246, 542);
+            this.tabPagePropertyGrid.Size = new System.Drawing.Size(246, 554);
             this.tabPagePropertyGrid.TabIndex = 1;
             this.tabPagePropertyGrid.Text = "Property Grid";
             this.tabPagePropertyGrid.UseVisualStyleBackColor = true;
@@ -639,7 +596,7 @@
             this.propertyGrid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGrid.Location = new System.Drawing.Point(3, 3);
             this.propertyGrid.Name = "propertyGrid";
-            this.propertyGrid.Size = new System.Drawing.Size(240, 536);
+            this.propertyGrid.Size = new System.Drawing.Size(240, 548);
             this.propertyGrid.TabIndex = 0;
             // 
             // tabPageADCs
@@ -647,7 +604,7 @@
             this.tabPageADCs.Controls.Add(this.dataGridViewAdcs);
             this.tabPageADCs.Location = new System.Drawing.Point(4, 29);
             this.tabPageADCs.Name = "tabPageADCs";
-            this.tabPageADCs.Size = new System.Drawing.Size(1122, 581);
+            this.tabPageADCs.Size = new System.Drawing.Size(1122, 593);
             this.tabPageADCs.TabIndex = 2;
             this.tabPageADCs.Text = "ADCs";
             this.tabPageADCs.UseVisualStyleBackColor = true;
@@ -660,7 +617,7 @@
             this.dataGridViewAdcs.Name = "dataGridViewAdcs";
             this.dataGridViewAdcs.RowHeadersWidth = 62;
             this.dataGridViewAdcs.RowTemplate.Height = 28;
-            this.dataGridViewAdcs.Size = new System.Drawing.Size(1122, 581);
+            this.dataGridViewAdcs.Size = new System.Drawing.Size(1122, 593);
             this.dataGridViewAdcs.TabIndex = 0;
             // 
             // panel1
@@ -708,44 +665,6 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
             // 
-            // labelApGainCorrection
-            // 
-            this.labelApGainCorrection.AutoSize = true;
-            this.labelApGainCorrection.Location = new System.Drawing.Point(13, 47);
-            this.labelApGainCorrection.Name = "labelApGainCorrection";
-            this.labelApGainCorrection.Size = new System.Drawing.Size(82, 20);
-            this.labelApGainCorrection.TabIndex = 15;
-            this.labelApGainCorrection.Text = "Correction";
-            this.labelApGainCorrection.Visible = false;
-            // 
-            // textBoxApGainCorrection
-            // 
-            this.textBoxApGainCorrection.Location = new System.Drawing.Point(101, 48);
-            this.textBoxApGainCorrection.Name = "textBoxApGainCorrection";
-            this.textBoxApGainCorrection.ReadOnly = true;
-            this.textBoxApGainCorrection.Size = new System.Drawing.Size(123, 26);
-            this.textBoxApGainCorrection.TabIndex = 16;
-            this.textBoxApGainCorrection.Visible = false;
-            // 
-            // textBoxLfpGainCorrection
-            // 
-            this.textBoxLfpGainCorrection.Location = new System.Drawing.Point(100, 130);
-            this.textBoxLfpGainCorrection.Name = "textBoxLfpGainCorrection";
-            this.textBoxLfpGainCorrection.ReadOnly = true;
-            this.textBoxLfpGainCorrection.Size = new System.Drawing.Size(123, 26);
-            this.textBoxLfpGainCorrection.TabIndex = 18;
-            this.textBoxLfpGainCorrection.Visible = false;
-            // 
-            // labelLfpGainCorrection
-            // 
-            this.labelLfpGainCorrection.AutoSize = true;
-            this.labelLfpGainCorrection.Location = new System.Drawing.Point(12, 129);
-            this.labelLfpGainCorrection.Name = "labelLfpGainCorrection";
-            this.labelLfpGainCorrection.Size = new System.Drawing.Size(82, 20);
-            this.labelLfpGainCorrection.TabIndex = 17;
-            this.labelLfpGainCorrection.Text = "Correction";
-            this.labelLfpGainCorrection.Visible = false;
-            // 
             // NeuropixelsV1eDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -779,6 +698,7 @@
             this.tabPageContactsOptions.ResumeLayout(false);
             this.panelChannelOptions.ResumeLayout(false);
             this.panelChannelOptions.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trackBarProbePosition)).EndInit();
             this.tabPagePropertyGrid.ResumeLayout(false);
             this.tabPageADCs.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewAdcs)).EndInit();
@@ -823,22 +743,14 @@
         private System.Windows.Forms.CheckBox checkBoxSpikeFilter;
         private System.Windows.Forms.Button buttonZoomIn;
         private System.Windows.Forms.Button buttonResetZoom;
-        private System.Windows.Forms.Button buttonJumpTo10;
         private System.Windows.Forms.Button buttonZoomOut;
-        private System.Windows.Forms.Button buttonJumpTo0;
-        private System.Windows.Forms.Button buttonJumpTo8;
-        private System.Windows.Forms.Button buttonJumpTo7;
-        private System.Windows.Forms.Button buttonJumpTo6;
-        private System.Windows.Forms.Button buttonJumpTo5;
-        private System.Windows.Forms.Button buttonJumpTo4;
-        private System.Windows.Forms.Button buttonJumpTo3;
-        private System.Windows.Forms.Button buttonJumpTo2;
-        private System.Windows.Forms.Button buttonJumpTo1;
-        private System.Windows.Forms.Button buttonJumpTo9;
         private System.Windows.Forms.DataGridView dataGridViewAdcs;
         private System.Windows.Forms.Label labelApGainCorrection;
         private System.Windows.Forms.TextBox textBoxApGainCorrection;
         private System.Windows.Forms.TextBox textBoxLfpGainCorrection;
         private System.Windows.Forms.Label labelLfpGainCorrection;
+        private System.Windows.Forms.Button buttonClearSelections;
+        private System.Windows.Forms.Button buttonEnableContacts;
+        private System.Windows.Forms.TrackBar trackBarProbePosition;
     }
 }

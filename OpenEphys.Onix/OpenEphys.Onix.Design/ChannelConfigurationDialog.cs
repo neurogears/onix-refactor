@@ -20,12 +20,24 @@ namespace OpenEphys.Onix.Design
         /// Standardize the format of the string used for creating tags, so that
         /// they can be searched for effectively
         /// </summary>
-        public const string ContactStringFormat = "Contact_{0}";
+        public const string ContactStringFormat = "Probe_{0}-Contact_{1}";
         /// <summary>
         /// Standardize the format of the string used for creating tags, so that
         /// they can be searched for effectively
         /// </summary>
-        public const string TextStringFormat = "TextContact_{0}";
+        public const string TextStringFormat = "TextProbe_{0}-Contact_{1}";
+
+        private struct Tag
+        {
+            public int ProbeNumber;
+            public int ContactNumber;
+
+            public Tag(int probeNumber, int contactNumber)
+            {
+                ProbeNumber = probeNumber;
+                ContactNumber = contactNumber;
+            }
+        }
 
         /// <summary>
         /// Local variable that holds the channel configuration in memory until the user presses Okay
@@ -45,7 +57,7 @@ namespace OpenEphys.Onix.Design
 
         const string SelectionAreaTag = "Selection";
 
-        readonly bool[] SelectedChannels = null;
+        internal readonly bool[] SelectedContacts = null;
 
         /// <summary>
         /// Constructs the dialog window using the given probe group, and plots all contacts after loading.
@@ -65,7 +77,7 @@ namespace OpenEphys.Onix.Design
                 ChannelConfiguration = probeGroup;
             }
 
-            SelectedChannels = new bool[ChannelConfiguration.NumberOfContacts];
+            SelectedContacts = new bool[ChannelConfiguration.NumberOfContacts];
 
             zedGraphChannels.MouseDownEvent += MouseDownEvent;
             zedGraphChannels.MouseMoveEvent += MouseMoveEvent;
@@ -183,9 +195,9 @@ namespace OpenEphys.Onix.Design
 
             zedGraphChannels.GraphPane.GraphObjList.Clear();
 
-            for (int i = 0; i < ChannelConfiguration.Probes.Count(); i++)
+            for (int probeNumber = 0; probeNumber < ChannelConfiguration.Probes.Count(); probeNumber++)
             {
-                PointD[] planarContours = ConvertFloatArrayToPointD(ChannelConfiguration.Probes.ElementAt(i).ProbePlanarContour);
+                PointD[] planarContours = ConvertFloatArrayToPointD(ChannelConfiguration.Probes.ElementAt(probeNumber).ProbePlanarContour);
                 PolyObj contour = new(planarContours, Color.Black, Color.White)
                 {
                     ZOrder = ZOrder.C_BehindChartBorder
@@ -193,9 +205,11 @@ namespace OpenEphys.Onix.Design
 
                 zedGraphChannels.GraphPane.GraphObjList.Add(contour);
 
-                for (int j = 0; j < ChannelConfiguration.Probes.ElementAt(i).ContactPositions.Length; j++)
+                var probeOffset = probeNumber == 0 ? 0 : GetProbeIndexOffset(probeNumber);
+
+                for (int j = 0; j < ChannelConfiguration.Probes.ElementAt(probeNumber).ContactPositions.Length; j++)
                 {
-                    Contact contact = ChannelConfiguration.Probes.ElementAt(i).GetContact(j);
+                    Contact contact = ChannelConfiguration.Probes.ElementAt(probeNumber).GetContact(j);
 
                     bool inactiveContact = contact.DeviceId == -1;
 
@@ -204,8 +218,8 @@ namespace OpenEphys.Onix.Design
                     if (!inactiveContact && ReferenceContacts.Any(x => x == contact.Index))
                         fillColor = ReferenceContactFill;
 
-                    Color borderColor = SelectedChannels[contact.Index] ? SelectedContactBorder : DeselectedContactBorder;
-                    string id = inactiveContact ? "Off" : contact.DeviceId.ToString();
+                    Color borderColor = SelectedContacts[probeOffset + contact.Index] ? SelectedContactBorder : DeselectedContactBorder;
+                    string id = inactiveContact ? "Off" : contact.Index.ToString();
 
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
@@ -215,7 +229,7 @@ namespace OpenEphys.Onix.Design
                             size, size, borderColor, fillColor)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
-                            Tag = string.Format(ContactStringFormat, contact.Index)
+                            Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
                         };
 
                         zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
@@ -228,7 +242,7 @@ namespace OpenEphys.Onix.Design
                             size, size, borderColor, fillColor)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
-                            Tag = string.Format(ContactStringFormat, contact.Index)
+                            Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
                         };
 
                         contactObj.Border.Width = 3;
@@ -244,7 +258,7 @@ namespace OpenEphys.Onix.Design
                     TextObj textObj = new(id, contact.PosX, contact.PosY)
                     {
                         ZOrder = ZOrder.A_InFront,
-                        Tag = string.Format(TextStringFormat, contact.Index)
+                        Tag = string.Format(TextStringFormat, probeNumber, contact.Index)
                     };
                     textObj.FontSpec.IsBold = true;
                     textObj.FontSpec.Border.IsVisible = false;
@@ -557,6 +571,23 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.GraphPane.YAxis.Scale.Max = newMinY + currentRange;
         }
 
+        public float GetRelativeVerticalPosition()
+        {
+            var minY = MinY(zedGraphChannels.GraphPane.GraphObjList);
+            var maxY = MaxY(zedGraphChannels.GraphPane.GraphObjList);
+
+            var currentRange = zedGraphChannels.GraphPane.YAxis.Scale.Max - zedGraphChannels.GraphPane.YAxis.Scale.Min;
+
+            if (zedGraphChannels.GraphPane.YAxis.Scale.Min <= minY)
+                return 0.0f;
+            else if (zedGraphChannels.GraphPane.YAxis.Scale.Min >= maxY - currentRange)
+                return 1.0f;
+            else
+            {
+                return (float)((zedGraphChannels.GraphPane.YAxis.Scale.Min - minY) / (maxY - minY - currentRange));
+            }
+        }
+
         public void RefreshZedGraph()
         {
             zedGraphChannels.AxisChange();
@@ -627,7 +658,7 @@ namespace OpenEphys.Onix.Design
                     {
                         for(int i = 0; i < ChannelConfiguration.NumberOfContacts; i++)
                         {
-                            if (sender.GraphPane.GraphObjList[string.Format(ContactStringFormat, i)] is BoxObj contact && contact != null)
+                            if (sender.GraphPane.GraphObjList[string.Format(ContactStringFormat, 0, i)] is BoxObj contact && contact != null)
                             {
                                 if (Contains(rect, contact.Location))
                                 {
@@ -675,26 +706,43 @@ namespace OpenEphys.Onix.Design
 
         private void SetSelectedContact(string tag, bool status)
         {
-            string[] words = tag.Split('_');
-            if (int.TryParse(words[1], out int num))
-            {
-                SelectedChannels[num] = status;
-            }
-            else
+            var parsedTag = ParseTag(tag);
+
+            var index = GetProbeIndexOffset(parsedTag.ProbeNumber) + parsedTag.ContactNumber;
+
+            SelectedContacts[index] = status;
+        }
+
+        private static Tag ParseTag(string tag)
+        {
+            string[] words = tag.Split('-');
+
+            string[] probeStrings = words[0].Split('_');
+            string[] contactStrings = words[1].Split('_');
+
+            if (!int.TryParse(probeStrings[1], out int probeNumber) || !int.TryParse(contactStrings[1], out int contactNumber))
             {
                 throw new ArgumentException($"Invalid channel tag \"{tag}\" found");
+            }
+
+            return new(probeNumber, contactNumber);
+        }
+
+        internal void SetAllSelections(bool newStatus)
+        {
+            for (int i = 0; i < SelectedContacts.Length; i++)
+            {
+                SelectedContacts[i] = newStatus;
             }
         }
 
         private bool GetContactStatus(string tag)
         {
-            string[] words = tag.Split('_');
-            if (int.TryParse(words[1], out int num))
-            {
-                return SelectedChannels[num];
-            }
+            var parsedTag = ParseTag(tag);
 
-            throw new ArgumentException($"Invalid channel tag \"{tag}\" found");
+            var index = GetProbeIndexOffset(parsedTag.ProbeNumber) + parsedTag.ContactNumber;
+
+            return SelectedContacts[index];
         }
 
         private static PointD TransformPixelsToCoordinates(Point pixels, GraphPane graphPane)
@@ -723,5 +771,16 @@ namespace OpenEphys.Onix.Design
             return false;
         }
 
+        private int GetProbeIndexOffset(int currentProbeIndex)
+        {
+            int offset = 0;
+
+            for(int i = currentProbeIndex - 1; i >= 0; i--)
+            {
+                offset += ChannelConfiguration.Probes.ElementAt(i).NumberOfContacts;
+            }
+
+            return offset;
+        }
     }
 }

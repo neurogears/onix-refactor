@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using OpenEphys.ProbeInterface;
@@ -8,6 +9,8 @@ namespace OpenEphys.Onix.Design
 {
     public partial class NeuropixelsV1eChannelConfigurationDialog : ChannelConfigurationDialog
     {
+        public event EventHandler OnZoom;
+
         public NeuropixelsV1eChannelConfigurationDialog(NeuropixelsV1eProbeGroup probeGroup)
             : base(probeGroup)
         {
@@ -36,6 +39,16 @@ namespace OpenEphys.Onix.Design
 
             UpdateFontSize();
             RefreshZedGraph();
+
+            OnZoomHandler();
+        }
+
+        private void OnZoomHandler()
+        {
+            if (OnZoom != null)
+            {
+                OnZoom(this, EventArgs.Empty);
+            }
         }
 
         public override void DrawScale()

@@ -29,7 +29,7 @@ namespace OpenEphys.Onix
                           DefaultProbePlanarContour(),
                           DefaultDeviceChannelIndices(ChannelCount, ElectrodeCount),
                           Probe.DefaultContactIds(ElectrodeCount),
-                          Probe.DefaultShankIds(ElectrodeCount))
+                          DefaultShankIds(ElectrodeCount))
                   }.ToArray())
         {
         }
@@ -145,5 +145,23 @@ namespace OpenEphys.Onix
 
             return stringBuilder.ToString();
         }
+
+        /// <summary>
+        /// Generates an array of strings with the value "0" as the default shank ID, since Neuropixel 1.0 only has one shank
+        /// </summary>
+        /// <param name="numberOfContacts">Number of contacts in a single probe</param>
+        /// <returns></returns>
+        public static string[] DefaultShankIds(int numberOfContacts)
+        {
+            string[] contactIds = new string[numberOfContacts];
+
+            for (int i = 0; i < numberOfContacts; i++)
+            {
+                contactIds[i] = "0";
+            }
+
+            return contactIds;
+        }
+
     }
 }

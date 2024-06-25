@@ -3,11 +3,18 @@ using System.ComponentModel;
 
 namespace OpenEphys.Onix
 {
+    [Editor("OpenEphys.Onix.Design.Bno055Editor, OpenEphys.Onix.Design", typeof(ComponentEditor))]
     public class ConfigureBno055 : SingleDeviceFactory
     {
         public ConfigureBno055()
             : base(typeof(Bno055))
         {
+        }
+
+        public ConfigureBno055(ConfigureBno055 configureBno055)
+            : base(typeof(Bno055))
+        {
+            Enable = configureBno055.Enable;
         }
 
         [Category(ConfigurationCategory)]

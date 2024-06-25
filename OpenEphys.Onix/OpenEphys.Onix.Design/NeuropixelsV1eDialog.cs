@@ -9,6 +9,16 @@ namespace OpenEphys.Onix.Design
     {
         readonly NeuropixelsV1eChannelConfigurationDialog channelConfiguration;
 
+        private enum ChannelPreset
+        {
+            BankA,
+            BankB,
+            BankC,
+            SingleColumn,
+            Tetrodes,
+            None
+        }
+
         NeuropixelsV1Adc[] Adcs;
 
         double ApGainCorrection = default;
@@ -34,6 +44,7 @@ namespace OpenEphys.Onix.Design
             this.AddMenuItemsFromDialog(channelConfiguration, "Channel Configuration");
 
             channelConfiguration.OnZoom += UpdateTrackBarLocation;
+            channelConfiguration.OnFileLoad += UpdateChannelPresetIndex;
 
             channelConfiguration.Show();
 
@@ -57,6 +68,10 @@ namespace OpenEphys.Onix.Design
 
             textBoxGainCalibrationFile.TextChanged += FileTextChanged;
             textBoxGainCalibrationFile.Text = ConfigureNode.GainCalibrationFile;
+
+            comboBoxChannelPresets.DataSource = Enum.GetValues(typeof(ChannelPreset));
+            CheckForExistingChannelPreset();
+            comboBoxChannelPresets.SelectedIndexChanged += SelectedIndexChanged;
 
             CheckStatus();
         }
@@ -147,6 +162,13 @@ namespace OpenEphys.Onix.Design
                 {
                     ConfigureNode.ProbeConfiguration.Reference = (NeuropixelsV1ReferenceSource)comboBox.SelectedItem;
                 }
+                else if (comboBox.Name == nameof(comboBoxChannelPresets))
+                {
+                    if ((ChannelPreset)comboBox.SelectedItem != ChannelPreset.None)
+                    {
+                        SetChannelPreset((ChannelPreset)comboBox.SelectedItem);
+                    }
+                }
             }
             else if (sender is CheckBox checkBox && checkBox != null)
             {
@@ -155,6 +177,83 @@ namespace OpenEphys.Onix.Design
                     ConfigureNode.ProbeConfiguration.SpikeFilter = checkBox.Checked;
                 }
             }
+        }
+
+        private void SetChannelPreset(ChannelPreset preset)
+        {
+            var channelMap = channelConfiguration.ChannelMap;
+            var electrodes = channelConfiguration.Electrodes;
+
+            switch (preset)
+            {
+                case ChannelPreset.BankA:
+                    channelMap.SelectElectrodes(
+                        electrodes.Where(e => e.Bank == NeuropixelsV1Bank.A).ToList());
+                    break;
+
+                case ChannelPreset.BankB:
+                    channelMap.SelectElectrodes(
+                        electrodes.Where(e => e.Bank == NeuropixelsV1Bank.B).ToList());
+                    break;
+
+                case ChannelPreset.BankC:
+                    channelMap.SelectElectrodes(
+                        electrodes.Where(e => e.Bank == NeuropixelsV1Bank.C ||
+                                                                  (e.Bank == NeuropixelsV1Bank.B && e.ElectrodeNumber >= 576)).ToList());
+                    break;
+
+                case ChannelPreset.SingleColumn:
+                    channelMap.SelectElectrodes(
+                        electrodes.Where(e => (e.ElectrodeNumber % 2 == 0 && e.Bank == NeuropixelsV1Bank.A) ||
+                                              (e.ElectrodeNumber % 2 == 1 && e.Bank == NeuropixelsV1Bank.B)).ToList());
+                    break;
+
+                case ChannelPreset.Tetrodes:
+                    channelMap.SelectElectrodes(
+                        electrodes.Where(e => (e.ElectrodeNumber % 8 < 4 && e.Bank == NeuropixelsV1Bank.A) ||
+                                              (e.ElectrodeNumber % 8 > 3 && e.Bank == NeuropixelsV1Bank.B)).ToList());
+                    break;
+            }
+
+            channelConfiguration.DrawChannels();
+        }
+
+        private void CheckForExistingChannelPreset()
+        {
+            var channelMap = channelConfiguration.ChannelMap;
+
+            if (channelMap.All(e => e.Bank == NeuropixelsV1Bank.A))
+            {
+                comboBoxChannelPresets.SelectedItem = ChannelPreset.BankA;
+            }
+            else if (channelMap.All(e => e.Bank == NeuropixelsV1Bank.B))
+            {
+                comboBoxChannelPresets.SelectedItem = ChannelPreset.BankB;
+            }
+            else if (channelMap.All(e => e.Bank == NeuropixelsV1Bank.C ||
+                                                             (e.Bank == NeuropixelsV1Bank.B && e.ElectrodeNumber >= 576)))
+            {
+                comboBoxChannelPresets.SelectedItem = ChannelPreset.BankC;
+            }
+            else if (channelMap.All(e => (e.ElectrodeNumber % 2 == 0 && e.Bank == NeuropixelsV1Bank.A) ||
+                                              (e.ElectrodeNumber % 2 == 1 && e.Bank == NeuropixelsV1Bank.B)))
+            {
+                comboBoxChannelPresets.SelectedItem = ChannelPreset.SingleColumn;
+            }
+            else if (channelMap.All(e => (e.ElectrodeNumber % 8 < 4 && e.Bank == NeuropixelsV1Bank.A) ||
+                                              (e.ElectrodeNumber % 8 > 3 && e.Bank == NeuropixelsV1Bank.B)))
+            {
+                comboBoxChannelPresets.SelectedItem = ChannelPreset.Tetrodes;
+            }
+            else
+            {
+                comboBoxChannelPresets.SelectedItem = ChannelPreset.None;
+            }
+        }
+
+        private void UpdateChannelPresetIndex(object sender, EventArgs e)
+        {
+            CheckForExistingChannelPreset();
         }
 
         private void CheckStatus()
@@ -221,7 +320,7 @@ namespace OpenEphys.Onix.Design
             {
                 if (button.Name == nameof(buttonOkay))
                 {
-                    NeuropixelsV1Helper.UpdateProbeGroup(channelConfiguration.ChannelMap, ConfigureNode.ProbeConfiguration.ChannelConfiguration);
+                    DesignHelper.UpdateProbeGroup(channelConfiguration.ChannelMap, ConfigureNode.ProbeConfiguration.ChannelConfiguration);
 
                     DialogResult = DialogResult.OK;
                 }
@@ -295,6 +394,8 @@ namespace OpenEphys.Onix.Design
                                                          .ToList();
 
             channelConfiguration.EnableElectrodes(selectedElectrodes);
+
+            CheckForExistingChannelPreset();
         }
 
         private void ZoomIn(double zoom)

@@ -16,7 +16,7 @@ namespace OpenEphys.Onix
         C
     }
 
-    public class NeuropixelsV1eProbe
+    public class NeuropixelsV1eProbeConfiguration
     {
         [Category("Configuration")]
         [Description("Amplifier gain for spike-band.")]
@@ -56,7 +56,7 @@ namespace OpenEphys.Onix
             }
         }
 
-        public NeuropixelsV1eProbe()
+        public NeuropixelsV1eProbeConfiguration()
         {
         }
     }

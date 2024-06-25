@@ -1,11 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Reactive.Disposables;
-using System.Text;
 using System.Threading;
-using System.Xml.Serialization;
 using Bonsai;
-using Newtonsoft.Json;
 
 namespace OpenEphys.Onix
 {
@@ -49,7 +46,7 @@ namespace OpenEphys.Onix
 
         [Category(ConfigurationCategory)]
         [Description("Neuropixels 1.0e probe configuration")]
-        public NeuropixelsV1eProbe ProbeConfiguration { get; set; } = new();
+        public NeuropixelsV1eProbeConfiguration ProbeConfiguration { get; set; } = new();
 
         public override IObservable<ContextTask> Process(IObservable<ContextTask> source)
         {

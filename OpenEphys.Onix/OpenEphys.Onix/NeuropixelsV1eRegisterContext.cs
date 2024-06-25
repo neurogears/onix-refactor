@@ -24,7 +24,7 @@ namespace OpenEphys.Onix
                                             new(BaseConfigurationBitCount, false) }; // Ch 1, 3, 5, ...
 
         public NeuropixelsV1eRegisterContext(DeviceContext deviceContext, uint i2cAddress, 
-            NeuropixelsV1eProbe probeConfiguration, string gainCalibrationFile, string adcCalibrationFile)
+            NeuropixelsV1eProbeConfiguration probeConfiguration, string gainCalibrationFile, string adcCalibrationFile)
             : base(deviceContext, i2cAddress)
         {
             if (gainCalibrationFile == null || adcCalibrationFile == null)

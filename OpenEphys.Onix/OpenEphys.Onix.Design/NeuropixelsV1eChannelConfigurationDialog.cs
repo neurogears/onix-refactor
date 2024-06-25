@@ -11,6 +11,7 @@ namespace OpenEphys.Onix.Design
     public partial class NeuropixelsV1eChannelConfigurationDialog : ChannelConfigurationDialog
     {
         public event EventHandler OnZoom;
+        public event EventHandler OnFileLoad;
 
         public readonly List<NeuropixelsV1eElectrode> Electrodes;
         public readonly List<NeuropixelsV1eElectrode> ChannelMap;
@@ -28,8 +29,8 @@ namespace OpenEphys.Onix.Design
 
             ReferenceContacts = new List<int> { 191, 575, 959 };
 
-            ChannelMap = NeuropixelsV1Helper.ToChannelMap(probeGroup);
-            Electrodes = NeuropixelsV1Helper.ToElectrodes(probeGroup);
+            ChannelMap = DesignHelper.ToChannelMap((NeuropixelsV1eProbeGroup)ChannelConfiguration);
+            Electrodes = DesignHelper.ToElectrodes((NeuropixelsV1eProbeGroup)ChannelConfiguration);
 
             DrawChannels();
             RefreshZedGraph();
@@ -44,16 +45,24 @@ namespace OpenEphys.Onix.Design
         {
             base.LoadDefaultChannelLayout();
 
-            NeuropixelsV1Helper.UpdateElectrodes(Electrodes, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
-            NeuropixelsV1Helper.UpdateChannelMap(ChannelMap, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+            DesignHelper.UpdateElectrodes(Electrodes, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+            DesignHelper.UpdateChannelMap(ChannelMap, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+
+            OnFileOpenHandler();
         }
 
         internal override void OpenFile<T>()
         {
             base.OpenFile<NeuropixelsV1eProbeGroup>();
 
-            NeuropixelsV1Helper.UpdateElectrodes(Electrodes, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
-            NeuropixelsV1Helper.UpdateChannelMap(ChannelMap, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+            DesignHelper.UpdateChannelMap(ChannelMap, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+
+            OnFileOpenHandler();
+        }
+
+        private void OnFileOpenHandler()
+        {
+            OnFileLoad?.Invoke(this, EventArgs.Empty);
         }
 
         public override void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
@@ -128,10 +137,9 @@ namespace OpenEphys.Onix.Design
             {
                 var tag = string.Format(ContactStringFormat, 0, e.ElectrodeNumber);
 
-                var fillColor = ChannelMap[e.Channel].ElectrodeNumber == e.ElectrodeNumber ? EnabledContactFill : DisabledContactFill;
-
-                if (ReferenceContacts.Any(x => x == e.ElectrodeNumber)) 
-                    fillColor = ReferenceContactFill;
+                var fillColor = ChannelMap[e.Channel].ElectrodeNumber == e.ElectrodeNumber ?
+                                (ReferenceContacts.Any(x => x == e.ElectrodeNumber) ? ReferenceContactFill : EnabledContactFill) : 
+                                DisabledContactFill;
 
                 if (zedGraphChannels.GraphPane.GraphObjList[tag] is BoxObj graphObj)
                 {
@@ -169,10 +177,7 @@ namespace OpenEphys.Onix.Design
 
         public void EnableElectrodes(List<NeuropixelsV1eElectrode> electrodes)
         {
-            foreach (var e in electrodes)
-            {
-                ChannelMap[e.Channel] = e;
-            }
+            ChannelMap.SelectElectrodes(electrodes);
         }
 
         private void AddPointsToCurve(PointPairList pointList)

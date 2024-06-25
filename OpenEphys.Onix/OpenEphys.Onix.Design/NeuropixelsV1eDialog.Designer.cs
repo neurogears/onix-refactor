@@ -39,7 +39,7 @@
             System.Windows.Forms.Label label1;
             System.Windows.Forms.Label label2;
             System.Windows.Forms.Label labelSelection;
-            System.Windows.Forms.Label label3;
+            System.Windows.Forms.Label labelPresets;
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.gainCalibrationSN = new System.Windows.Forms.ToolStripStatusLabel();
@@ -68,6 +68,7 @@
             this.comboBoxApGain = new System.Windows.Forms.ComboBox();
             this.tabPageContactsOptions = new System.Windows.Forms.TabPage();
             this.panelChannelOptions = new System.Windows.Forms.Panel();
+            this.comboBoxChannelPresets = new System.Windows.Forms.ComboBox();
             this.trackBarProbePosition = new System.Windows.Forms.TrackBar();
             this.buttonEnableContacts = new System.Windows.Forms.Button();
             this.buttonClearSelections = new System.Windows.Forms.Button();
@@ -80,7 +81,7 @@
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOkay = new System.Windows.Forms.Button();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripStatusLabelGainCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusLabelAdcCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             apGain = new System.Windows.Forms.Label();
@@ -92,7 +93,8 @@
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             labelSelection = new System.Windows.Forms.Label();
-            label3 = new System.Windows.Forms.Label();
+            labelPresets = new System.Windows.Forms.Label();
+            this.menuStrip.SuspendLayout();
             this.statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -202,13 +204,33 @@
             label2.TabIndex = 6;
             label2.Text = "Zoom";
             // 
+            // labelSelection
+            // 
+            labelSelection.AutoSize = true;
+            labelSelection.Location = new System.Drawing.Point(149, 191);
+            labelSelection.Name = "labelSelection";
+            labelSelection.Size = new System.Drawing.Size(75, 20);
+            labelSelection.TabIndex = 18;
+            labelSelection.Text = "Selection";
+            // 
+            // labelPresets
+            // 
+            labelPresets.AutoSize = true;
+            labelPresets.Location = new System.Drawing.Point(149, 384);
+            labelPresets.Name = "labelPresets";
+            labelPresets.Size = new System.Drawing.Size(63, 20);
+            labelPresets.TabIndex = 23;
+            labelPresets.Text = "Presets";
+            // 
             // menuStrip
             // 
             this.menuStrip.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1130, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1130, 33);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -251,7 +273,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 33);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -262,8 +284,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1130, 678);
-            this.splitContainer1.SplitterDistance = 626;
+            this.splitContainer1.Size = new System.Drawing.Size(1130, 669);
+            this.splitContainer1.SplitterDistance = 617;
             this.splitContainer1.TabIndex = 2;
             // 
             // tabControlProbe
@@ -274,7 +296,7 @@
             this.tabControlProbe.Location = new System.Drawing.Point(0, 0);
             this.tabControlProbe.Name = "tabControlProbe";
             this.tabControlProbe.SelectedIndex = 0;
-            this.tabControlProbe.Size = new System.Drawing.Size(1130, 626);
+            this.tabControlProbe.Size = new System.Drawing.Size(1130, 617);
             this.tabControlProbe.TabIndex = 0;
             // 
             // tabPageProbe
@@ -283,7 +305,7 @@
             this.tabPageProbe.Location = new System.Drawing.Point(4, 29);
             this.tabPageProbe.Name = "tabPageProbe";
             this.tabPageProbe.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProbe.Size = new System.Drawing.Size(1122, 593);
+            this.tabPageProbe.Size = new System.Drawing.Size(1122, 584);
             this.tabPageProbe.TabIndex = 0;
             this.tabPageProbe.Text = "Probe";
             this.tabPageProbe.UseVisualStyleBackColor = true;
@@ -302,7 +324,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panel2);
-            this.splitContainer2.Size = new System.Drawing.Size(1116, 587);
+            this.splitContainer2.Size = new System.Drawing.Size(1116, 578);
             this.splitContainer2.SplitterDistance = 858;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -311,7 +333,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(858, 587);
+            this.panelProbe.Size = new System.Drawing.Size(858, 578);
             this.panelProbe.TabIndex = 0;
             // 
             // panel2
@@ -320,7 +342,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(254, 587);
+            this.panel2.Size = new System.Drawing.Size(254, 578);
             this.panel2.TabIndex = 0;
             // 
             // tabControlOptions
@@ -331,7 +353,7 @@
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(254, 587);
+            this.tabControlOptions.Size = new System.Drawing.Size(254, 578);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabPageOptions
@@ -340,7 +362,7 @@
             this.tabPageOptions.Location = new System.Drawing.Point(4, 29);
             this.tabPageOptions.Name = "tabPageOptions";
             this.tabPageOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOptions.Size = new System.Drawing.Size(246, 554);
+            this.tabPageOptions.Size = new System.Drawing.Size(246, 545);
             this.tabPageOptions.TabIndex = 0;
             this.tabPageOptions.Text = "Options";
             this.tabPageOptions.UseVisualStyleBackColor = true;
@@ -368,7 +390,7 @@
             this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelOptions.Location = new System.Drawing.Point(3, 3);
             this.panelOptions.Name = "panelOptions";
-            this.panelOptions.Size = new System.Drawing.Size(240, 548);
+            this.panelOptions.Size = new System.Drawing.Size(240, 539);
             this.panelOptions.TabIndex = 0;
             // 
             // textBoxLfpGainCorrection
@@ -493,8 +515,8 @@
             // 
             // panelChannelOptions
             // 
-            this.panelChannelOptions.Controls.Add(this.comboBox1);
-            this.panelChannelOptions.Controls.Add(label3);
+            this.panelChannelOptions.Controls.Add(this.comboBoxChannelPresets);
+            this.panelChannelOptions.Controls.Add(labelPresets);
             this.panelChannelOptions.Controls.Add(this.trackBarProbePosition);
             this.panelChannelOptions.Controls.Add(this.buttonEnableContacts);
             this.panelChannelOptions.Controls.Add(this.buttonClearSelections);
@@ -509,6 +531,15 @@
             this.panelChannelOptions.Name = "panelChannelOptions";
             this.panelChannelOptions.Size = new System.Drawing.Size(246, 554);
             this.panelChannelOptions.TabIndex = 0;
+            // 
+            // comboBoxChannelPresets
+            // 
+            this.comboBoxChannelPresets.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxChannelPresets.FormattingEnabled = true;
+            this.comboBoxChannelPresets.Location = new System.Drawing.Point(134, 420);
+            this.comboBoxChannelPresets.Name = "comboBoxChannelPresets";
+            this.comboBoxChannelPresets.Size = new System.Drawing.Size(102, 28);
+            this.comboBoxChannelPresets.TabIndex = 24;
             // 
             // trackBarProbePosition
             // 
@@ -541,15 +572,6 @@
             this.buttonClearSelections.Text = "Clear Selection";
             this.buttonClearSelections.UseVisualStyleBackColor = true;
             this.buttonClearSelections.Click += new System.EventHandler(this.ButtonClick);
-            // 
-            // labelSelection
-            // 
-            labelSelection.AutoSize = true;
-            labelSelection.Location = new System.Drawing.Point(149, 191);
-            labelSelection.Name = "labelSelection";
-            labelSelection.Size = new System.Drawing.Size(75, 20);
-            labelSelection.TabIndex = 18;
-            labelSelection.Text = "Selection";
             // 
             // buttonResetZoom
             // 
@@ -647,22 +669,11 @@
             this.linkLabelDocumentation.Text = "Documentation";
             this.linkLabelDocumentation.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.LinkClicked);
             // 
-            // label3
+            // fileToolStripMenuItem
             // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(149, 384);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(63, 20);
-            label3.TabIndex = 23;
-            label3.Text = "Presets";
-            // 
-            // comboBox1
-            // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(134, 420);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(102, 28);
-            this.comboBox1.TabIndex = 24;
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
+            this.fileToolStripMenuItem.Text = "File";
             // 
             // NeuropixelsV1eDialog
             // 
@@ -677,6 +688,8 @@
             this.Name = "NeuropixelsV1eDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "NeuropixelsV1eDialog";
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -748,6 +761,7 @@
         private System.Windows.Forms.Button buttonClearSelections;
         private System.Windows.Forms.Button buttonEnableContacts;
         private System.Windows.Forms.TrackBar trackBarProbePosition;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxChannelPresets;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
     }
 }

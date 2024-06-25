@@ -169,16 +169,28 @@ namespace OpenEphys.Onix.Design
 
             if (ofd.ShowDialog() == DialogResult.OK && File.Exists(ofd.FileName))
             {
-                var channelConfiguration = DesignHelper.DeserializeString<T>(File.ReadAllText(ofd.FileName));
+                var newConfiguration = DesignHelper.DeserializeString<T>(File.ReadAllText(ofd.FileName));
 
-                if (channelConfiguration == null)
+                if (newConfiguration == null)
                 {
                     MessageBox.Show("Error opening the JSON file.");
                     return;
                 }
                 else
                 {
-                    ChannelConfiguration = channelConfiguration;
+                    var currentNumberOfProbes = ChannelConfiguration.Probes.Count();
+                    var newNumberOfProbes = newConfiguration.Probes.Count();
+
+                    if (currentNumberOfProbes != newNumberOfProbes)
+                        throw new InvalidOperationException("New file is invalid; number of probes does not match current configuration.");
+
+                    for (int i = 0; i < currentNumberOfProbes; i++)
+                    {
+                        if (ChannelConfiguration.Probes.ElementAt(i).NumberOfContacts != newConfiguration.Probes.ElementAt(i).NumberOfContacts)
+                            throw new InvalidOperationException($"New file is invalid; number of contacts in probe {i} does not match current configuration");
+
+                        ChannelConfiguration.UpdateDeviceChannelIndices(i, newConfiguration.Probes.ElementAt(i).DeviceChannelIndices);
+                    }
                 }
             }
         }
@@ -270,10 +282,9 @@ namespace OpenEphys.Onix.Design
 
                     bool inactiveContact = contact.DeviceId == -1;
 
-                    Color fillColor = inactiveContact ? DisabledContactFill : EnabledContactFill;
-
-                    if (!inactiveContact && ReferenceContacts.Any(x => x == contact.Index))
-                        fillColor = ReferenceContactFill;
+                    Color fillColor = inactiveContact ? 
+                                      DisabledContactFill : 
+                                      (ReferenceContacts.Any(x => x == contact.Index) ? ReferenceContactFill : EnabledContactFill);
 
                     var tag = string.Format(ContactStringFormat, probeNumber, contact.Index);
 

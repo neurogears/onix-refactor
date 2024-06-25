@@ -29,6 +29,7 @@ namespace OpenEphys.Onix.Design
         public NeuropixelsV1eDialog(ConfigureNeuropixelsV1e configureNode)
         {
             InitializeComponent();
+            Shown += FormShown;
 
             ConfigureNode = new(configureNode);
 
@@ -41,7 +42,7 @@ namespace OpenEphys.Onix.Design
             };
 
             panelProbe.Controls.Add(channelConfiguration);
-            this.AddMenuItemsFromDialog(channelConfiguration, "Channel Configuration");
+            this.AddMenuItemsFromDialogToFileOption(channelConfiguration);
 
             channelConfiguration.OnZoom += UpdateTrackBarLocation;
             channelConfiguration.OnFileLoad += UpdateChannelPresetIndex;
@@ -74,6 +75,17 @@ namespace OpenEphys.Onix.Design
             comboBoxChannelPresets.SelectedIndexChanged += SelectedIndexChanged;
 
             CheckStatus();
+        }
+
+        private void FormShown(object sender, EventArgs e)
+        {
+            if (!TopLevel)
+            {
+                splitContainer1.Panel2Collapsed = true;
+                splitContainer1.Panel2.Hide();
+
+                menuStrip.Visible = false;
+            }
         }
 
         private void FileTextChanged(object sender, EventArgs e)

@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             this.propertyGrid = new System.Windows.Forms.PropertyGrid();
-            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
-            this.splitContainer2.Panel1.SuspendLayout();
-            this.splitContainer2.Panel2.SuspendLayout();
-            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
+            this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
+            this.splitContainer1.SuspendLayout();
             this.SuspendLayout();
             // 
             // propertyGrid
@@ -46,25 +46,25 @@
             this.propertyGrid.Size = new System.Drawing.Size(378, 532);
             this.propertyGrid.TabIndex = 0;
             // 
-            // splitContainer2
+            // splitContainer1
             // 
-            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer2.Name = "splitContainer2";
-            this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Right;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
+            this.splitContainer1.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer1.Name = "splitContainer1";
+            this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
-            // splitContainer2.Panel1
+            // splitContainer1.Panel1
             // 
-            this.splitContainer2.Panel1.Controls.Add(this.propertyGrid);
+            this.splitContainer1.Panel1.Controls.Add(this.propertyGrid);
             // 
-            // splitContainer2.Panel2
+            // splitContainer1.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.buttonCancel);
-            this.splitContainer2.Panel2.Controls.Add(this.buttonOK);
-            this.splitContainer2.Size = new System.Drawing.Size(378, 594);
-            this.splitContainer2.SplitterDistance = 532;
-            this.splitContainer2.TabIndex = 1;
+            this.splitContainer1.Panel2.Controls.Add(this.buttonCancel);
+            this.splitContainer1.Panel2.Controls.Add(this.buttonOK);
+            this.splitContainer1.Size = new System.Drawing.Size(378, 594);
+            this.splitContainer1.SplitterDistance = 532;
+            this.splitContainer1.TabIndex = 1;
             // 
             // buttonCancel
             // 
@@ -93,26 +93,24 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(378, 594);
-            this.Controls.Add(this.splitContainer2);
+            this.Controls.Add(this.splitContainer1);
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(400, 650);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(400, 650);
             this.Name = "GenericDeviceDialog";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "GenericDeviceDialog";
-            this.splitContainer2.Panel1.ResumeLayout(false);
-            this.splitContainer2.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
-            this.splitContainer2.ResumeLayout(false);
+            this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
+            this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
         internal System.Windows.Forms.PropertyGrid propertyGrid;
-        private System.Windows.Forms.SplitContainer splitContainer2;
+        internal System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOK;
     }

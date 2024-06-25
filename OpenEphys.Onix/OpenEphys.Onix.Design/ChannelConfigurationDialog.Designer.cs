@@ -63,7 +63,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.buttonCancel);
             this.splitContainer1.Panel2.Controls.Add(this.buttonOK);
             this.splitContainer1.Size = new System.Drawing.Size(686, 717);
-            this.splitContainer1.SplitterDistance = 649;
+            this.splitContainer1.SplitterDistance = 657;
             this.splitContainer1.TabIndex = 0;
             // 
             // zedGraphChannels
@@ -80,7 +80,7 @@
             this.zedGraphChannels.ScrollMinX = 0D;
             this.zedGraphChannels.ScrollMinY = 0D;
             this.zedGraphChannels.ScrollMinY2 = 0D;
-            this.zedGraphChannels.Size = new System.Drawing.Size(686, 616);
+            this.zedGraphChannels.Size = new System.Drawing.Size(686, 624);
             this.zedGraphChannels.TabIndex = 4;
             this.zedGraphChannels.UseExtendedPrintDialog = true;
             this.zedGraphChannels.ZoomEvent += new ZedGraph.ZedGraphControl.ZoomEventHandler(this.ZoomEvent);
@@ -111,21 +111,21 @@
             // menuItemOpenFile
             // 
             this.menuItemOpenFile.Name = "menuItemOpenFile";
-            this.menuItemOpenFile.Size = new System.Drawing.Size(215, 34);
+            this.menuItemOpenFile.Size = new System.Drawing.Size(270, 34);
             this.menuItemOpenFile.Text = "Open File";
             this.menuItemOpenFile.Click += new System.EventHandler(this.MenuItemOpenFile_Click);
             // 
             // menuItemSaveFile
             // 
             this.menuItemSaveFile.Name = "menuItemSaveFile";
-            this.menuItemSaveFile.Size = new System.Drawing.Size(215, 34);
+            this.menuItemSaveFile.Size = new System.Drawing.Size(270, 34);
             this.menuItemSaveFile.Text = "Save File";
             this.menuItemSaveFile.Click += new System.EventHandler(this.MenuItemSaveFile_Click);
             // 
             // loadDefaultToolStripMenuItem
             // 
             this.loadDefaultToolStripMenuItem.Name = "loadDefaultToolStripMenuItem";
-            this.loadDefaultToolStripMenuItem.Size = new System.Drawing.Size(215, 34);
+            this.loadDefaultToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
             this.loadDefaultToolStripMenuItem.Text = "Load Default";
             this.loadDefaultToolStripMenuItem.Click += new System.EventHandler(this.LoadDefaultToolStripMenuItem_Click);
             // 
@@ -133,9 +133,9 @@
             // 
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(512, 7);
+            this.buttonCancel.Location = new System.Drawing.Point(512, 8);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(162, 49);
+            this.buttonCancel.Size = new System.Drawing.Size(162, 40);
             this.buttonCancel.TabIndex = 4;
             this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
@@ -143,9 +143,9 @@
             // buttonOK
             // 
             this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(329, 7);
+            this.buttonOK.Location = new System.Drawing.Point(329, 8);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(162, 49);
+            this.buttonOK.Size = new System.Drawing.Size(162, 40);
             this.buttonOK.TabIndex = 3;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
@@ -174,7 +174,7 @@
         #endregion
 
         private System.Windows.Forms.SplitContainer splitContainer1;
-        protected ZedGraph.ZedGraphControl zedGraphChannels;
+        internal ZedGraph.ZedGraphControl zedGraphChannels;
         private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.MenuStrip menuStrip;

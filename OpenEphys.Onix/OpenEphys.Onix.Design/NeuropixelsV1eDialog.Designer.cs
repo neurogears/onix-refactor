@@ -44,7 +44,6 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.gainCalibrationSN = new System.Windows.Forms.ToolStripStatusLabel();
             this.adcCalibrationSN = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControlProbe = new System.Windows.Forms.TabControl();
             this.tabPageProbe = new System.Windows.Forms.TabPage();
@@ -82,6 +81,7 @@
             this.buttonOkay = new System.Windows.Forms.Button();
             this.linkLabelDocumentation = new System.Windows.Forms.LinkLabel();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripStatus = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusLabelGainCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             toolStripStatusLabelAdcCalSN = new System.Windows.Forms.ToolStripStatusLabel();
             apGain = new System.Windows.Forms.Label();
@@ -224,13 +224,12 @@
             // 
             // menuStrip
             // 
-            this.menuStrip.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1130, 33);
+            this.menuStrip.Size = new System.Drawing.Size(1130, 36);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -263,17 +262,11 @@
             this.adcCalibrationSN.Size = new System.Drawing.Size(150, 25);
             this.adcCalibrationSN.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // toolStripStatus
-            // 
-            this.toolStripStatus.Image = global::OpenEphys.Onix.Design.Properties.Resources.StatusReadyImage;
-            this.toolStripStatus.Name = "toolStripStatus";
-            this.toolStripStatus.Size = new System.Drawing.Size(24, 25);
-            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 33);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -284,8 +277,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.panel1);
-            this.splitContainer1.Size = new System.Drawing.Size(1130, 669);
-            this.splitContainer1.SplitterDistance = 617;
+            this.splitContainer1.Size = new System.Drawing.Size(1130, 666);
+            this.splitContainer1.SplitterDistance = 614;
             this.splitContainer1.TabIndex = 2;
             // 
             // tabControlProbe
@@ -296,7 +289,7 @@
             this.tabControlProbe.Location = new System.Drawing.Point(0, 0);
             this.tabControlProbe.Name = "tabControlProbe";
             this.tabControlProbe.SelectedIndex = 0;
-            this.tabControlProbe.Size = new System.Drawing.Size(1130, 617);
+            this.tabControlProbe.Size = new System.Drawing.Size(1130, 614);
             this.tabControlProbe.TabIndex = 0;
             // 
             // tabPageProbe
@@ -305,7 +298,7 @@
             this.tabPageProbe.Location = new System.Drawing.Point(4, 29);
             this.tabPageProbe.Name = "tabPageProbe";
             this.tabPageProbe.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageProbe.Size = new System.Drawing.Size(1122, 584);
+            this.tabPageProbe.Size = new System.Drawing.Size(1122, 581);
             this.tabPageProbe.TabIndex = 0;
             this.tabPageProbe.Text = "Probe";
             this.tabPageProbe.UseVisualStyleBackColor = true;
@@ -324,7 +317,7 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panel2);
-            this.splitContainer2.Size = new System.Drawing.Size(1116, 578);
+            this.splitContainer2.Size = new System.Drawing.Size(1116, 575);
             this.splitContainer2.SplitterDistance = 858;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -333,7 +326,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(858, 578);
+            this.panelProbe.Size = new System.Drawing.Size(858, 575);
             this.panelProbe.TabIndex = 0;
             // 
             // panel2
@@ -342,7 +335,7 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 0);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(254, 578);
+            this.panel2.Size = new System.Drawing.Size(254, 575);
             this.panel2.TabIndex = 0;
             // 
             // tabControlOptions
@@ -353,7 +346,7 @@
             this.tabControlOptions.Location = new System.Drawing.Point(0, 0);
             this.tabControlOptions.Name = "tabControlOptions";
             this.tabControlOptions.SelectedIndex = 0;
-            this.tabControlOptions.Size = new System.Drawing.Size(254, 578);
+            this.tabControlOptions.Size = new System.Drawing.Size(254, 575);
             this.tabControlOptions.TabIndex = 0;
             // 
             // tabPageOptions
@@ -362,7 +355,7 @@
             this.tabPageOptions.Location = new System.Drawing.Point(4, 29);
             this.tabPageOptions.Name = "tabPageOptions";
             this.tabPageOptions.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageOptions.Size = new System.Drawing.Size(246, 545);
+            this.tabPageOptions.Size = new System.Drawing.Size(246, 542);
             this.tabPageOptions.TabIndex = 0;
             this.tabPageOptions.Text = "Options";
             this.tabPageOptions.UseVisualStyleBackColor = true;
@@ -390,7 +383,7 @@
             this.panelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelOptions.Location = new System.Drawing.Point(3, 3);
             this.panelOptions.Name = "panelOptions";
-            this.panelOptions.Size = new System.Drawing.Size(240, 539);
+            this.panelOptions.Size = new System.Drawing.Size(240, 536);
             this.panelOptions.TabIndex = 0;
             // 
             // textBoxLfpGainCorrection
@@ -508,7 +501,7 @@
             this.tabPageContactsOptions.Controls.Add(this.panelChannelOptions);
             this.tabPageContactsOptions.Location = new System.Drawing.Point(4, 29);
             this.tabPageContactsOptions.Name = "tabPageContactsOptions";
-            this.tabPageContactsOptions.Size = new System.Drawing.Size(246, 554);
+            this.tabPageContactsOptions.Size = new System.Drawing.Size(246, 542);
             this.tabPageContactsOptions.TabIndex = 2;
             this.tabPageContactsOptions.Text = "Contacts";
             this.tabPageContactsOptions.UseVisualStyleBackColor = true;
@@ -529,7 +522,7 @@
             this.panelChannelOptions.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelChannelOptions.Location = new System.Drawing.Point(0, 0);
             this.panelChannelOptions.Name = "panelChannelOptions";
-            this.panelChannelOptions.Size = new System.Drawing.Size(246, 554);
+            this.panelChannelOptions.Size = new System.Drawing.Size(246, 542);
             this.panelChannelOptions.TabIndex = 0;
             // 
             // comboBoxChannelPresets
@@ -549,7 +542,7 @@
             this.trackBarProbePosition.Maximum = 100;
             this.trackBarProbePosition.Name = "trackBarProbePosition";
             this.trackBarProbePosition.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBarProbePosition.Size = new System.Drawing.Size(69, 494);
+            this.trackBarProbePosition.Size = new System.Drawing.Size(69, 482);
             this.trackBarProbePosition.TabIndex = 22;
             this.trackBarProbePosition.Scroll += new System.EventHandler(this.TrackBarScroll);
             // 
@@ -608,7 +601,7 @@
             this.tabPageADCs.Controls.Add(this.dataGridViewAdcs);
             this.tabPageADCs.Location = new System.Drawing.Point(4, 29);
             this.tabPageADCs.Name = "tabPageADCs";
-            this.tabPageADCs.Size = new System.Drawing.Size(1122, 593);
+            this.tabPageADCs.Size = new System.Drawing.Size(1122, 581);
             this.tabPageADCs.TabIndex = 2;
             this.tabPageADCs.Text = "ADCs";
             this.tabPageADCs.UseVisualStyleBackColor = true;
@@ -621,7 +614,7 @@
             this.dataGridViewAdcs.Name = "dataGridViewAdcs";
             this.dataGridViewAdcs.RowHeadersWidth = 62;
             this.dataGridViewAdcs.RowTemplate.Height = 28;
-            this.dataGridViewAdcs.Size = new System.Drawing.Size(1122, 593);
+            this.dataGridViewAdcs.Size = new System.Drawing.Size(1122, 581);
             this.dataGridViewAdcs.TabIndex = 0;
             // 
             // panel1
@@ -672,8 +665,14 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 30);
             this.fileToolStripMenuItem.Text = "File";
+            // 
+            // toolStripStatus
+            // 
+            this.toolStripStatus.Image = global::OpenEphys.Onix.Design.Properties.Resources.StatusReadyImage;
+            this.toolStripStatus.Name = "toolStripStatus";
+            this.toolStripStatus.Size = new System.Drawing.Size(24, 24);
             // 
             // NeuropixelsV1eDialog
             // 

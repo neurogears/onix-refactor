@@ -4,6 +4,7 @@ using System.Threading;
 
 namespace OpenEphys.Onix
 {
+    [Editor("OpenEphys.Onix.Design.NeuropixelsV1eHeadstageEditor, OpenEphys.Onix.Design", typeof(ComponentEditor))]
     public class ConfigureNeuropixelsV1eHeadstage : HubDeviceFactory
     {
         PortName port;

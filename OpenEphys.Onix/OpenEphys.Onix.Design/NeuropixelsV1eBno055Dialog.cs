@@ -2,20 +2,20 @@
 
 namespace OpenEphys.Onix.Design
 {
-    public partial class Bno055Dialog : GenericDeviceDialog
+    public partial class NeuropixelsV1eBno055Dialog : GenericDeviceDialog
     {
-        public ConfigureBno055 ConfigureBno055
+        public ConfigureNeuropixelsV1eBno055 ConfigureNode
         {
-            get => (ConfigureBno055)propertyGrid.SelectedObject;
+            get => (ConfigureNeuropixelsV1eBno055)propertyGrid.SelectedObject;
             set => propertyGrid.SelectedObject = value;
         }
 
-        public Bno055Dialog(ConfigureBno055 configureNode)
+        public NeuropixelsV1eBno055Dialog(ConfigureNeuropixelsV1eBno055 configureNode)
         {
             InitializeComponent();
             Shown += FormShown;
 
-            ConfigureBno055 = new(configureNode);
+            ConfigureNode = new(configureNode);
         }
 
         private void FormShown(object sender, EventArgs e)
@@ -24,8 +24,6 @@ namespace OpenEphys.Onix.Design
             {
                 splitContainer1.Panel2Collapsed = true;
                 splitContainer1.Panel2.Hide();
-
-                MaximumSize = new System.Drawing.Size(0, 0);
             }
         }
     }

@@ -27,12 +27,12 @@ namespace OpenEphys.Onix.Design
         /// </summary>
         public const string TextStringFormat = "TextProbe_{0}-Contact_{1}";
 
-        private struct Tag
+        private struct ContactTag
         {
             public int ProbeNumber;
             public int ContactNumber;
 
-            public Tag(int probeNumber, int contactNumber)
+            public ContactTag(int probeNumber, int contactNumber)
             {
                 ProbeNumber = probeNumber;
                 ContactNumber = contactNumber;
@@ -42,13 +42,13 @@ namespace OpenEphys.Onix.Design
         /// <summary>
         /// Local variable that holds the channel configuration in memory until the user presses Okay
         /// </summary>
-        public ProbeGroup ChannelConfiguration;
+        internal ProbeGroup ChannelConfiguration;
 
         internal List<int> ReferenceContacts = new();
 
-        readonly Color InactiveContactFill = Color.DarkGray;
-        readonly Color ActiveContactFill = Color.LightYellow;
-        readonly Color ReferenceContactFill = Color.Black;
+        internal readonly Color DisabledContactFill = Color.DarkGray;
+        internal readonly Color EnabledContactFill = Color.LightYellow;
+        internal readonly Color ReferenceContactFill = Color.Black;
 
         readonly Color DeselectedContactBorder = Color.LightGray;
         readonly Color SelectedContactBorder = Color.YellowGreen;
@@ -153,12 +153,12 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.Refresh();
         }
 
-        private void LoadDefaultChannelLayout()
+        internal virtual void LoadDefaultChannelLayout()
         {
             ChannelConfiguration = DefaultChannelLayout();
         }
 
-        private void OpenFile()
+        internal virtual void OpenFile<T>() where T : ProbeGroup
         {
             using OpenFileDialog ofd = new();
 
@@ -169,11 +169,11 @@ namespace OpenEphys.Onix.Design
 
             if (ofd.ShowDialog() == DialogResult.OK && File.Exists(ofd.FileName))
             {
-                var channelConfiguration = DesignHelper.DeserializeString<ProbeGroup>(File.ReadAllText(ofd.FileName));
+                var channelConfiguration = DesignHelper.DeserializeString<T>(File.ReadAllText(ofd.FileName));
 
-                if (channelConfiguration == null || channelConfiguration.NumberOfContacts != 32)
+                if (channelConfiguration == null)
                 {
-                    MessageBox.Show("Error opening the JSON file. Incorrect number of contacts.");
+                    MessageBox.Show("Error opening the JSON file.");
                     return;
                 }
                 else
@@ -191,8 +191,6 @@ namespace OpenEphys.Onix.Design
             if (ChannelConfiguration == null)
                 return;
 
-            var fontSize = CalculateFontSize();
-
             zedGraphChannels.GraphPane.GraphObjList.Clear();
 
             for (int probeNumber = 0; probeNumber < ChannelConfiguration.Probes.Count(); probeNumber++)
@@ -206,27 +204,20 @@ namespace OpenEphys.Onix.Design
                 zedGraphChannels.GraphPane.GraphObjList.Add(contour);
 
                 var probeOffset = probeNumber == 0 ? 0 : GetProbeIndexOffset(probeNumber);
+                var probe = ChannelConfiguration.Probes.ElementAt(probeNumber);
 
-                for (int j = 0; j < ChannelConfiguration.Probes.ElementAt(probeNumber).ContactPositions.Length; j++)
+                for (int j = 0; j < probe.ContactPositions.Length; j++)
                 {
-                    Contact contact = ChannelConfiguration.Probes.ElementAt(probeNumber).GetContact(j);
-
-                    bool inactiveContact = contact.DeviceId == -1;
-
-                    Color fillColor = inactiveContact ? InactiveContactFill : ActiveContactFill;
-
-                    if (!inactiveContact && ReferenceContacts.Any(x => x == contact.Index))
-                        fillColor = ReferenceContactFill;
+                    Contact contact = probe.GetContact(j);
 
                     Color borderColor = SelectedContacts[probeOffset + contact.Index] ? SelectedContactBorder : DeselectedContactBorder;
-                    string id = inactiveContact ? "Off" : contact.Index.ToString();
 
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
                         var size = contact.ShapeParams.Radius.Value * 2;
 
                         EllipseObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, borderColor, fillColor)
+                            size, size, borderColor, DisabledContactFill)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
@@ -239,7 +230,7 @@ namespace OpenEphys.Onix.Design
                         var size = contact.ShapeParams.Width.Value;
 
                         BoxObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, borderColor, fillColor)
+                            size, size, borderColor, DisabledContactFill)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
@@ -254,24 +245,87 @@ namespace OpenEphys.Onix.Design
                         MessageBox.Show("Contact shapes other than 'circle' and 'square' not implemented yet.");
                         return;
                     }
+                }
+            }
+
+            HighlightEnabledContacts();
+            DrawContactLabels();
+            DrawScale();
+
+            zedGraphChannels.Refresh();
+        }
+
+        public virtual void HighlightEnabledContacts()
+        {
+            if (ChannelConfiguration == null)
+                return;
+
+            for (int probeNumber = 0; probeNumber < ChannelConfiguration.Probes.Count(); probeNumber++)
+            {
+                var probe = ChannelConfiguration.Probes.ElementAt(probeNumber);
+
+                for (int j = 0; j < probe.ContactPositions.Length; j++)
+                {
+                    Contact contact = probe.GetContact(j);
+
+                    bool inactiveContact = contact.DeviceId == -1;
+
+                    Color fillColor = inactiveContact ? DisabledContactFill : EnabledContactFill;
+
+                    if (!inactiveContact && ReferenceContacts.Any(x => x == contact.Index))
+                        fillColor = ReferenceContactFill;
+
+                    var tag = string.Format(ContactStringFormat, probeNumber, contact.Index);
+
+                    if (zedGraphChannels.GraphPane.GraphObjList[tag] is BoxObj graphObj)
+                    {
+                        graphObj.Fill.Color = fillColor;
+                    }
+                    else
+                    {
+                        throw new NullReferenceException($"Tag {tag} is not found in the graph object list");
+                    }
+                }
+            }
+        }
+
+        public virtual void DrawContactLabels()
+        {
+            if (ChannelConfiguration == null)
+                return;
+
+            var fontSize = CalculateFontSize();
+
+            for (int probeNumber = 0; probeNumber < ChannelConfiguration.Probes.Count(); probeNumber++)
+            {
+                var probe = ChannelConfiguration.Probes.ElementAt(probeNumber);
+
+                for (int j = 0; j < probe.ContactPositions.Length; j++)
+                {
+                    Contact contact = probe.GetContact(j);
+                    bool inactiveContact = contact.DeviceId == -1;
+
+                    string id = inactiveContact ? "Off" : contact.Index.ToString();
 
                     TextObj textObj = new(id, contact.PosX, contact.PosY)
                     {
                         ZOrder = ZOrder.A_InFront,
                         Tag = string.Format(TextStringFormat, probeNumber, contact.Index)
                     };
-                    textObj.FontSpec.IsBold = true;
-                    textObj.FontSpec.Border.IsVisible = false;
-                    textObj.FontSpec.Fill.IsVisible = false;
-                    textObj.FontSpec.Size = fontSize;
+
+                    SetTextObj(textObj, fontSize);
 
                     zedGraphChannels.GraphPane.GraphObjList.Add(textObj);
                 }
             }
+        }
 
-            DrawScale();
-
-            zedGraphChannels.Refresh();
+        public void SetTextObj(TextObj textObj, float fontSize)
+        {
+            textObj.FontSpec.IsBold = true;
+            textObj.FontSpec.Border.IsVisible = false;
+            textObj.FontSpec.Fill.IsVisible = false;
+            textObj.FontSpec.Size = fontSize;
         }
 
         public virtual void DrawScale()
@@ -510,7 +564,7 @@ namespace OpenEphys.Onix.Design
 
         private void MenuItemOpenFile_Click(object sender, EventArgs e)
         {
-            OpenFile();
+            OpenFile<ProbeGroup>();
             DrawChannels();
         }
 
@@ -613,6 +667,9 @@ namespace OpenEphys.Onix.Design
                     sender.Cursor = Cursors.Cross;
                 }
 
+                if (clickStart.X == default && clickStart.Y == default)
+                    return false;
+
                 BoxObj oldArea = (BoxObj)sender.GraphPane.GraphObjList[SelectionAreaTag];
                 if (oldArea != null)
                 {
@@ -669,6 +726,8 @@ namespace OpenEphys.Onix.Design
                     }
 
                     sender.GraphPane.GraphObjList.Remove(selectionArea);
+                    clickStart.X = default;
+                    clickStart.Y = default;
                 }
 
                 DrawChannels();
@@ -713,8 +772,11 @@ namespace OpenEphys.Onix.Design
             SelectedContacts[index] = status;
         }
 
-        private static Tag ParseTag(string tag)
+        private static ContactTag ParseTag(string tag)
         {
+            if (string.IsNullOrEmpty(tag))
+                throw new NullReferenceException(nameof(tag));
+
             string[] words = tag.Split('-');
 
             string[] probeStrings = words[0].Split('_');

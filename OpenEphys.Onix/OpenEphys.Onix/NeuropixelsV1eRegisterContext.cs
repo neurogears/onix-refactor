@@ -24,8 +24,7 @@ namespace OpenEphys.Onix
                                             new(BaseConfigurationBitCount, false) }; // Ch 1, 3, 5, ...
 
         public NeuropixelsV1eRegisterContext(DeviceContext deviceContext, uint i2cAddress, 
-            NeuropixelsV1Gain apGain, NeuropixelsV1Gain lfpGain, NeuropixelsV1ReferenceSource refSource, 
-            bool apFilter, string gainCalibrationFile, string adcCalibrationFile, NeuropixelsV1eProbeGroup channelConfiguration)
+            NeuropixelsV1eProbe probeConfiguration, string gainCalibrationFile, string adcCalibrationFile)
             : base(deviceContext, i2cAddress)
         {
             if (gainCalibrationFile == null || adcCalibrationFile == null)
@@ -41,7 +40,7 @@ namespace OpenEphys.Onix
                 throw new ArgumentException("Calibration file serial numbers do not match.");
 
             // parse gain correction file
-            var gainCorrection = NeuropixelsV1Helper.ParseGainCalibrationFile(gainFile, apGain, lfpGain);
+            var gainCorrection = NeuropixelsV1Helper.ParseGainCalibrationFile(gainFile, probeConfiguration.SpikeAmplifierGain, probeConfiguration.LfpAmplifierGain);
             ApGainCorrection = gainCorrection.AP;
             LfpGainCorrection = gainCorrection.LFP;
 
@@ -52,7 +51,7 @@ namespace OpenEphys.Onix
             AdcOffsets = Adcs.ToList().Select(a => (ushort)a.Offset).ToArray();
 
             // Update active channels
-            ShankConfig = NeuropixelsV1Helper.MakeShankBits(channelConfiguration, refSource);
+            ShankConfig = NeuropixelsV1Helper.MakeShankBits(probeConfiguration.ChannelConfiguration, probeConfiguration.Reference);
 
             // create base shift-register bit arrays
             for (int i = 0; i < NeuropixelsV1e.ChannelCount; i++)
@@ -64,24 +63,24 @@ namespace OpenEphys.Onix
                     (382 - i) / 2 * 3 :
                     (383 - i) / 2 * 3;
 
-                BaseConfigs[configIdx][refIdx + 0] = ((byte)refSource >> 0 & 0x1) == 1;
-                BaseConfigs[configIdx][refIdx + 1] = ((byte)refSource >> 1 & 0x1) == 1;
-                BaseConfigs[configIdx][refIdx + 2] = ((byte)refSource >> 2 & 0x1) == 1;
+                BaseConfigs[configIdx][refIdx + 0] = ((byte)probeConfiguration.Reference >> 0 & 0x1) == 1;
+                BaseConfigs[configIdx][refIdx + 1] = ((byte)probeConfiguration.Reference >> 1 & 0x1) == 1;
+                BaseConfigs[configIdx][refIdx + 2] = ((byte)probeConfiguration.Reference >> 2 & 0x1) == 1;
 
                 var chanOptsIdx = BaseConfigurationConfigOffset + ((i - configIdx) * 4);
 
                 // MSB [Full, standby, LFPGain(3 downto 0), APGain(3 downto0)] LSB
 
-                BaseConfigs[configIdx][chanOptsIdx + 0] = ((byte)apGain >> 0 & 0x1) == 1;
-                BaseConfigs[configIdx][chanOptsIdx + 1] = ((byte)apGain >> 1 & 0x1) == 1;
-                BaseConfigs[configIdx][chanOptsIdx + 2] = ((byte)apGain >> 2 & 0x1) == 1;
+                BaseConfigs[configIdx][chanOptsIdx + 0] = ((byte)probeConfiguration.SpikeAmplifierGain >> 0 & 0x1) == 1;
+                BaseConfigs[configIdx][chanOptsIdx + 1] = ((byte)probeConfiguration.SpikeAmplifierGain >> 1 & 0x1) == 1;
+                BaseConfigs[configIdx][chanOptsIdx + 2] = ((byte)probeConfiguration.SpikeAmplifierGain >> 2 & 0x1) == 1;
 
-                BaseConfigs[configIdx][chanOptsIdx + 3] = ((byte)lfpGain >> 0 & 0x1) == 1;
-                BaseConfigs[configIdx][chanOptsIdx + 4] = ((byte)lfpGain >> 1 & 0x1) == 1;
-                BaseConfigs[configIdx][chanOptsIdx + 5] = ((byte)lfpGain >> 2 & 0x1) == 1;
+                BaseConfigs[configIdx][chanOptsIdx + 3] = ((byte)probeConfiguration.LfpAmplifierGain >> 0 & 0x1) == 1;
+                BaseConfigs[configIdx][chanOptsIdx + 4] = ((byte)probeConfiguration.LfpAmplifierGain >> 1 & 0x1) == 1;
+                BaseConfigs[configIdx][chanOptsIdx + 5] = ((byte)probeConfiguration.LfpAmplifierGain >> 2 & 0x1) == 1;
 
                 BaseConfigs[configIdx][chanOptsIdx + 6] = false;
-                BaseConfigs[configIdx][chanOptsIdx + 7] = !apFilter; // Full bandwidth = 1, filter on = 0
+                BaseConfigs[configIdx][chanOptsIdx + 7] = !probeConfiguration.SpikeFilter; // Full bandwidth = 1, filter on = 0
 
             }
 

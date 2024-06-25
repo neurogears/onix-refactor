@@ -19,13 +19,9 @@ namespace OpenEphys.Onix.Design
                     if (editorDialog.ShowDialog() == DialogResult.OK)
                     {
                         configureNeuropixelsV1e.Enable = editorDialog.ConfigureNode.Enable;
-                        configureNeuropixelsV1e.SpikeAmplifierGain = editorDialog.ConfigureNode.SpikeAmplifierGain;
-                        configureNeuropixelsV1e.LfpAmplifierGain = editorDialog.ConfigureNode.LfpAmplifierGain;
-                        configureNeuropixelsV1e.Reference = editorDialog.ConfigureNode.Reference;
-                        configureNeuropixelsV1e.SpikeFilter = editorDialog.ConfigureNode.SpikeFilter;
                         configureNeuropixelsV1e.GainCalibrationFile = editorDialog.ConfigureNode.GainCalibrationFile;
                         configureNeuropixelsV1e.AdcCalibrationFile = editorDialog.ConfigureNode.AdcCalibrationFile;
-                        configureNeuropixelsV1e.ChannelConfiguration = editorDialog.GetProbeGroup();
+                        configureNeuropixelsV1e.ProbeConfiguration = editorDialog.ConfigureNode.ProbeConfiguration;
 
                         return true;
                     }

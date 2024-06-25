@@ -54,10 +54,15 @@ namespace OpenEphys.Onix
 
             for (int i = 0; i < numberOfChannels; i++)
             {
-                contactPositions[i] = new float[2] { ContactPositionX(i), i / 2 * 20 + 170 };
+                contactPositions[i] = DefaultContactPosition(i);
             }
 
             return contactPositions;
+        }
+
+        public static float[] DefaultContactPosition(int index)
+        {
+            return new float[2] { ContactPositionX(index), index / 2 * 20 + 170 };
         }
 
         private static float ContactPositionX(int index) => (index % 4) switch
@@ -160,5 +165,19 @@ namespace OpenEphys.Onix
             return contactIds;
         }
 
+        public List<Contact> GetContacts()
+        {
+            List<Contact> contacts = new();
+
+            foreach(var p in Probes)
+            {
+                for (int i = 0; i < p.NumberOfContacts; i++)
+                {
+                    contacts.Add(p.GetContact(i));
+                }
+            }
+
+            return contacts;
+        }
     }
 }

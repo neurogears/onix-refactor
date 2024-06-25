@@ -58,6 +58,5 @@ namespace OpenEphys.Onix.Design
                 }
             }
         }
-
     }
 }

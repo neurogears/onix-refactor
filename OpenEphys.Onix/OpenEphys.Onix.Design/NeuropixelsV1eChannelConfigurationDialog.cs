@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using OpenEphys.ProbeInterface;
 using ZedGraph;
@@ -10,6 +11,9 @@ namespace OpenEphys.Onix.Design
     public partial class NeuropixelsV1eChannelConfigurationDialog : ChannelConfigurationDialog
     {
         public event EventHandler OnZoom;
+
+        public readonly List<NeuropixelsV1eElectrode> Electrodes;
+        public readonly List<NeuropixelsV1eElectrode> ChannelMap;
 
         public NeuropixelsV1eChannelConfigurationDialog(NeuropixelsV1eProbeGroup probeGroup)
             : base(probeGroup)
@@ -24,6 +28,9 @@ namespace OpenEphys.Onix.Design
 
             ReferenceContacts = new List<int> { 191, 575, 959 };
 
+            ChannelMap = NeuropixelsV1Helper.ToChannelMap(probeGroup);
+            Electrodes = NeuropixelsV1Helper.ToElectrodes(probeGroup);
+
             DrawChannels();
             RefreshZedGraph();
         }
@@ -31,6 +38,22 @@ namespace OpenEphys.Onix.Design
         public override ProbeGroup DefaultChannelLayout()
         {
             return new NeuropixelsV1eProbeGroup();
+        }
+
+        internal override void LoadDefaultChannelLayout()
+        {
+            base.LoadDefaultChannelLayout();
+
+            NeuropixelsV1Helper.UpdateElectrodes(Electrodes, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+            NeuropixelsV1Helper.UpdateChannelMap(ChannelMap, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+        }
+
+        internal override void OpenFile<T>()
+        {
+            base.OpenFile<NeuropixelsV1eProbeGroup>();
+
+            NeuropixelsV1Helper.UpdateElectrodes(Electrodes, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
+            NeuropixelsV1Helper.UpdateChannelMap(ChannelMap, (NeuropixelsV1eProbeGroup)ChannelConfiguration);
         }
 
         public override void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
@@ -45,10 +68,7 @@ namespace OpenEphys.Onix.Design
 
         private void OnZoomHandler()
         {
-            if (OnZoom != null)
-            {
-                OnZoom(this, EventArgs.Empty);
-            }
+            OnZoom?.Invoke(this, EventArgs.Empty);
         }
 
         public override void DrawScale()
@@ -97,6 +117,62 @@ namespace OpenEphys.Onix.Design
             }
 
             AddPointsToCurve(pointList);
+        }
+
+        public override void HighlightEnabledContacts()
+        {
+            if (Electrodes == null || Electrodes.Count == 0) 
+                return;
+
+            foreach(var e in Electrodes)
+            {
+                var tag = string.Format(ContactStringFormat, 0, e.ElectrodeNumber);
+
+                var fillColor = ChannelMap[e.Channel].ElectrodeNumber == e.ElectrodeNumber ? EnabledContactFill : DisabledContactFill;
+
+                if (ReferenceContacts.Any(x => x == e.ElectrodeNumber)) 
+                    fillColor = ReferenceContactFill;
+
+                if (zedGraphChannels.GraphPane.GraphObjList[tag] is BoxObj graphObj)
+                {
+                    graphObj.Fill.Color = fillColor;
+                }
+                else
+                {
+                    throw new NullReferenceException($"Tag {tag} is not found in the graph object list");
+                }
+            }
+        }
+
+        public override void DrawContactLabels()
+        {
+            if (Electrodes == null || Electrodes.Count == 0)
+                return;
+
+            var fontSize = CalculateFontSize();
+
+            foreach (var e in Electrodes)
+            {
+                string id = ChannelMap[e.Channel].ElectrodeNumber == e.ElectrodeNumber ? e.ElectrodeNumber.ToString(): "Off";
+
+                TextObj textObj = new(id, e.Position.X, e.Position.Y)
+                {
+                    ZOrder = ZOrder.A_InFront,
+                    Tag = string.Format(TextStringFormat, 0, e.ElectrodeNumber)
+                };
+
+                SetTextObj(textObj, fontSize);
+
+                zedGraphChannels.GraphPane.GraphObjList.Add(textObj);
+            }
+        }
+
+        public void EnableElectrodes(List<NeuropixelsV1eElectrode> electrodes)
+        {
+            foreach (var e in electrodes)
+            {
+                ChannelMap[e.Channel] = e;
+            }
         }
 
         private void AddPointsToCurve(PointPairList pointList)

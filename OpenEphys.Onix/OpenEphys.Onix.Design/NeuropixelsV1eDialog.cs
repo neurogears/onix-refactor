@@ -2,7 +2,6 @@
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using OpenEphys.ProbeInterface;
 
 namespace OpenEphys.Onix.Design
 {
@@ -23,7 +22,7 @@ namespace OpenEphys.Onix.Design
 
             ConfigureNode = new(configureNode);
 
-            channelConfiguration = new(ConfigureNode.ChannelConfiguration)
+            channelConfiguration = new(ConfigureNode.ProbeConfiguration.ChannelConfiguration)
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
@@ -39,18 +38,18 @@ namespace OpenEphys.Onix.Design
             channelConfiguration.Show();
 
             comboBoxApGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
-            comboBoxApGain.SelectedItem = ConfigureNode.SpikeAmplifierGain;
+            comboBoxApGain.SelectedItem = ConfigureNode.ProbeConfiguration.SpikeAmplifierGain;
             comboBoxApGain.SelectedIndexChanged += SelectedIndexChanged;
 
             comboBoxLfpGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
-            comboBoxLfpGain.SelectedItem = ConfigureNode.LfpAmplifierGain;
+            comboBoxLfpGain.SelectedItem = ConfigureNode.ProbeConfiguration.LfpAmplifierGain;
             comboBoxLfpGain.SelectedIndexChanged += SelectedIndexChanged;
 
             comboBoxReference.DataSource = Enum.GetValues(typeof(NeuropixelsV1ReferenceSource));
-            comboBoxReference.SelectedItem = ConfigureNode.Reference;
+            comboBoxReference.SelectedItem = ConfigureNode.ProbeConfiguration.Reference;
             comboBoxReference.SelectedIndexChanged += SelectedIndexChanged;
 
-            checkBoxSpikeFilter.Checked = ConfigureNode.SpikeFilter;
+            checkBoxSpikeFilter.Checked = ConfigureNode.ProbeConfiguration.SpikeFilter;
             checkBoxSpikeFilter.CheckedChanged += SelectedIndexChanged;
 
             textBoxAdcCalibrationFile.TextChanged += FileTextChanged;
@@ -110,7 +109,7 @@ namespace OpenEphys.Onix.Design
 
                     gainCalibrationSN.Text = ulong.Parse(gainCalibrationFile.ReadLine()).ToString();
 
-                    var gainCorrection = NeuropixelsV1Helper.ParseGainCalibrationFile(gainCalibrationFile, ConfigureNode.SpikeAmplifierGain, ConfigureNode.LfpAmplifierGain);
+                    var gainCorrection = NeuropixelsV1Helper.ParseGainCalibrationFile(gainCalibrationFile, ConfigureNode.ProbeConfiguration.SpikeAmplifierGain, ConfigureNode.ProbeConfiguration.LfpAmplifierGain);
 
                     ApGainCorrection = gainCorrection.AP;
                     LfpGainCorrection = gainCorrection.LFP;
@@ -126,7 +125,7 @@ namespace OpenEphys.Onix.Design
             {
                 if (comboBox.Name == nameof(comboBoxApGain))
                 {
-                    ConfigureNode.SpikeAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
+                    ConfigureNode.ProbeConfiguration.SpikeAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
                     ParseGainCalibrationFile();
 
                     if (ApGainCorrection != default && LfpGainCorrection != default)
@@ -136,7 +135,7 @@ namespace OpenEphys.Onix.Design
                 }
                 else if (comboBox.Name == nameof(comboBoxLfpGain))
                 {
-                    ConfigureNode.LfpAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
+                    ConfigureNode.ProbeConfiguration.LfpAmplifierGain = (NeuropixelsV1Gain)comboBox.SelectedItem;
                     ParseGainCalibrationFile();
 
                     if (ApGainCorrection != default && LfpGainCorrection != default)
@@ -146,14 +145,14 @@ namespace OpenEphys.Onix.Design
                 }
                 else if (comboBox.Name == nameof(comboBoxReference))
                 {
-                    ConfigureNode.Reference = (NeuropixelsV1ReferenceSource)comboBox.SelectedItem;
+                    ConfigureNode.ProbeConfiguration.Reference = (NeuropixelsV1ReferenceSource)comboBox.SelectedItem;
                 }
             }
             else if (sender is CheckBox checkBox && checkBox != null)
             {
                 if (checkBox.Name == nameof(checkBoxSpikeFilter))
                 {
-                    ConfigureNode.SpikeFilter = checkBox.Checked;
+                    ConfigureNode.ProbeConfiguration.SpikeFilter = checkBox.Checked;
                 }
             }
         }
@@ -222,6 +221,8 @@ namespace OpenEphys.Onix.Design
             {
                 if (button.Name == nameof(buttonOkay))
                 {
+                    NeuropixelsV1Helper.UpdateProbeGroup(channelConfiguration.ChannelMap, ConfigureNode.ProbeConfiguration.ChannelConfiguration);
+
                     DialogResult = DialogResult.OK;
                 }
                 else if (button.Name == nameof(buttonCancel))
@@ -286,104 +287,16 @@ namespace OpenEphys.Onix.Design
 
         private void EnableSelectedContacts()
         {
-            const int probeIndex = 0;
+            if (channelConfiguration.SelectedContacts.Length != channelConfiguration.Electrodes.Count)
+                throw new Exception("Invalid number of contacts versus electrodes found.");
 
-            var selectedContacts = channelConfiguration.SelectedContacts;
+            var selectedElectrodes = channelConfiguration.Electrodes
+                                                         .Where((e, ind) => channelConfiguration.SelectedContacts[ind])
+                                                         .ToList();
 
-            for (int i = 0; i < selectedContacts.Length; i++)
-            {
-                if (selectedContacts[i])
-                {
-                    EnableContact(probeIndex, i);
-                }
-            }
+            channelConfiguration.EnableElectrodes(selectedElectrodes);
         }
 
-        private void EnableContact(int probeNumber, int contactNumber) 
-        {
-            var probe = channelConfiguration.GetProbeGroup().Probes.ElementAt(probeNumber);
-
-            if (probe.DeviceChannelIndices[contactNumber] != -1)
-                return;
-
-            var contact = probe.GetContact(contactNumber);
-
-            const int BankA_Start = 0;
-            const int BankA_End = 383;
-            const int BankB_Start = 384;
-            const int BankB_End = 767;
-            const int BankC_Start = 768;
-            const int BankC_End = 959;
-
-            if (contact.Index >= BankA_Start && contact.Index <= BankA_End)
-            {
-                var index = contact.Index + BankB_Start;
-
-                if (probe.DeviceChannelIndices[index] != -1)
-                {
-                    SwapIndices(probe, contact.Index, index);
-                    return;
-                }
-
-                index = contact.Index + BankC_Start;
-
-                if (index > BankC_End)
-                    return;
-
-                if (probe.DeviceChannelIndices[index] != -1)
-                {
-                    SwapIndices(probe, contact.Index, index);
-                    return;
-                }
-            }
-            else if (contact.Index >= BankB_Start && contact.Index <= BankB_End)
-            {
-                var index = contact.Index - BankB_Start;
-
-                if (probe.DeviceChannelIndices[index] != -1)
-                {
-                    SwapIndices(probe, contact.Index, index);
-                    return;
-                }
-
-                index = contact.Index - BankB_Start + BankC_Start;
-
-                if (index > BankC_End)
-                    return;
-
-                if (probe.DeviceChannelIndices[index] != -1)
-                {
-                    SwapIndices(probe, contact.Index, index);
-                    return;
-                }
-            }
-            else if (contact.Index >= BankC_Start && contact.Index <= BankC_End)
-            {
-                var index = contact.Index - BankC_Start;
-
-                if (probe.DeviceChannelIndices[index] != -1)
-                {
-                    SwapIndices(probe, contact.Index, index);
-                    return;
-                }
-
-                index = contact.Index - BankC_Start + BankB_Start;
-
-                if (index > BankC_End)
-                    return;
-
-                if (probe.DeviceChannelIndices[index] != -1)
-                {
-                    SwapIndices(probe, contact.Index, index);
-                    return;
-                }
-            }
-        }
-
-        private static void SwapIndices(Probe probe, int currentIndex, int offsetIndex)
-        {
-            (probe.DeviceChannelIndices[currentIndex], probe.DeviceChannelIndices[offsetIndex]) = (probe.DeviceChannelIndices[offsetIndex], probe.DeviceChannelIndices[currentIndex]);
-        }
         private void ZoomIn(double zoom)
         {
             if (zoom <= 1)

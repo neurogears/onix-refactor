@@ -22,13 +22,9 @@ namespace OpenEphys.Onix
         {
             Enable = configureNeuropixelsV1e.Enable;
             EnableLed = configureNeuropixelsV1e.EnableLed;
-            SpikeAmplifierGain = configureNeuropixelsV1e.SpikeAmplifierGain;
-            LfpAmplifierGain = configureNeuropixelsV1e.LfpAmplifierGain;
-            Reference = configureNeuropixelsV1e.Reference;
-            SpikeFilter = configureNeuropixelsV1e.SpikeFilter;
             GainCalibrationFile = configureNeuropixelsV1e.GainCalibrationFile;
             AdcCalibrationFile = configureNeuropixelsV1e.AdcCalibrationFile;
-            ChannelConfiguration = configureNeuropixelsV1e.ChannelConfiguration;
+            ProbeConfiguration = configureNeuropixelsV1e.ProbeConfiguration;
         }
 
         [Category(ConfigurationCategory)]
@@ -38,22 +34,6 @@ namespace OpenEphys.Onix
         [Category(ConfigurationCategory)]
         [Description("If true, the headstage LED will illuminate during acquisition. Otherwise it will remain off.")]
         public bool EnableLed { get; set; } = true;
-
-        [Category(ConfigurationCategory)]
-        [Description("Amplifier gain for spike-band.")]
-        public NeuropixelsV1Gain SpikeAmplifierGain { get; set; } = NeuropixelsV1Gain.x1000;
-
-        [Category(ConfigurationCategory)]
-        [Description("Amplifier gain for LFP-band.")]
-        public NeuropixelsV1Gain LfpAmplifierGain { get; set; } = NeuropixelsV1Gain.x50;
-
-        [Category(ConfigurationCategory)]
-        [Description("Reference selection.")]
-        public NeuropixelsV1ReferenceSource Reference { get; set; } = NeuropixelsV1ReferenceSource.Ext;
-
-        [Category(ConfigurationCategory)]
-        [Description("If true, activates a 300 Hz high-pass filter in the spike-band data stream.")]
-        public bool SpikeFilter { get; set; } = true;
 
         [Category(ConfigurationCategory)]
         [FileNameFilter("Gain calibration files (*_gainCalValues.csv)|*_gainCalValues.csv")]
@@ -67,27 +47,9 @@ namespace OpenEphys.Onix
         [Editor("Bonsai.Design.OpenFileNameEditor, Bonsai.Design", DesignTypes.UITypeEditor)]
         public string AdcCalibrationFile { get; set; }
 
-        [XmlIgnore]
         [Category(ConfigurationCategory)]
-        [Description("Defines the shape of the probe, and which contacts are currently selected for streaming")]
-        public NeuropixelsV1eProbeGroup ChannelConfiguration { get; set; } = new();
-
-        [Browsable(false)]
-        [Externalizable(false)]
-        [XmlElement(nameof(ChannelConfiguration))]
-        public string ChannelConfigurationString
-        {
-            get
-            {
-                var jsonString = JsonConvert.SerializeObject(ChannelConfiguration);
-                return Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
-            }
-            set
-            {
-                var jsonString = Encoding.UTF8.GetString(Convert.FromBase64String(value));
-                ChannelConfiguration = JsonConvert.DeserializeObject<NeuropixelsV1eProbeGroup>(jsonString);
-            }
-        }
+        [Description("Neuropixels 1.0e probe configuration")]
+        public NeuropixelsV1eProbe ProbeConfiguration { get; set; } = new();
 
         public override IObservable<ContextTask> Process(IObservable<ContextTask> source)
         {
@@ -121,7 +83,7 @@ namespace OpenEphys.Onix
                     throw new InvalidOperationException("Probe serial number could not be read.");
 
                 // program shift registers
-                var probeControl = new NeuropixelsV1eRegisterContext(device, NeuropixelsV1e.ProbeAddress, SpikeAmplifierGain, LfpAmplifierGain, Reference, SpikeFilter, GainCalibrationFile, AdcCalibrationFile, ChannelConfiguration);
+                var probeControl = new NeuropixelsV1eRegisterContext(device, NeuropixelsV1e.ProbeAddress, ProbeConfiguration, GainCalibrationFile, AdcCalibrationFile);
                 probeControl.InitializeProbe();
                 probeControl.WriteConfiguration();
                 probeControl.StartAcquisition();

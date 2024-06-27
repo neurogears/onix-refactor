@@ -19,8 +19,6 @@ namespace OpenEphys.Onix.Design
         public NeuropixelsV1eChannelConfigurationDialog(NeuropixelsV1eProbeGroup probeGroup)
             : base(probeGroup)
         {
-            InitializeComponent();
-
             zedGraphChannels.IsEnableHPan = false;
             zedGraphChannels.ZoomButtons = MouseButtons.None;
             zedGraphChannels.ZoomButtons2 = MouseButtons.None;
@@ -32,7 +30,8 @@ namespace OpenEphys.Onix.Design
             ChannelMap = DesignHelper.ToChannelMap((NeuropixelsV1eProbeGroup)ChannelConfiguration);
             Electrodes = DesignHelper.ToElectrodes((NeuropixelsV1eProbeGroup)ChannelConfiguration);
 
-            DrawChannels();
+            HighlightEnabledContacts();
+            DrawContactLabels();
             RefreshZedGraph();
         }
 

@@ -47,8 +47,6 @@ namespace OpenEphys.Onix.Design
             channelConfiguration.OnZoom += UpdateTrackBarLocation;
             channelConfiguration.OnFileLoad += UpdateChannelPresetIndex;
 
-            channelConfiguration.Show();
-
             comboBoxApGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
             comboBoxApGain.SelectedItem = ConfigureNode.ProbeConfiguration.SpikeAmplifierGain;
             comboBoxApGain.SelectedIndexChanged += SelectedIndexChanged;
@@ -86,6 +84,8 @@ namespace OpenEphys.Onix.Design
 
                 menuStrip.Visible = false;
             }
+
+            channelConfiguration.Show();
         }
 
         private void FileTextChanged(object sender, EventArgs e)

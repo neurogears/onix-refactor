@@ -86,6 +86,8 @@ namespace OpenEphys.Onix.Design
             }
 
             channelConfiguration.Show();
+
+            channelConfiguration.ConnectResizeEventHandler();
         }
 
         private void FileTextChanged(object sender, EventArgs e)

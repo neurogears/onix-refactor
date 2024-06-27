@@ -32,10 +32,10 @@
             this.tabPageNeuropixelsV1e = new System.Windows.Forms.TabPage();
             this.panelNeuropixelsV1e = new System.Windows.Forms.Panel();
             this.tabPageBno055 = new System.Windows.Forms.TabPage();
+            this.panelBno055 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.buttonCancel = new System.Windows.Forms.Button();
             this.buttonOK = new System.Windows.Forms.Button();
-            this.panelBno055 = new System.Windows.Forms.Panel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl1.SuspendLayout();
@@ -89,6 +89,14 @@
             this.tabPageBno055.Text = "Bno055";
             this.tabPageBno055.UseVisualStyleBackColor = true;
             // 
+            // panelBno055
+            // 
+            this.panelBno055.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelBno055.Location = new System.Drawing.Point(3, 3);
+            this.panelBno055.Name = "panelBno055";
+            this.panelBno055.Size = new System.Drawing.Size(1281, 683);
+            this.panelBno055.TabIndex = 0;
+            // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -131,14 +139,6 @@
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             // 
-            // panelBno055
-            // 
-            this.panelBno055.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelBno055.Location = new System.Drawing.Point(3, 3);
-            this.panelBno055.Name = "panelBno055";
-            this.panelBno055.Size = new System.Drawing.Size(1281, 683);
-            this.panelBno055.TabIndex = 0;
-            // 
             // menuStrip1
             // 
             this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
@@ -164,6 +164,7 @@
             this.ClientSize = new System.Drawing.Size(1295, 811);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.menuStrip1);
+            this.DoubleBuffered = true;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "NeuropixelsV1eHeadstageDialog";
             this.Text = "NeuropixelsV1eHeadstageDialog";

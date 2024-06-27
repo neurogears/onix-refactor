@@ -84,7 +84,6 @@
             this.zedGraphChannels.TabIndex = 4;
             this.zedGraphChannels.UseExtendedPrintDialog = true;
             this.zedGraphChannels.ZoomEvent += new ZedGraph.ZedGraphControl.ZoomEventHandler(this.ZoomEvent);
-            this.zedGraphChannels.Resize += new System.EventHandler(this.ZedGraphChannels_Resize);
             // 
             // menuStrip
             // 
@@ -111,21 +110,21 @@
             // menuItemOpenFile
             // 
             this.menuItemOpenFile.Name = "menuItemOpenFile";
-            this.menuItemOpenFile.Size = new System.Drawing.Size(270, 34);
+            this.menuItemOpenFile.Size = new System.Drawing.Size(215, 34);
             this.menuItemOpenFile.Text = "Open File";
             this.menuItemOpenFile.Click += new System.EventHandler(this.MenuItemOpenFile_Click);
             // 
             // menuItemSaveFile
             // 
             this.menuItemSaveFile.Name = "menuItemSaveFile";
-            this.menuItemSaveFile.Size = new System.Drawing.Size(270, 34);
+            this.menuItemSaveFile.Size = new System.Drawing.Size(215, 34);
             this.menuItemSaveFile.Text = "Save File";
             this.menuItemSaveFile.Click += new System.EventHandler(this.MenuItemSaveFile_Click);
             // 
             // loadDefaultToolStripMenuItem
             // 
             this.loadDefaultToolStripMenuItem.Name = "loadDefaultToolStripMenuItem";
-            this.loadDefaultToolStripMenuItem.Size = new System.Drawing.Size(270, 34);
+            this.loadDefaultToolStripMenuItem.Size = new System.Drawing.Size(215, 34);
             this.loadDefaultToolStripMenuItem.Text = "Load Default";
             this.loadDefaultToolStripMenuItem.Click += new System.EventHandler(this.LoadDefaultToolStripMenuItem_Click);
             // 

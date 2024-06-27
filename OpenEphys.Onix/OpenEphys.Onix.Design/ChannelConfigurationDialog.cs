@@ -143,10 +143,15 @@ namespace OpenEphys.Onix.Design
         {
             if (!TopLevel)
             {
+                DisconnectResizeEventHandler();
+
                 splitContainer1.Panel2Collapsed = true;
                 splitContainer1.Panel2.Hide();
 
                 menuStrip.Visible = false;
+
+                ConnectResizeEventHandler();
+                ZedGraphChannels_Resize(null, null);
             }
 
             UpdateFontSize();
@@ -415,6 +420,11 @@ namespace OpenEphys.Onix.Design
 
             zedGraphChannels.GraphPane.Rect = axisRect;
             zedGraphChannels.GraphPane.Chart.Rect = axisRect;
+        }
+
+        private void UpdateControlSizeBasedOnAxisSize()
+        {
+            RectangleF axisRect = zedGraphChannels.GraphPane.Rect;
 
             zedGraphChannels.Size = new Size((int)axisRect.Width, (int)axisRect.Height);
             zedGraphChannels.Location = new Point((int)axisRect.X, (int)axisRect.Y);
@@ -424,6 +434,12 @@ namespace OpenEphys.Onix.Design
         {
             if (zedGraphChannels.GraphPane.GraphObjList.Count == 0)
                 return;
+
+            if (zedGraphChannels.GraphPane.XAxis.Scale.Max - zedGraphChannels.GraphPane.XAxis.Scale.Min ==
+                zedGraphChannels.GraphPane.YAxis.Scale.Max - zedGraphChannels.GraphPane.YAxis.Scale.Min)
+            {
+                return;
+            }
 
             var minX = MinX(zedGraphChannels.GraphPane.GraphObjList);
             var minY = MinY(zedGraphChannels.GraphPane.GraphObjList);
@@ -565,9 +581,33 @@ namespace OpenEphys.Onix.Design
             }
         }
 
+        public void ConnectResizeEventHandler()
+        {
+            DisconnectResizeEventHandler();
+            zedGraphChannels.Resize += ZedGraphChannels_Resize;
+        }
+
+        public void DisconnectResizeEventHandler()
+        {
+            zedGraphChannels.Resize -= ZedGraphChannels_Resize;
+        }
+
         private void ZedGraphChannels_Resize(object sender, EventArgs e)
         {
+            if (zedGraphChannels.Size.Width == zedGraphChannels.Size.Height &&
+                zedGraphChannels.Size.Height == zedGraphChannels.GraphPane.Rect.Height &&
+                zedGraphChannels.Location.X == zedGraphChannels.GraphPane.Rect.X)
+            {
+                if (zedGraphChannels.GraphPane.Chart.Rect != zedGraphChannels.GraphPane.Rect)
+                {
+                    zedGraphChannels.GraphPane.Chart.Rect = zedGraphChannels.GraphPane.Rect;
+                }
+
+                return;
+            }
+
             ResizeAxes();
+            UpdateControlSizeBasedOnAxisSize();
             UpdateFontSize();
             zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();

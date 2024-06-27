@@ -683,6 +683,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.menuStrip);
+            this.DoubleBuffered = true;
             this.MainMenuStrip = this.menuStrip;
             this.Name = "NeuropixelsV1eDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

@@ -11,10 +11,29 @@
 
   <ItemGroup>
     <PackageReference Include="Bonsai.Core" Version="2.8.2" />
+    <PackageReference Include="Bonsai.Design" Version="2.8.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="ZedGraph" Version="5.1.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\OpenEphys.Onix\OpenEphys.Onix.csproj" />
+    <ProjectReference Include="..\OpenEphys.ProbeInterface\OpenEphys.ProbeInterface\OpenEphys.ProbeInterface\OpenEphys.ProbeInterface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

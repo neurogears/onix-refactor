@@ -1,17 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Text;
 using System.Threading;
+using Bonsai;
+using Newtonsoft.Json;
+using System.Xml.Serialization;
 
 namespace OpenEphys.Onix
 {
+    [Editor("OpenEphys.Onix.Design.HeadstageRhs2116Editor, OpenEphys.Onix.Design", typeof(ComponentEditor))]
     public class ConfigureHeadstageRhs2116 : HubDeviceFactory
     {
         PortName port;
+        Rhs2116ProbeGroup probeGroup = new();
         readonly ConfigureHeadstageRhs2116LinkController LinkController = new();
 
         public ConfigureHeadstageRhs2116()
         {
+            // TODO: The issue with this headstage is that its locking voltage is far, far lower than the voltage required for full
+            // functionality. Locking occurs at around 2V on the headstage (enough to turn 1.8V on). Full functionality is at 5.0 volts.
+            // Whats worse: the port voltage can only go down to 3.3V, which means that its very hard to find the true lowest voltage
+            // for a lock and then add a large offset to that.
             Port = PortName.PortA;
+            ChannelConfiguration = probeGroup;
             LinkController.HubConfiguration = HubConfiguration.Standard;
         }
 
@@ -49,6 +61,31 @@ namespace OpenEphys.Onix
             }
         }
 
+        [XmlIgnore]
+        [Category(ConfigurationCategory)]
+        [Description("Defines the physical channel configuration")]
+        public Rhs2116ProbeGroup ChannelConfiguration
+        {
+            get { return probeGroup; }
+            set { probeGroup = value; }
+        }
+
+        [Browsable(false)]
+        [Externalizable(false)]
+        [XmlElement(nameof(ChannelConfiguration))]
+        public string ChannelConfigurationString
+        {
+            get
+            {
+                var jsonString = JsonConvert.SerializeObject(ChannelConfiguration);
+                return Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
+            }
+            set
+            {
+                var jsonString = Encoding.UTF8.GetString(Convert.FromBase64String(value));
+                ChannelConfiguration = JsonConvert.DeserializeObject<Rhs2116ProbeGroup>(jsonString);
+            }
+        }
 
         [Description("If defined, it will override automated voltage discovery and apply the specified voltage" +
                      "to the headstage. Warning: this device requires 3.4V to 4.4V for proper operation." +

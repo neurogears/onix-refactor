@@ -1,10 +1,19 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.Reactive.Subjects;
+using Bonsai;
+using Newtonsoft.Json;
+using System.Text;
+using System.Xml.Serialization;
 
 namespace OpenEphys.Onix
 {
+    [Editor("OpenEphys.Onix.Design.Rhs2116StimulusSequenceEditor, OpenEphys.Onix.Design", typeof(ComponentEditor))]
     public class ConfigureRhs2116Trigger : SingleDeviceFactory
     {
+        readonly BehaviorSubject<Rhs2116StimulusSequenceDual> stimulusSequence = new(new Rhs2116StimulusSequenceDual());
+
         public ConfigureRhs2116Trigger()
             : base(typeof(Rhs2116Trigger))
         {
@@ -14,17 +23,67 @@ namespace OpenEphys.Onix
         [Description("Specifies whether the RHS2116 device is enabled.")]
         public Rhs2116TriggerSource TriggerSource { get; set; } = Rhs2116TriggerSource.Local;
 
+        [XmlIgnore]
+        [Category(ConfigurationCategory)]
+        [Description("Defines the channel configuration")]
+        public Rhs2116ProbeGroup ChannelConfiguration { get; set; } = new();
+
+        [Browsable(false)]
+        [Externalizable(false)]
+        [XmlElement(nameof(ChannelConfiguration))]
+        public string ChannelConfigurationString
+        {
+            get
+            {
+                var jsonString = JsonConvert.SerializeObject(ChannelConfiguration);
+                return Convert.ToBase64String(Encoding.UTF8.GetBytes(jsonString));
+            }
+            set
+            {
+                var jsonString = Encoding.UTF8.GetString(Convert.FromBase64String(value));
+                ChannelConfiguration = JsonConvert.DeserializeObject<Rhs2116ProbeGroup>(jsonString);
+            }
+        }
+
+        [Category("Acquisition")]
+        [Description("Stimulus sequence.")]
+        public Rhs2116StimulusSequenceDual StimulusSequence
+        {
+            get => stimulusSequence.Value;
+            set => stimulusSequence.OnNext(value);
+        }
+
         public override IObservable<ContextTask> Process(IObservable<ContextTask> source)
         {
             var triggerSource = TriggerSource;
             var deviceName = DeviceName;
             var deviceAddress = DeviceAddress;
+            var channelConfiguration = new Rhs2116ProbeGroup();
+
             return source.ConfigureDevice(context =>
             {
                 var device = context.GetDeviceContext(deviceAddress, Rhs2116Trigger.ID);
+
                 device.WriteRegister(Rhs2116Trigger.TRIGGERSOURCE, (uint)triggerSource);
-                return DeviceManager.RegisterDevice(deviceName, device, DeviceType);
+
+                var deviceInfo = new Rhs2116TriggerDeviceInfo(context, DeviceType, deviceAddress, channelConfiguration, stimulusSequence.Value);
+
+                return DeviceManager.RegisterDevice(deviceName, deviceInfo);
             });
+        }
+    }
+
+    class Rhs2116TriggerDeviceInfo : DeviceInfo
+    {
+        public Rhs2116ProbeGroup ChannelConfiguration { get; }
+        public Rhs2116StimulusSequenceDual StimulusSequence { get; }
+
+        public Rhs2116TriggerDeviceInfo(ContextTask context, Type deviceType, uint deviceAddress,
+                                        Rhs2116ProbeGroup channelConfiguration, Rhs2116StimulusSequenceDual stimulusSequence)
+            : base(context, deviceType, deviceAddress)
+        {
+            ChannelConfiguration = channelConfiguration;
+            StimulusSequence = stimulusSequence;
         }
     }
 
@@ -50,7 +109,7 @@ namespace OpenEphys.Onix
     {
         [Description("Respect local triggers (e.g. via GPIO or TRIGGER register) and broadcast via sync pin. ")]
         Local = 0,
-        [Description("Receiver. Only resepct triggers received from sync pin")]
+        [Description("Receiver. Only respect triggers received from sync pin")]
         External = 1,
     }
 }

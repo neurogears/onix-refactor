@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -167,7 +167,7 @@ namespace OpenEphys.Onix.Design
             ChannelDialog.RefreshZedGraph();
         }
 
-        private void PropertyGridStimulusSequence_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        private void PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             ChannelDialog.DrawChannels();
             DrawStimulusWaveform();
@@ -235,6 +235,8 @@ namespace OpenEphys.Onix.Design
 
             SetStatusValidity();
             SetPercentOfSlotsUsed();
+
+            dataGridViewStimulusTable.Refresh();
 
             zedGraphWaveform.Refresh();
         }
@@ -305,12 +307,20 @@ namespace OpenEphys.Onix.Design
                 if (!Sequence.FitsInHardware)
                 {
                     toolStripStatusIsValid.Image = Properties.Resources.StatusBlockedImage;
-                    toolStripStatusIsValid.Text = "Stimulus sequence too complex";
+                    toolStripStatusIsValid.Text = "Invalid seqeunce - Too many pulses defined";
                 }
                 else
                 {
+                    var reason = Sequence.Stimuli.Where(s => !s.IsValid())
+                                                    .Select((s, ind) =>
+                                                    {
+                                                        s.IsValid(out string reason);
+                                                        return (reason, ind);
+                                                    })
+                                                    .First();
+
                     toolStripStatusIsValid.Image = Properties.Resources.StatusCriticalImage;
-                    toolStripStatusIsValid.Text = "Stimulus sequence not valid";
+                    toolStripStatusIsValid.Text = string.Format("Invalid sequence - Contact {0}, Reason: {1}", reason.ind, reason.reason);
                 }
             }
         }

@@ -1,5 +1,4 @@
-﻿
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace OpenEphys.Onix
 {
@@ -12,7 +11,7 @@ namespace OpenEphys.Onix
         /// <summary>
         /// The shank this electrode belongs to
         /// </summary>
-        public int Shank { get; internal set; } = 0;
+        public int Shank { get; internal set; }
         /// <summary>
         /// Index of the electrode within this shank
         /// </summary>

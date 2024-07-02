@@ -82,8 +82,6 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.MouseDownEvent += MouseDownEvent;
             zedGraphChannels.MouseMoveEvent += MouseMoveEvent;
             zedGraphChannels.MouseUpEvent += MouseUpEvent;
-            zedGraphChannels.MouseClick += MouseClickEvent;
-            zedGraphChannels.MouseDoubleClick += MouseClickEvent;
 
             InitializeZedGraphChannels();
             DrawChannels();
@@ -762,6 +760,8 @@ namespace OpenEphys.Onix.Design
 
         private bool MouseUpEvent(ZedGraphControl sender, MouseEventArgs e)
         {
+            sender.Cursor = Cursors.Arrow;
+
             if (e.Button == MouseButtons.Left)
             {
                 if (sender.GraphPane.GraphObjList[SelectionAreaTag] is BoxObj selectionArea && selectionArea != null && ChannelConfiguration != null)
@@ -791,6 +791,26 @@ namespace OpenEphys.Onix.Design
                     clickStart.X = default;
                     clickStart.Y = default;
                 }
+                else
+                {
+                    PointF mouseClick = new(e.X, e.Y);
+
+                    if (zedGraphChannels.GraphPane.FindNearestObject(mouseClick, CreateGraphics(), out object nearestObject, out int _))
+                    {
+                        if (nearestObject is TextObj textObj)
+                        {
+                            ToggleSelectedContact(textObj.Tag as string);
+                        }
+                        else if (nearestObject is BoxObj boxObj)
+                        {
+                            ToggleSelectedContact(boxObj.Tag as string);
+                        }
+                    }
+                    else
+                    {
+                        SetAllSelections(false);
+                    }
+                }
 
                 DrawChannels();
                 SelectedContactChanged();
@@ -799,32 +819,6 @@ namespace OpenEphys.Onix.Design
             }
 
             return false;
-        }
-
-        private void MouseClickEvent(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Left || zedGraphChannels.GraphPane.GraphObjList[SelectionAreaTag] is BoxObj)
-                return;
-
-            PointF mouseClick = new(e.X, e.Y);
-
-            if (zedGraphChannels.GraphPane.FindNearestObject(mouseClick, CreateGraphics(), out object nearestObject, out int _))
-            {
-                if (nearestObject is TextObj textObj)
-                {
-                    ToggleSelectedContact(textObj.Tag as string);
-                }
-                else if (nearestObject is BoxObj boxObj)
-                {
-                    ToggleSelectedContact(boxObj.Tag as string);
-                }
-            }
-            else
-            {
-                SetAllSelections(false);
-            }
-
-            SelectedContactChanged();
         }
 
         private void ToggleSelectedContact(string tag)

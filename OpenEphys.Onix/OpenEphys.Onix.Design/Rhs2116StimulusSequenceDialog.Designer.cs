@@ -507,7 +507,7 @@
             this.propertyGridStimulusSequence.Name = "propertyGridStimulusSequence";
             this.propertyGridStimulusSequence.Size = new System.Drawing.Size(452, 314);
             this.propertyGridStimulusSequence.TabIndex = 4;
-            this.propertyGridStimulusSequence.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyGridStimulusSequence_PropertyValueChanged);
+            this.propertyGridStimulusSequence.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyValueChanged);
             // 
             // tabControlVisualization
             // 

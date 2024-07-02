@@ -68,7 +68,7 @@ namespace OpenEphys.Onix
             {
                 for (int i = 0; i < numberOfChannels; i++)
                 {
-                    contactPositions[i] = new float[2] { i + 1.0f, 3.0f };
+                    contactPositions[i] = new float[2] { numberOfChannels - i, 3.0f };
                 }
             }
             else if (probeIndex == 1)

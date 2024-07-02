@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Windows.Forms;
 using OpenEphys.ProbeInterface;
+using ZedGraph;
 
 namespace OpenEphys.Onix.Design
 {
     public partial class Rhs2116ChannelConfigurationDialog : ChannelConfigurationDialog
     {
         public event EventHandler OnSelect;
+        public event EventHandler OnZoom;
 
         public Rhs2116ChannelConfigurationDialog(Rhs2116ProbeGroup probeGroup)
             : base(probeGroup)
@@ -34,11 +36,6 @@ namespace OpenEphys.Onix.Design
             base.OpenFile<Rhs2116ProbeGroup>();
         }
 
-        internal override float CalculateFontSize()
-        {
-            return 20;
-        }
-
         internal override string ContactString(Contact contact)
         {
             return contact.DeviceId.ToString();
@@ -54,34 +51,15 @@ namespace OpenEphys.Onix.Design
             OnSelect?.Invoke(this, EventArgs.Empty);
         }
 
-        // HERE: Use this logic to highlight the invalid channels above
+        public override void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
+        {
+            base.ZoomEvent(sender, oldState, newState);
+            OnZoomHandler();
+        }
 
-        //private void VisualizeSelectedChannels()
-        //{
-        //    bool showAllChannels = SelectedChannels.All(x => x == false);
-
-        //    for (int i = 0; i < SelectedChannels.Length; i++)
-        //    {
-        //        EllipseObj circleObj = (EllipseObj)zedGraphChannels.GraphPane.GraphObjList[string.Format(ChannelConfigurationDialog.ContactStringFormat, i)];
-
-        //        if (circleObj != null)
-        //        {
-        //            if (!Sequence.Stimuli[i].IsValid())
-        //            {
-        //                circleObj.Fill.Color = Color.Red;
-        //            }
-        //            else if (showAllChannels || !SelectedChannels[i])
-        //            {
-        //                circleObj.Fill.Color = Color.White;
-        //            }
-        //            else
-        //            {
-        //                circleObj.Fill.Color = Color.SlateGray;
-        //            }
-        //        }
-        //    }
-
-        //    zedGraphChannels.Refresh();
-        //}
+        private void OnZoomHandler()
+        {
+            OnZoom?.Invoke(this, EventArgs.Empty);
+        }
     }
 }

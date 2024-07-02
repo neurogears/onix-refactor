@@ -1,4 +1,4 @@
-using System.Drawing;
+﻿using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -50,8 +50,8 @@ namespace OpenEphys.Onix.Design
         internal readonly Color EnabledContactFill = Color.LightYellow;
         internal readonly Color ReferenceContactFill = Color.Black;
 
-        readonly Color DeselectedContactBorder = Color.LightGray;
-        readonly Color SelectedContactBorder = Color.YellowGreen;
+        internal readonly Color DeselectedContactBorder = Color.LightGray;
+        internal readonly Color SelectedContactBorder = Color.YellowGreen;
 
         PointD clickStart = new(0.0, 0.0);
 
@@ -224,6 +224,8 @@ namespace OpenEphys.Onix.Design
                 var probeOffset = probeNumber == 0 ? 0 : GetProbeIndexOffset(probeNumber);
                 var probe = ChannelConfiguration.Probes.ElementAt(probeNumber);
 
+                const int borderWidth = 4;
+
                 for (int j = 0; j < probe.ContactPositions.Length; j++)
                 {
                     Contact contact = probe.GetContact(j);
@@ -241,7 +243,7 @@ namespace OpenEphys.Onix.Design
                             Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
                         };
 
-                        contactObj.Border.Width = 3;
+                        contactObj.Border.Width = borderWidth;
 
                         zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
                     }
@@ -256,7 +258,7 @@ namespace OpenEphys.Onix.Design
                             Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
                         };
 
-                        contactObj.Border.Width = 3;
+                        contactObj.Border.Width = borderWidth;
 
                         zedGraphChannels.GraphPane.GraphObjList.Add(contactObj);
                     }
@@ -380,7 +382,7 @@ namespace OpenEphys.Onix.Design
             var fontSize = 300f * contactSize / rangeY;
 
             fontSize = fontSize < 1f ? 1f : fontSize;
-            fontSize = fontSize > 100f ? 200f : fontSize;
+            fontSize = fontSize > 100f ? 100f : fontSize;
 
             return fontSize;
         }
@@ -909,7 +911,7 @@ namespace OpenEphys.Onix.Design
             return false;
         }
 
-        private int GetProbeIndexOffset(int currentProbeIndex)
+        internal int GetProbeIndexOffset(int currentProbeIndex)
         {
             int offset = 0;
 

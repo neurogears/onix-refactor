@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,7 +18,7 @@ namespace OpenEphys.Onix.Design
             set { propertyGridStimulusSequence.SelectedObject = value; }
         }
 
-        public readonly Rhs2116ChannelConfigurationDialog ChannelConfiguration;
+        public readonly Rhs2116ChannelConfigurationDialog ChannelDialog;
 
         private const double SamplePeriodMicroSeconds = 1e6 / 30.1932367151e3;
 
@@ -35,7 +35,7 @@ namespace OpenEphys.Onix.Design
             Sequence = new Rhs2116StimulusSequenceDual(sequence);
 
 
-            ChannelConfiguration = new(probeGroup)
+            ChannelDialog = new(probeGroup)
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
@@ -43,12 +43,13 @@ namespace OpenEphys.Onix.Design
                 Parent = this,
             };
 
-            panelProbe.Controls.Add(ChannelConfiguration);
-            this.AddMenuItemsFromDialogToFileOption(ChannelConfiguration, "Channel Configuration");
+            panelProbe.Controls.Add(ChannelDialog);
+            this.AddMenuItemsFromDialogToFileOption(ChannelDialog, "Channel Configuration");
 
-            ChannelConfiguration.OnSelect += OnSelect;
+            ChannelDialog.OnSelect += OnSelect;
+            ChannelDialog.OnZoom += OnZoom;
 
-            ChannelConfiguration.Show();
+            ChannelDialog.Show();
 
             comboBoxStepSize.DataSource = Enum.GetValues(typeof(Rhs2116StepSize));
             comboBoxStepSize.SelectedIndex = (int)Sequence.CurrentStepSize;
@@ -128,21 +129,53 @@ namespace OpenEphys.Onix.Design
             }
         }
 
-        private void OnSelect(object sender, EventArgs e) 
+        private void OnSelect(object sender, EventArgs e)
         {
             DrawStimulusWaveform();
+        }
+
+        private void OnZoom(object sender, EventArgs e)
+        {
+            HighlightInvalidSequences();
+            ChannelDialog.UpdateFontSize();
+        }
+
+        private void HighlightInvalidSequences()
+        {
+            for (int i = 0; i < ChannelDialog.ChannelConfiguration.Probes.Count(); i++)
+            {
+                var probe = ChannelDialog.ChannelConfiguration.Probes.ElementAt(i);
+                var probeOffset = ChannelDialog.GetProbeIndexOffset(i);
+
+                for (int j = 0; j < probe.NumberOfContacts; j++)
+                {
+                    BoxObj contactObj = (BoxObj)ChannelDialog.zedGraphChannels.GraphPane.GraphObjList[string.Format(ChannelConfigurationDialog.ContactStringFormat, i, j)];
+
+                    if (contactObj != null)
+                    {
+                        if (!Sequence.Stimuli[j + probeOffset].IsValid())
+                        {
+                            contactObj.Fill.Color = Color.Red;
+
+                            if (contactObj.Border.Color != ChannelDialog.SelectedContactBorder)
+                                contactObj.Border.Color = Color.Red;
+                        }
+                    }
+                }
+            }
+
+            ChannelDialog.RefreshZedGraph();
         }
 
         private void PropertyGridStimulusSequence_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
+            ChannelDialog.DrawChannels();
             DrawStimulusWaveform();
-
-            ChannelConfiguration.DrawChannels();
         }
 
         private void DrawStimulusWaveform()
         {
-            bool plotAllContacts = ChannelConfiguration.SelectedContacts.All(x => x == false);
+            bool plotAllContacts = ChannelDialog.SelectedContacts.All(x => x == false);
 
             zedGraphWaveform.GraphPane.CurveList.Clear();
             zedGraphWaveform.GraphPane.GraphObjList.Clear();
@@ -163,7 +196,7 @@ namespace OpenEphys.Onix.Design
 
             for (int i = 0; i < stimuli.Length; i++)
             {
-                if (ChannelConfiguration.SelectedContacts[i] || plotAllContacts)
+                if (ChannelDialog.SelectedContacts[i] || plotAllContacts)
                 {
                     PointPairList pointPairs = CreateStimulusWaveform(stimuli[i], -peakToPeak * i);
 
@@ -193,6 +226,8 @@ namespace OpenEphys.Onix.Design
                     zedGraphWaveform.GraphPane.GraphObjList.Add(contactNumber);
                 }
             }
+
+            HighlightInvalidSequences();
 
             zedGraphWaveform.GraphPane.YAxis.Scale.MinorStep = 0;
 
@@ -301,7 +336,7 @@ namespace OpenEphys.Onix.Design
 
         private void ButtonAddPulses_Click(object sender, EventArgs e)
         {
-            if (ChannelConfiguration.SelectedContacts.All(x => x))
+            if (ChannelDialog.SelectedContacts.All(x => x))
             {
                 DialogResult result = MessageBox.Show("Caution: All channels are currently selected, and all " +
                     "settings will be applied to all channels if you continue. Press Okay to add pulse settings to all channels, or Cancel to keep them as is",
@@ -313,71 +348,75 @@ namespace OpenEphys.Onix.Design
                 }
             }
 
-            bool plotAllContacts = ChannelConfiguration.SelectedContacts.All(x => x == false);
-
-            for (int i = 0; i < ChannelConfiguration.SelectedContacts.Length; i++)
+            if (ChannelDialog.SelectedContacts.All(x => x == false))
             {
-                if (ChannelConfiguration.SelectedContacts[i] || plotAllContacts)
+                MessageBox.Show("No contacts selected. Please select the contacts before trying to add pulses.");
+                return;
+            }
+
+            for (int i = 0; i < ChannelDialog.SelectedContacts.Length; i++)
+            {
+                if (ChannelDialog.SelectedContacts[i])
                 {
-                    if (delay.Tag == null)
+                    if (textboxDelay.Tag == null)
                     {
                         MessageBox.Show("Unable to parse delay.");
                         return;
                     }
 
-                    if (amplitudeAnodic.Tag == null)
+                    if (textboxAmplitudeAnodic.Tag == null)
                     {
                         MessageBox.Show("Unable to parse anodic amplitude.");
                         return;
                     }
 
-                    if (pulseWidthAnodic.Tag == null)
+                    if (textboxPulseWidthAnodic.Tag == null)
                     {
                         MessageBox.Show("Unable to parse anodic pulse width.");
                         return;
                     }
 
-                    if (interPulseInterval.Tag == null)
+                    if (textboxInterPulseInterval.Tag == null)
                     {
                         MessageBox.Show("Unable to parse inter-pulse interval.");
                         return;
                     }
 
-                    if (amplitudeCathodic.Tag == null)
+                    if (textboxAmplitudeCathodic.Tag == null)
                     {
                         MessageBox.Show("Unable to parse cathodic amplitude.");
                         return;
                     }
 
-                    if (pulseWidthCathodic.Tag == null)
+                    if (textboxPulseWidthCathodic.Tag == null)
                     {
                         MessageBox.Show("Unable to parse cathodic pulse width.");
                         return;
                     }
 
-                    if (interStimulusInterval.Tag == null)
+                    if (textboxInterStimulusInterval.Tag == null)
                     {
                         MessageBox.Show("Unable to parse inter-stimulus interval.");
                         return;
                     }
 
-                    if (!uint.TryParse(numberOfStimuli.Text, out uint numberOfStimuliValue))
+                    if (!uint.TryParse(textboxNumberOfStimuli.Text, out uint numberOfStimuliValue))
                     {
                         MessageBox.Show("Unable to parse number of stimuli.");
                         return;
                     }
 
-                    Sequence.Stimuli[i].DelaySamples = (uint)delay.Tag;
+                    Sequence.Stimuli[i].DelaySamples = (uint)textboxDelay.Tag;
 
-                    Sequence.Stimuli[i].AnodicAmplitudeSteps = (byte)amplitudeAnodic.Tag;
-                    Sequence.Stimuli[i].AnodicWidthSamples = (uint)pulseWidthAnodic.Tag;
+                    Sequence.Stimuli[i].AnodicAmplitudeSteps = (byte)textboxAmplitudeAnodic.Tag;
+                    Sequence.Stimuli[i].AnodicWidthSamples = (uint)textboxPulseWidthAnodic.Tag;
 
-                    Sequence.Stimuli[i].CathodicAmplitudeSteps = (byte)amplitudeCathodic.Tag;
-                    Sequence.Stimuli[i].CathodicWidthSamples = (uint)pulseWidthCathodic.Tag;
+                    Sequence.Stimuli[i].CathodicAmplitudeSteps = (byte)textboxAmplitudeCathodic.Tag;
+                    Sequence.Stimuli[i].CathodicWidthSamples = (uint)textboxPulseWidthCathodic.Tag;
 
-                    Sequence.Stimuli[i].DwellSamples = (uint)interPulseInterval.Tag;
+                    Sequence.Stimuli[i].DwellSamples = (uint)textboxInterPulseInterval.Tag;
 
-                    Sequence.Stimuli[i].InterStimulusIntervalSamples = (uint)interStimulusInterval.Tag;
+                    Sequence.Stimuli[i].InterStimulusIntervalSamples = (uint)textboxInterStimulusInterval.Tag;
 
                     Sequence.Stimuli[i].NumberOfStimuli = numberOfStimuliValue;
 
@@ -386,7 +425,7 @@ namespace OpenEphys.Onix.Design
             }
 
             DrawStimulusWaveform();
-            ChannelConfiguration.HighlightEnabledContacts();
+            ChannelDialog.HighlightEnabledContacts();
         }
 
         private void ParameterKeyPress_Time(object sender, KeyPressEventArgs e)
@@ -410,7 +449,7 @@ namespace OpenEphys.Onix.Design
             dataGridViewStimulusTable.BindingContext[dataGridViewStimulusTable.DataSource].EndCurrentEdit();
             AddDeviceChannelIndexToGridRow();
             DrawStimulusWaveform();
-            ChannelConfiguration.HighlightEnabledContacts();
+            ChannelDialog.HighlightEnabledContacts();
         }
 
         private void DataGridViewStimulusTable_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -420,10 +459,10 @@ namespace OpenEphys.Onix.Design
 
         private void AddDeviceChannelIndexToGridRow()
         {
-            if (ChannelConfiguration == null || ChannelConfiguration.GetProbeGroup().NumberOfContacts != 32)
+            if (ChannelDialog == null || ChannelDialog.GetProbeGroup().NumberOfContacts != 32)
                 return;
 
-            var deviceChannelIndices = ChannelConfiguration.GetProbeGroup().GetDeviceChannelIndices();
+            var deviceChannelIndices = ChannelDialog.GetProbeGroup().GetDeviceChannelIndices();
 
             for (int i = 0; i < deviceChannelIndices.Count(); i++)
             {
@@ -442,14 +481,14 @@ namespace OpenEphys.Onix.Design
             DrawStimulusWaveform();
             UpdateAmplitudeLabelUnits();
 
-            if (amplitudeAnodic.Tag != null)
+            if (textboxAmplitudeAnodic.Tag != null)
             {
-                amplitudeAnodic.Text = GetAmplitudeString((byte)amplitudeAnodic.Tag);
+                textboxAmplitudeAnodic.Text = GetAmplitudeString((byte)textboxAmplitudeAnodic.Tag);
             }
 
-            if (amplitudeCathodic.Tag != null)
+            if (textboxAmplitudeCathodic.Tag != null)
             {
-                amplitudeCathodic.Text = GetAmplitudeString((byte)amplitudeCathodic.Tag);
+                textboxAmplitudeCathodic.Text = GetAmplitudeString((byte)textboxAmplitudeCathodic.Tag);
             }
         }
 
@@ -517,17 +556,33 @@ namespace OpenEphys.Onix.Design
         {
             TextBox textBox = (TextBox)sender;
 
-            if (textBox.Text == "" || textBox.Text == "0" || textBox.Text == "0.0" || textBox.Text == "0.00" || textBox.Text == "0.000")
+            if (textBox == null || textBox.Text == "")
                 return;
 
             if (double.TryParse(textBox.Text, out double result))
             {
                 if (!GetSampleFromTime(result, out uint sampleTime))
                 {
-                    MessageBox.Show("Warning: Value was too small. Time is now set to zero seconds. Please increase the value.");
+                    MessageBox.Show($"Warning: Value \"{result}\" is not valid.");
+                    textBox.Text = "";
+                    textBox.Tag = null;
                 }
-                textBox.Text = GetTimeString(sampleTime);
-                textBox.Tag = sampleTime;
+                else
+                {
+                    textBox.Text = GetTimeString(sampleTime);
+                    textBox.Tag = sampleTime;
+
+                    if (sampleTime == 0)
+                    {
+                        if (textBox.Name == nameof(textboxPulseWidthAnodic) ||
+                            textBox.Name == nameof(textboxPulseWidthCathodic))
+                        {
+                            MessageBox.Show($"Warning: Value entered must be greater than {result}.");
+                            textBox.Text = "";
+                            textBox.Tag = null;
+                        }
+                    }
+                }
             }
             else
             {
@@ -536,15 +591,15 @@ namespace OpenEphys.Onix.Design
                 textBox.Tag = null;
             }
 
-            if (groupBoxAnode.Visible && !groupBoxCathode.Visible)
+            if (textBox.Name == nameof(textboxPulseWidthAnodic) && checkboxBiphasicSymmetrical.Checked)
             {
-                pulseWidthCathodic.Text = textBox.Text;
-                pulseWidthCathodic.Tag = textBox.Tag;
+                textboxPulseWidthCathodic.Text = textBox.Text;
+                textboxPulseWidthCathodic.Tag = textBox.Tag;
             }
-            else if (groupBoxCathode.Visible && !groupBoxAnode.Visible)
+            else if (textBox.Name == nameof(textboxPulseWidthCathodic) && checkboxBiphasicSymmetrical.Checked)
             {
-                pulseWidthAnodic.Text = textBox.Text;
-                pulseWidthAnodic.Tag = textBox.Tag;
+                textboxPulseWidthAnodic.Text = textBox.Text;
+                textboxPulseWidthAnodic.Tag = textBox.Tag;
             }
         }
 
@@ -553,7 +608,7 @@ namespace OpenEphys.Onix.Design
             var ratio = value * 1e3 / SamplePeriodMicroSeconds;
             samples = (uint)Math.Round(ratio);
 
-            return !(ratio > uint.MaxValue || ratio < uint.MinValue || samples == 0);
+            return !(ratio > uint.MaxValue || ratio < uint.MinValue);
         }
 
         private bool GetSampleFromAmplitude(double value, out byte samples)
@@ -561,7 +616,7 @@ namespace OpenEphys.Onix.Design
             var ratio = value * GetUnitConversion() / Sequence.CurrentStepSizeuA;
             samples = (byte)Math.Round(ratio);
 
-            return !(ratio > byte.MaxValue || ratio < 0 || samples == 0);
+            return !(ratio > byte.MaxValue || ratio < 0);
         }
 
         private double GetTimeFromSample(uint value)
@@ -578,26 +633,17 @@ namespace OpenEphys.Onix.Design
         {
             TextBox textBox = (TextBox)sender;
 
-            if (textBox.Text == "" || textBox.Text == "0" || textBox.Text == "0.0" || textBox.Text == "0.00" || textBox.Text == "0.000")
+            if (textBox.Text == "")
                 return;
 
             if (double.TryParse(textBox.Text, out double result))
             {
                 if (!GetSampleFromAmplitude(result, out byte sampleAmplitude))
                 {
-                    if (sampleAmplitude == 0)
-                    {
-                        MessageBox.Show("Warning: amplitude is set to zero. Please increase the amplitude value and try again.");
-                        textBox.Text = "";
-                        textBox.Tag = null;
-                        return;
-                    }
-                    else
-                    {
-                        MessageBox.Show("Warning: Amplitude is too high for the given step-size. " +
-                            "Please increase the amplitude step-size and try again.");
-                        sampleAmplitude = byte.MaxValue;
-                    }
+                    sampleAmplitude = byte.MaxValue;
+
+                    MessageBox.Show("Warning: Amplitude is too high for the given step-size. " +
+                        "Please increase the amplitude step-size and try again.");
                 }
 
                 textBox.Text = GetAmplitudeString(sampleAmplitude);
@@ -610,15 +656,15 @@ namespace OpenEphys.Onix.Design
                 textBox.Tag = null;
             }
 
-            if (groupBoxAnode.Visible && !groupBoxCathode.Visible)
+            if (textBox.Name == nameof(textboxAmplitudeAnodic) && checkboxBiphasicSymmetrical.Checked)
             {
-                amplitudeCathodic.Text = textBox.Text;
-                amplitudeCathodic.Tag = textBox.Tag;
+                textboxAmplitudeCathodic.Text = textBox.Text;
+                textboxAmplitudeCathodic.Tag = textBox.Tag;
             }
-            else if (groupBoxCathode.Visible && !groupBoxAnode.Visible)
+            else if (textBox.Name == nameof(textboxAmplitudeCathodic) && checkboxBiphasicSymmetrical.Checked)
             {
-                amplitudeAnodic.Text = textBox.Text;
-                amplitudeAnodic.Tag = textBox.Tag;
+                textboxAmplitudeAnodic.Text = textBox.Text;
+                textboxAmplitudeAnodic.Tag = textBox.Tag;
             }
         }
 
@@ -646,7 +692,7 @@ namespace OpenEphys.Onix.Design
 
         private void ButtonClearPulses_Click(object sender, EventArgs e)
         {
-            if (ChannelConfiguration.SelectedContacts.All(x => x == false) || ChannelConfiguration.SelectedContacts.All(x => x == true))
+            if (ChannelDialog.SelectedContacts.All(x => x == false) || ChannelDialog.SelectedContacts.All(x => x == true))
             {
                 DialogResult result = MessageBox.Show("Caution: All channels are currently selected, and all " +
                     "settings will be cleared if you continue. Press Okay to clear all pulse settings, or Cancel to keep them",
@@ -658,11 +704,11 @@ namespace OpenEphys.Onix.Design
                 }
             }
 
-            var clearAllContacts = ChannelConfiguration.SelectedContacts.All(x => x == false);
+            var clearAllContacts = ChannelDialog.SelectedContacts.All(x => x == false);
 
-            for (int i = 0; i < ChannelConfiguration.SelectedContacts.Length; i++)
+            for (int i = 0; i < ChannelDialog.SelectedContacts.Length; i++)
             {
-                if (ChannelConfiguration.SelectedContacts[i] || clearAllContacts)
+                if (ChannelDialog.SelectedContacts[i] || clearAllContacts)
                 {
                     Sequence.Stimuli[i].Clear();
                 }
@@ -673,7 +719,7 @@ namespace OpenEphys.Onix.Design
 
         private void ButtonReadPulses_Click(object sender, EventArgs e)
         {
-            if (ChannelConfiguration.SelectedContacts.Count(x => x) > 1)
+            if (ChannelDialog.SelectedContacts.Count(x => x) > 1)
             {
                 MessageBox.Show("Too many contacts selected. Please choose a single contact to read from.");
                 return;
@@ -681,9 +727,9 @@ namespace OpenEphys.Onix.Design
 
             int index = -1;
 
-            for (int i = 0; i < ChannelConfiguration.SelectedContacts.Length; i++)
+            for (int i = 0; i < ChannelDialog.SelectedContacts.Length; i++)
             {
-                if (ChannelConfiguration.SelectedContacts[i])
+                if (ChannelDialog.SelectedContacts[i])
                 {
                     index = i; break;
                 }
@@ -709,14 +755,14 @@ namespace OpenEphys.Onix.Design
 
             Checkbox_CheckedChanged(checkboxBiphasicSymmetrical, e);
 
-            delay.Text = GetTimeString(Sequence.Stimuli[index].DelaySamples); Samples_TextChanged(delay, e);
-            amplitudeAnodic.Text = GetAmplitudeString(Sequence.Stimuli[index].AnodicAmplitudeSteps); Amplitude_TextChanged(amplitudeAnodic, e);
-            pulseWidthAnodic.Text = GetTimeString(Sequence.Stimuli[index].AnodicWidthSamples); Samples_TextChanged(pulseWidthAnodic, e);
-            amplitudeCathodic.Text = GetAmplitudeString(Sequence.Stimuli[index].CathodicAmplitudeSteps); Amplitude_TextChanged(amplitudeCathodic, e);
-            pulseWidthCathodic.Text = GetTimeString(Sequence.Stimuli[index].CathodicWidthSamples); Samples_TextChanged(pulseWidthCathodic, e);
-            interPulseInterval.Text = GetTimeString(Sequence.Stimuli[index].DwellSamples); Samples_TextChanged(interPulseInterval, e);
-            interStimulusInterval.Text = GetTimeString(Sequence.Stimuli[index].InterStimulusIntervalSamples); Samples_TextChanged(interStimulusInterval, e);
-            numberOfStimuli.Text = Sequence.Stimuli[index].NumberOfStimuli.ToString();
+            textboxDelay.Text = GetTimeString(Sequence.Stimuli[index].DelaySamples); Samples_TextChanged(textboxDelay, e);
+            textboxAmplitudeAnodic.Text = GetAmplitudeString(Sequence.Stimuli[index].AnodicAmplitudeSteps); Amplitude_TextChanged(textboxAmplitudeAnodic, e);
+            textboxPulseWidthAnodic.Text = GetTimeString(Sequence.Stimuli[index].AnodicWidthSamples); Samples_TextChanged(textboxPulseWidthAnodic, e);
+            textboxAmplitudeCathodic.Text = GetAmplitudeString(Sequence.Stimuli[index].CathodicAmplitudeSteps); Amplitude_TextChanged(textboxAmplitudeCathodic, e);
+            textboxPulseWidthCathodic.Text = GetTimeString(Sequence.Stimuli[index].CathodicWidthSamples); Samples_TextChanged(textboxPulseWidthCathodic, e);
+            textboxInterPulseInterval.Text = GetTimeString(Sequence.Stimuli[index].DwellSamples); Samples_TextChanged(textboxInterPulseInterval, e);
+            textboxInterStimulusInterval.Text = GetTimeString(Sequence.Stimuli[index].InterStimulusIntervalSamples); Samples_TextChanged(textboxInterStimulusInterval, e);
+            textboxNumberOfStimuli.Text = Sequence.Stimuli[index].NumberOfStimuli.ToString();
         }
 
         private void MenuItemSaveFile_Click(object sender, EventArgs e)

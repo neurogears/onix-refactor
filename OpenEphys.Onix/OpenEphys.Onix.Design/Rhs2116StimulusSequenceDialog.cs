@@ -311,13 +311,13 @@ namespace OpenEphys.Onix.Design
                 }
                 else
                 {
-                    var reason = Sequence.Stimuli.Where(s => !s.IsValid())
-                                                    .Select((s, ind) =>
-                                                    {
-                                                        s.IsValid(out string reason);
-                                                        return (reason, ind);
-                                                    })
-                                                    .First();
+                    var reason = Sequence.Stimuli.Select((s, ind) =>
+                                                 {
+                                                     s.IsValid(out string reason);
+                                                     return (reason, ind);
+                                                 })
+                                                 .Where(reason => reason.reason != "")
+                                                 .First();
 
                     toolStripStatusIsValid.Image = Properties.Resources.StatusCriticalImage;
                     toolStripStatusIsValid.Text = string.Format("Invalid sequence - Contact {0}, Reason: {1}", reason.ind, reason.reason);
@@ -566,8 +566,14 @@ namespace OpenEphys.Onix.Design
         {
             TextBox textBox = (TextBox)sender;
 
-            if (textBox == null || textBox.Text == "")
+            if (textBox == null)
                 return;
+
+            else if (textBox.Text == "")
+            {
+                textBox.Tag = null;
+                return;
+            }
 
             if (double.TryParse(textBox.Text, out double result))
             {
@@ -725,31 +731,23 @@ namespace OpenEphys.Onix.Design
             }
 
             DrawStimulusWaveform();
+            ChannelDialog.HighlightEnabledContacts();
+            ChannelDialog.RefreshZedGraph();
         }
 
         private void ButtonReadPulses_Click(object sender, EventArgs e)
         {
-            if (ChannelDialog.SelectedContacts.Count(x => x) > 1)
+            if (ChannelDialog.SelectedContacts.Count(x => x) != 1)
             {
-                MessageBox.Show("Too many contacts selected. Please choose a single contact to read from.");
+                MessageBox.Show("Please choose a single contact to read from.");
                 return;
             }
 
-            int index = -1;
+            var index = ChannelDialog.SelectedContacts.Select((s, ind) => { return ind; })
+                                                      .First();
 
-            for (int i = 0; i < ChannelDialog.SelectedContacts.Length; i++)
-            {
-                if (ChannelDialog.SelectedContacts[i])
-                {
-                    index = i; break;
-                }
-            }
-
-            if (index < 0)
-            {
-                MessageBox.Show("Warning: No contact selected. Please choose a contact before continuing.");
+            if (Sequence.Stimuli[index].NumberOfStimuli == 0 || !Sequence.Stimuli[index].IsValid())
                 return;
-            }
 
             if (Sequence.Stimuli[index].AnodicAmplitudeSteps == Sequence.Stimuli[index].CathodicAmplitudeSteps &&
                 Sequence.Stimuli[index].AnodicWidthSamples == Sequence.Stimuli[index].CathodicWidthSamples)

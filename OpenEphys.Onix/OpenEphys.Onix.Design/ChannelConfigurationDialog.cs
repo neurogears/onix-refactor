@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -83,6 +83,7 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.MouseMoveEvent += MouseMoveEvent;
             zedGraphChannels.MouseUpEvent += MouseUpEvent;
             zedGraphChannels.MouseClick += MouseClickEvent;
+            zedGraphChannels.MouseDoubleClick += MouseClickEvent;
 
             InitializeZedGraphChannels();
             DrawChannels();

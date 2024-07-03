@@ -27,7 +27,7 @@ namespace OpenEphys.Onix.Design
             };
 
             tabPageStimulusSequence.Controls.Add(StimulusSequenceDialog);
-            AddMenuItemsFromDialog(StimulusSequenceDialog, "Stimulus Sequence");
+            this.AddMenuItemsFromDialogToFileOption(StimulusSequenceDialog);
 
             StimulusSequenceDialog.Show();
 
@@ -49,28 +49,6 @@ namespace OpenEphys.Onix.Design
             {
                 DialogResult = result;
                 Close();
-            }
-        }
-
-        private void AddMenuItemsFromDialog(Form form, string menuName)
-        {
-            if (form != null)
-            {
-                var menuStrips = form.GetAllChildren()
-                                     .OfType<MenuStrip>()
-                                     .ToList();
-
-                if (menuStrips != null && menuStrips.Count > 0)
-                {
-                    foreach (var menuStrip in menuStrips)
-                    {
-                        var toolStripMenuItem = new ToolStripMenuItem(menuName);
-
-                        toolStripMenuItem.DropDownItems.AddRange(menuStrip.Items);
-
-                        this.menuStrip.Items.AddRange(new ToolStripItem[] { toolStripMenuItem });
-                    }
-                }
             }
         }
     }

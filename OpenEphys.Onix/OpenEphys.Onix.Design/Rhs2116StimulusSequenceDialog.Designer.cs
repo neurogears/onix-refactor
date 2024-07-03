@@ -124,7 +124,7 @@
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonCancel.Location = new System.Drawing.Point(319, 8);
+            this.buttonCancel.Location = new System.Drawing.Point(319, 9);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(140, 42);
             this.buttonCancel.TabIndex = 0;
@@ -170,14 +170,14 @@
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelButtons.Location = new System.Drawing.Point(0, 0);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Size = new System.Drawing.Size(466, 59);
+            this.panelButtons.Size = new System.Drawing.Size(466, 60);
             this.panelButtons.TabIndex = 0;
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonOk.Location = new System.Drawing.Point(170, 8);
+            this.buttonOk.Location = new System.Drawing.Point(170, 9);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(140, 42);
             this.buttonOk.TabIndex = 4;
@@ -193,7 +193,7 @@
             this.tabControlParameters.Location = new System.Drawing.Point(0, 0);
             this.tabControlParameters.Name = "tabControlParameters";
             this.tabControlParameters.SelectedIndex = 0;
-            this.tabControlParameters.Size = new System.Drawing.Size(466, 350);
+            this.tabControlParameters.Size = new System.Drawing.Size(466, 351);
             this.tabControlParameters.TabIndex = 1;
             // 
             // tabPageAddPulse
@@ -202,7 +202,7 @@
             this.tabPageAddPulse.Location = new System.Drawing.Point(4, 29);
             this.tabPageAddPulse.Name = "tabPageAddPulse";
             this.tabPageAddPulse.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageAddPulse.Size = new System.Drawing.Size(458, 317);
+            this.tabPageAddPulse.Size = new System.Drawing.Size(458, 318);
             this.tabPageAddPulse.TabIndex = 0;
             this.tabPageAddPulse.Text = "Add Pulses";
             this.tabPageAddPulse.UseVisualStyleBackColor = true;
@@ -230,7 +230,7 @@
             this.panelParameters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelParameters.Location = new System.Drawing.Point(3, 3);
             this.panelParameters.Name = "panelParameters";
-            this.panelParameters.Size = new System.Drawing.Size(452, 311);
+            this.panelParameters.Size = new System.Drawing.Size(452, 312);
             this.panelParameters.TabIndex = 0;
             // 
             // groupBoxCathode
@@ -338,6 +338,7 @@
             // 
             // comboBoxStepSize
             // 
+            this.comboBoxStepSize.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxStepSize.FormattingEnabled = true;
             this.comboBoxStepSize.Location = new System.Drawing.Point(257, 38);
             this.comboBoxStepSize.Name = "comboBoxStepSize";
@@ -374,7 +375,6 @@
             this.textboxInterPulseInterval.Name = "textboxInterPulseInterval";
             this.textboxInterPulseInterval.Size = new System.Drawing.Size(60, 26);
             this.textboxInterPulseInterval.TabIndex = 1;
-            this.textboxInterPulseInterval.Tag = "";
             this.textboxInterPulseInterval.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ParameterKeyPress_Time);
             this.textboxInterPulseInterval.Leave += new System.EventHandler(this.Samples_TextChanged);
             // 
@@ -427,7 +427,6 @@
             this.textboxDelay.Name = "textboxDelay";
             this.textboxDelay.Size = new System.Drawing.Size(60, 26);
             this.textboxDelay.TabIndex = 0;
-            this.textboxDelay.Tag = "";
             this.textboxDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.ParameterKeyPress_Time);
             this.textboxDelay.Leave += new System.EventHandler(this.Samples_TextChanged);
             // 
@@ -495,7 +494,7 @@
             this.tabPageEditorDialog.Location = new System.Drawing.Point(4, 29);
             this.tabPageEditorDialog.Name = "tabPageEditorDialog";
             this.tabPageEditorDialog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageEditorDialog.Size = new System.Drawing.Size(458, 320);
+            this.tabPageEditorDialog.Size = new System.Drawing.Size(458, 317);
             this.tabPageEditorDialog.TabIndex = 2;
             this.tabPageEditorDialog.Text = "EditorDialog";
             this.tabPageEditorDialog.UseVisualStyleBackColor = true;
@@ -505,7 +504,7 @@
             this.propertyGridStimulusSequence.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridStimulusSequence.Location = new System.Drawing.Point(3, 3);
             this.propertyGridStimulusSequence.Name = "propertyGridStimulusSequence";
-            this.propertyGridStimulusSequence.Size = new System.Drawing.Size(452, 314);
+            this.propertyGridStimulusSequence.Size = new System.Drawing.Size(452, 311);
             this.propertyGridStimulusSequence.TabIndex = 4;
             this.propertyGridStimulusSequence.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyValueChanged);
             // 
@@ -517,7 +516,7 @@
             this.tabControlVisualization.Location = new System.Drawing.Point(0, 0);
             this.tabControlVisualization.Name = "tabControlVisualization";
             this.tabControlVisualization.SelectedIndex = 0;
-            this.tabControlVisualization.Size = new System.Drawing.Size(1172, 832);
+            this.tabControlVisualization.Size = new System.Drawing.Size(1172, 835);
             this.tabControlVisualization.TabIndex = 6;
             // 
             // tabPageWaveform
@@ -526,7 +525,7 @@
             this.tabPageWaveform.Location = new System.Drawing.Point(4, 29);
             this.tabPageWaveform.Name = "tabPageWaveform";
             this.tabPageWaveform.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageWaveform.Size = new System.Drawing.Size(1164, 799);
+            this.tabPageWaveform.Size = new System.Drawing.Size(1164, 802);
             this.tabPageWaveform.TabIndex = 0;
             this.tabPageWaveform.Text = "Stimulus Waveform";
             this.tabPageWaveform.UseVisualStyleBackColor = true;
@@ -545,7 +544,7 @@
             this.zedGraphWaveform.ScrollMinX = 0D;
             this.zedGraphWaveform.ScrollMinY = 0D;
             this.zedGraphWaveform.ScrollMinY2 = 0D;
-            this.zedGraphWaveform.Size = new System.Drawing.Size(1158, 793);
+            this.zedGraphWaveform.Size = new System.Drawing.Size(1158, 796);
             this.zedGraphWaveform.TabIndex = 4;
             this.zedGraphWaveform.UseExtendedPrintDialog = true;
             // 
@@ -555,7 +554,7 @@
             this.tabPageTable.Location = new System.Drawing.Point(4, 29);
             this.tabPageTable.Name = "tabPageTable";
             this.tabPageTable.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTable.Size = new System.Drawing.Size(1164, 806);
+            this.tabPageTable.Size = new System.Drawing.Size(1164, 799);
             this.tabPageTable.TabIndex = 1;
             this.tabPageTable.Text = "Table";
             this.tabPageTable.UseVisualStyleBackColor = true;
@@ -572,7 +571,7 @@
             this.dataGridViewStimulusTable.Name = "dataGridViewStimulusTable";
             this.dataGridViewStimulusTable.RowHeadersWidth = 62;
             this.dataGridViewStimulusTable.RowTemplate.Height = 28;
-            this.dataGridViewStimulusTable.Size = new System.Drawing.Size(1158, 800);
+            this.dataGridViewStimulusTable.Size = new System.Drawing.Size(1158, 793);
             this.dataGridViewStimulusTable.TabIndex = 0;
             this.dataGridViewStimulusTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewStimulusTable_CellEndEdit);
             this.dataGridViewStimulusTable.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.DataGridViewStimulusTable_DataBindingComplete);
@@ -580,7 +579,7 @@
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 36);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 33);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
@@ -590,7 +589,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(1642, 832);
+            this.splitContainer1.Size = new System.Drawing.Size(1642, 835);
             this.splitContainer1.SplitterDistance = 1172;
             this.splitContainer1.TabIndex = 6;
             // 
@@ -609,8 +608,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panelButtons);
-            this.splitContainer2.Size = new System.Drawing.Size(466, 832);
-            this.splitContainer2.SplitterDistance = 768;
+            this.splitContainer2.Size = new System.Drawing.Size(466, 835);
+            this.splitContainer2.SplitterDistance = 770;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -629,8 +628,8 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tabControlParameters);
             this.splitContainer3.Panel2MinSize = 315;
-            this.splitContainer3.Size = new System.Drawing.Size(466, 768);
-            this.splitContainer3.SplitterDistance = 410;
+            this.splitContainer3.Size = new System.Drawing.Size(466, 770);
+            this.splitContainer3.SplitterDistance = 411;
             this.splitContainer3.SplitterWidth = 8;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -639,7 +638,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(466, 410);
+            this.panelProbe.Size = new System.Drawing.Size(466, 411);
             this.panelProbe.TabIndex = 0;
             // 
             // menuStrip
@@ -650,7 +649,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1642, 36);
+            this.menuStrip.Size = new System.Drawing.Size(1642, 33);
             this.menuStrip.TabIndex = 7;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -659,7 +658,7 @@
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stimulusWaveformToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 32);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // stimulusWaveformToolStripMenuItem

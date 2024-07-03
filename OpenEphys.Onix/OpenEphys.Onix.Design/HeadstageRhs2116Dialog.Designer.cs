@@ -35,11 +35,13 @@
             this.buttonOK = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabControl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl
@@ -50,7 +52,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(1894, 877);
+            this.tabControl.Size = new System.Drawing.Size(1894, 868);
             this.tabControl.TabIndex = 0;
             // 
             // tabPageStimulusSequence
@@ -58,7 +60,7 @@
             this.tabPageStimulusSequence.Location = new System.Drawing.Point(4, 29);
             this.tabPageStimulusSequence.Name = "tabPageStimulusSequence";
             this.tabPageStimulusSequence.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageStimulusSequence.Size = new System.Drawing.Size(1886, 844);
+            this.tabPageStimulusSequence.Size = new System.Drawing.Size(1886, 835);
             this.tabPageStimulusSequence.TabIndex = 1;
             this.tabPageStimulusSequence.Text = "Stimulus Sequence";
             this.tabPageStimulusSequence.UseVisualStyleBackColor = true;
@@ -98,7 +100,7 @@
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
-            this.splitContainer1.Location = new System.Drawing.Point(0, 24);
+            this.splitContainer1.Location = new System.Drawing.Point(0, 33);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
             // 
@@ -110,19 +112,27 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.buttonOK);
             this.splitContainer1.Panel2.Controls.Add(this.buttonCancel);
-            this.splitContainer1.Size = new System.Drawing.Size(1894, 930);
-            this.splitContainer1.SplitterDistance = 877;
+            this.splitContainer1.Size = new System.Drawing.Size(1894, 921);
+            this.splitContainer1.SplitterDistance = 868;
             this.splitContainer1.TabIndex = 2;
             // 
             // menuStrip
             // 
             this.menuStrip.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1894, 24);
+            this.menuStrip.Size = new System.Drawing.Size(1894, 33);
             this.menuStrip.TabIndex = 3;
             this.menuStrip.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
+            this.fileToolStripMenuItem.Text = "File";
             // 
             // HeadstageRhs2116Dialog
             // 
@@ -139,6 +149,8 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -153,5 +165,6 @@
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
     }
 }

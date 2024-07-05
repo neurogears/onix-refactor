@@ -20,6 +20,7 @@ namespace OpenEphys.Onix.Design
                     if (editorDialog.ShowDialog() == DialogResult.OK)
                     {
                         configureNode.StimulusTrigger.StimulusSequence = editorDialog.StimulusSequenceDialog.Sequence;
+                        configureNode.StimulusTrigger.ChannelConfiguration = (Rhs2116ProbeGroup)editorDialog.StimulusSequenceDialog.ChannelDialog.GetProbeGroup();
                         configureNode.ChannelConfiguration = (Rhs2116ProbeGroup)editorDialog.StimulusSequenceDialog.ChannelDialog.GetProbeGroup();
                         configureNode.Rhs2116A = editorDialog.Rhs2116Dialog.ConfigureNode;
 

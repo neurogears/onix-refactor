@@ -118,23 +118,28 @@ namespace OpenEphys.Onix.Design
         {
             if (newState.Type == ZoomState.StateType.Zoom || newState.Type == ZoomState.StateType.WheelZoom)
             {
-                var rangeX = sender.GraphPane.XAxis.Scale.Max - sender.GraphPane.XAxis.Scale.Min;
-                var rangeY = sender.GraphPane.YAxis.Scale.Max - sender.GraphPane.YAxis.Scale.Min;
+                SetEqualAxisLimits(sender);
+            }
+        }
 
-                if (rangeX > rangeY)
-                {
-                    var diff = rangeX - rangeY;
+        private void SetEqualAxisLimits(ZedGraphControl zedGraphControl)
+        {
+            var rangeX = zedGraphControl.GraphPane.XAxis.Scale.Max - zedGraphControl.GraphPane.XAxis.Scale.Min;
+            var rangeY = zedGraphControl.GraphPane.YAxis.Scale.Max - zedGraphControl.GraphPane.YAxis.Scale.Min;
 
-                    sender.GraphPane.YAxis.Scale.Max += diff / 2;
-                    sender.GraphPane.YAxis.Scale.Min -= diff / 2;
-                }
-                else if (rangeX < rangeY)
-                {
-                    var diff = rangeY - rangeX;
+            if (rangeX > rangeY)
+            {
+                var diff = rangeX - rangeY;
 
-                    sender.GraphPane.XAxis.Scale.Max += diff / 2;
-                    sender.GraphPane.XAxis.Scale.Min -= diff / 2;
-                }
+                zedGraphControl.GraphPane.YAxis.Scale.Max += diff / 2;
+                zedGraphControl.GraphPane.YAxis.Scale.Min -= diff / 2;
+            }
+            else if (rangeX < rangeY)
+            {
+                var diff = rangeY - rangeX;
+
+                zedGraphControl.GraphPane.XAxis.Scale.Max += diff / 2;
+                zedGraphControl.GraphPane.XAxis.Scale.Min -= diff / 2;
             }
         }
 
@@ -164,6 +169,30 @@ namespace OpenEphys.Onix.Design
 
         internal virtual void OpenFile<T>() where T : ProbeGroup
         {
+            var newConfiguration = OpenAndParseConfigurationFile<T>();
+
+            if (newConfiguration == null)
+            {
+                return;
+            }
+
+            var currentNumberOfProbes = ChannelConfiguration.Probes.Count();
+            var newNumberOfProbes = newConfiguration.Probes.Count();
+
+            if (currentNumberOfProbes != newNumberOfProbes)
+                throw new InvalidOperationException("New file is invalid; number of probes does not match current configuration.");
+
+            for (int i = 0; i < currentNumberOfProbes; i++)
+            {
+                if (ChannelConfiguration.Probes.ElementAt(i).NumberOfContacts != newConfiguration.Probes.ElementAt(i).NumberOfContacts)
+                    throw new InvalidOperationException($"New file is invalid; number of contacts in probe {i} does not match current configuration");
+
+                ChannelConfiguration.UpdateDeviceChannelIndices(i, newConfiguration.Probes.ElementAt(i).DeviceChannelIndices);
+            }
+        }
+
+        internal T OpenAndParseConfigurationFile<T>() where T : ProbeGroup
+        {
             using OpenFileDialog ofd = new();
 
             ofd.Filter = "Probe Interface Files (*.json)|*.json";
@@ -175,28 +204,10 @@ namespace OpenEphys.Onix.Design
             {
                 var newConfiguration = DesignHelper.DeserializeString<T>(File.ReadAllText(ofd.FileName));
 
-                if (newConfiguration == null)
-                {
-                    MessageBox.Show("Error opening the JSON file.");
-                    return;
-                }
-                else
-                {
-                    var currentNumberOfProbes = ChannelConfiguration.Probes.Count();
-                    var newNumberOfProbes = newConfiguration.Probes.Count();
-
-                    if (currentNumberOfProbes != newNumberOfProbes)
-                        throw new InvalidOperationException("New file is invalid; number of probes does not match current configuration.");
-
-                    for (int i = 0; i < currentNumberOfProbes; i++)
-                    {
-                        if (ChannelConfiguration.Probes.ElementAt(i).NumberOfContacts != newConfiguration.Probes.ElementAt(i).NumberOfContacts)
-                            throw new InvalidOperationException($"New file is invalid; number of contacts in probe {i} does not match current configuration");
-
-                        ChannelConfiguration.UpdateDeviceChannelIndices(i, newConfiguration.Probes.ElementAt(i).DeviceChannelIndices);
-                    }
-                }
+                return newConfiguration ?? throw new InvalidOperationException($"Unable to open {ofd.FileName}");
             }
+
+            return null;
         }
 
         /// <summary>
@@ -290,8 +301,8 @@ namespace OpenEphys.Onix.Design
 
                     bool inactiveContact = contact.DeviceId == -1;
 
-                    Color fillColor = inactiveContact ? 
-                                      DisabledContactFill : 
+                    Color fillColor = inactiveContact ?
+                                      DisabledContactFill :
                                       (ReferenceContacts.Any(x => x == contact.Index) ? ReferenceContactFill : EnabledContactFill);
 
                     var tag = string.Format(ContactStringFormat, probeNumber, contact.Index);
@@ -909,7 +920,7 @@ namespace OpenEphys.Onix.Design
         {
             int offset = 0;
 
-            for(int i = currentProbeIndex - 1; i >= 0; i--)
+            for (int i = currentProbeIndex - 1; i >= 0; i--)
             {
                 offset += ChannelConfiguration.Probes.ElementAt(i).NumberOfContacts;
             }

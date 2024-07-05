@@ -33,7 +33,26 @@ namespace OpenEphys.Onix.Design
 
         internal override void OpenFile<T>()
         {
-            base.OpenFile<Rhs2116ProbeGroup>();
+            Rhs2116ProbeGroup newConfiguration = OpenAndParseConfigurationFile<Rhs2116ProbeGroup>();
+
+            if (newConfiguration == null)
+            {
+                return;
+            }
+
+            if (ChannelConfiguration.NumberOfContacts == newConfiguration.NumberOfContacts)
+            {
+                newConfiguration.Validate();
+
+                ChannelConfiguration = newConfiguration;
+                DrawChannels();
+                SetEqualAspectRatio();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Number of contacts does not match; expected {ChannelConfiguration.NumberOfContacts}" +
+                    $", but found {newConfiguration.NumberOfContacts}");
+            }
         }
 
         internal override string ContactString(Contact contact)

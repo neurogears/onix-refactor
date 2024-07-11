@@ -84,7 +84,8 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.MouseUpEvent += MouseUpEvent;
 
             InitializeZedGraphChannels();
-            DrawChannels();
+            DrawProbeGroup();
+            RefreshZedGraph();
         }
 
         /// <summary>
@@ -210,27 +211,26 @@ namespace OpenEphys.Onix.Design
             return null;
         }
 
-        /// <summary>
-        /// Draw all available contacts in the probe contour, with the device channel indices plotted to indicate the contact number.
-        /// </summary>
-        public void DrawChannels()
+        internal void DrawProbeGroup()
+        {
+            zedGraphChannels.GraphPane.GraphObjList.Clear();
+
+            DrawProbeContour();
+            SetEqualAspectRatio();
+            DrawContacts();
+            HighlightEnabledContacts();
+            HighlightSelectedContacts();
+            DrawContactLabels();
+            DrawScale();
+        }
+
+        internal void DrawContacts()
         {
             if (ChannelConfiguration == null)
                 return;
 
-            zedGraphChannels.GraphPane.GraphObjList.Clear();
-
             for (int probeNumber = 0; probeNumber < ChannelConfiguration.Probes.Count(); probeNumber++)
             {
-                PointD[] planarContours = ConvertFloatArrayToPointD(ChannelConfiguration.Probes.ElementAt(probeNumber).ProbePlanarContour);
-                PolyObj contour = new(planarContours, Color.Black, Color.White)
-                {
-                    ZOrder = ZOrder.C_BehindChartBorder
-                };
-
-                zedGraphChannels.GraphPane.GraphObjList.Add(contour);
-
-                var probeOffset = probeNumber == 0 ? 0 : GetProbeIndexOffset(probeNumber);
                 var probe = ChannelConfiguration.Probes.ElementAt(probeNumber);
 
                 const int borderWidth = 4;
@@ -239,14 +239,11 @@ namespace OpenEphys.Onix.Design
                 {
                     Contact contact = probe.GetContact(j);
 
-                    Color borderColor = SelectedContacts[probeOffset + contact.Index] ? SelectedContactBorder : DeselectedContactBorder;
-
                     if (contact.Shape.Equals(ContactShape.Circle))
                     {
                         var size = contact.ShapeParams.Radius.Value * 2;
 
-                        EllipseObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, borderColor, DisabledContactFill)
+                        EllipseObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2, size, size)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
@@ -260,8 +257,7 @@ namespace OpenEphys.Onix.Design
                     {
                         var size = contact.ShapeParams.Width.Value;
 
-                        BoxObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2,
-                            size, size, borderColor, DisabledContactFill)
+                        BoxObj contactObj = new(contact.PosX - size / 2, contact.PosY + size / 2, size, size)
                         {
                             ZOrder = ZOrder.B_BehindLegend,
                             Tag = string.Format(ContactStringFormat, probeNumber, contact.Index)
@@ -278,15 +274,26 @@ namespace OpenEphys.Onix.Design
                     }
                 }
             }
-
-            HighlightEnabledContacts();
-            DrawContactLabels();
-            DrawScale();
-
-            zedGraphChannels.Refresh();
         }
 
-        public virtual void HighlightEnabledContacts()
+        internal void DrawProbeContour()
+        {
+            if (ChannelConfiguration == null)
+                return;
+
+            for (int probeNumber = 0; probeNumber < ChannelConfiguration.Probes.Count(); probeNumber++)
+            {
+                PointD[] planarContours = ConvertFloatArrayToPointD(ChannelConfiguration.Probes.ElementAt(probeNumber).ProbePlanarContour);
+                PolyObj contour = new(planarContours, Color.Black, Color.White)
+                {
+                    ZOrder = ZOrder.C_BehindChartBorder
+                };
+
+                zedGraphChannels.GraphPane.GraphObjList.Add(contour);
+            }
+        }
+
+        internal virtual void HighlightEnabledContacts()
         {
             if (ChannelConfiguration == null)
                 return;
@@ -319,7 +326,39 @@ namespace OpenEphys.Onix.Design
             }
         }
 
-        public virtual void DrawContactLabels()
+        internal virtual void HighlightSelectedContacts()
+        {
+            if (ChannelConfiguration == null)
+                return;
+
+            for (int probeNumber = 0; probeNumber < ChannelConfiguration.Probes.Count(); probeNumber++)
+            {
+                var probe = ChannelConfiguration.Probes.ElementAt(probeNumber);
+                var probeOffset = GetProbeIndexOffset(probeNumber);
+
+                for (int j = 0; j < probe.ContactPositions.Length; j++)
+                {
+                    Contact contact = probe.GetContact(j);
+
+                    Color borderColor = SelectedContacts[probeOffset + j] ?
+                                        SelectedContactBorder :
+                                        DeselectedContactBorder;
+
+                    var tag = string.Format(ContactStringFormat, probeNumber, contact.Index);
+
+                    if (zedGraphChannels.GraphPane.GraphObjList[tag] is BoxObj graphObj)
+                    {
+                        graphObj.Border.Color = borderColor;
+                    }
+                    else
+                    {
+                        throw new NullReferenceException($"Tag {tag} is not found in the graph object list");
+                    }
+                }
+            }
+        }
+
+        internal virtual void DrawContactLabels()
         {
             if (ChannelConfiguration == null)
                 return;
@@ -343,7 +382,10 @@ namespace OpenEphys.Onix.Design
                         Tag = string.Format(TextStringFormat, probeNumber, contact.Index)
                     };
 
-                    SetTextObj(textObj, fontSize);
+                    textObj.FontSpec.IsBold = true;
+                    textObj.FontSpec.Border.IsVisible = false;
+                    textObj.FontSpec.Fill.IsVisible = false;
+                    textObj.FontSpec.Size = fontSize;
 
                     zedGraphChannels.GraphPane.GraphObjList.Add(textObj);
                 }
@@ -353,14 +395,6 @@ namespace OpenEphys.Onix.Design
         internal virtual string ContactString(Contact contact)
         {
             return contact.Index.ToString();
-        }
-
-        public void SetTextObj(TextObj textObj, float fontSize)
-        {
-            textObj.FontSpec.IsBold = true;
-            textObj.FontSpec.Border.IsVisible = false;
-            textObj.FontSpec.Fill.IsVisible = false;
-            textObj.FontSpec.Size = fontSize;
         }
 
         public virtual void DrawScale()
@@ -484,7 +518,7 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.GraphPane.YAxis.Scale.Max = maxY + margin;
         }
 
-        protected static double MinX(GraphObjList graphObjs)
+        private static double MinX(GraphObjList graphObjs)
         {
             return graphObjs.Min<GraphObj, double>(obj =>
             {
@@ -497,7 +531,7 @@ namespace OpenEphys.Onix.Design
             });
         }
 
-        protected static double MinY(GraphObjList graphObjs)
+        private static double MinY(GraphObjList graphObjs)
         {
             return graphObjs.Min<GraphObj, double>(obj =>
             {
@@ -510,7 +544,7 @@ namespace OpenEphys.Onix.Design
             });
         }
 
-        protected static double MaxX(GraphObjList graphObjs)
+        private static double MaxX(GraphObjList graphObjs)
         {
             return graphObjs.Max<GraphObj, double>(obj =>
             {
@@ -523,7 +557,7 @@ namespace OpenEphys.Onix.Design
             });
         }
 
-        protected static double MaxY(GraphObjList graphObjs)
+        private static double MaxY(GraphObjList graphObjs)
         {
             return graphObjs.Max<GraphObj, double>(obj =>
             {
@@ -631,13 +665,15 @@ namespace OpenEphys.Onix.Design
         private void MenuItemOpenFile_Click(object sender, EventArgs e)
         {
             OpenFile<ProbeGroup>();
-            DrawChannels();
+            DrawProbeGroup();
+            RefreshZedGraph();
         }
 
         private void LoadDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
             LoadDefaultChannelLayout();
-            DrawChannels();
+            DrawProbeGroup();
+            RefreshZedGraph();
         }
 
         private void ButtonOK_Click(object sender, EventArgs e)
@@ -649,7 +685,7 @@ namespace OpenEphys.Onix.Design
             }
         }
 
-        public void ManualZoom(double zoomFactor)
+        internal void ManualZoom(double zoomFactor)
         {
             var center = new PointF(zedGraphChannels.GraphPane.Rect.Left + zedGraphChannels.GraphPane.Rect.Width / 2,
                                     zedGraphChannels.GraphPane.Rect.Top  + zedGraphChannels.GraphPane.Rect.Height / 2);
@@ -659,7 +695,7 @@ namespace OpenEphys.Onix.Design
             UpdateFontSize();
         }
 
-        public void ResetZoom()
+        internal void ResetZoom()
         {
             SetEqualAspectRatio();
             UpdateFontSize();
@@ -691,7 +727,7 @@ namespace OpenEphys.Onix.Design
             zedGraphChannels.GraphPane.YAxis.Scale.Max = newMinY + currentRange;
         }
 
-        public float GetRelativeVerticalPosition()
+        internal float GetRelativeVerticalPosition()
         {
             var minY = MinY(zedGraphChannels.GraphPane.GraphObjList);
             var maxY = MaxY(zedGraphChannels.GraphPane.GraphObjList);
@@ -708,7 +744,7 @@ namespace OpenEphys.Onix.Design
             }
         }
 
-        public void RefreshZedGraph()
+        internal void RefreshZedGraph()
         {
             zedGraphChannels.AxisChange();
             zedGraphChannels.Refresh();
@@ -823,8 +859,9 @@ namespace OpenEphys.Onix.Design
                     }
                 }
 
-                DrawChannels();
+                HighlightSelectedContacts();
                 SelectedContactChanged();
+                RefreshZedGraph();
 
                 return true;
             }

@@ -21,8 +21,6 @@ namespace OpenEphys.Onix.Design
 
             zedGraphChannels.ZoomStepFraction = 0.5;
 
-            HighlightEnabledContacts();
-            DrawContactLabels();
             RefreshZedGraph();
         }
 
@@ -45,8 +43,8 @@ namespace OpenEphys.Onix.Design
                 newConfiguration.Validate();
 
                 ChannelConfiguration = newConfiguration;
-                DrawChannels();
-                SetEqualAspectRatio();
+                DrawProbeGroup();
+                RefreshZedGraph();
             }
             else
             {

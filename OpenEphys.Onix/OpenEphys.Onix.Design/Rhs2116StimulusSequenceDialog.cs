@@ -136,6 +136,7 @@ namespace OpenEphys.Onix.Design
 
         private void OnZoom(object sender, EventArgs e)
         {
+            ChannelDialog.HighlightEnabledContacts();
             HighlightInvalidSequences();
             ChannelDialog.UpdateFontSize();
         }
@@ -169,7 +170,7 @@ namespace OpenEphys.Onix.Design
 
         private void PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            ChannelDialog.DrawChannels();
+            ChannelDialog.HighlightEnabledContacts();
             DrawStimulusWaveform();
         }
 
@@ -434,8 +435,8 @@ namespace OpenEphys.Onix.Design
                 }
             }
 
-            DrawStimulusWaveform();
             ChannelDialog.HighlightEnabledContacts();
+            DrawStimulusWaveform();
         }
 
         private void ParameterKeyPress_Time(object sender, KeyPressEventArgs e)
@@ -458,8 +459,8 @@ namespace OpenEphys.Onix.Design
         {
             dataGridViewStimulusTable.BindingContext[dataGridViewStimulusTable.DataSource].EndCurrentEdit();
             AddDeviceChannelIndexToGridRow();
-            DrawStimulusWaveform();
             ChannelDialog.HighlightEnabledContacts();
+            DrawStimulusWaveform();
         }
 
         private void DataGridViewStimulusTable_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
@@ -730,8 +731,8 @@ namespace OpenEphys.Onix.Design
                 }
             }
 
-            DrawStimulusWaveform();
             ChannelDialog.HighlightEnabledContacts();
+            DrawStimulusWaveform();
             ChannelDialog.RefreshZedGraph();
         }
 

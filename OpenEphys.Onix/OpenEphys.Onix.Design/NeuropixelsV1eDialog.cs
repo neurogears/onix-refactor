@@ -49,28 +49,21 @@ namespace OpenEphys.Onix.Design
 
             comboBoxApGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
             comboBoxApGain.SelectedItem = ConfigureNode.ProbeConfiguration.SpikeAmplifierGain;
-            comboBoxApGain.SelectedIndexChanged += SelectedIndexChanged;
 
             comboBoxLfpGain.DataSource = Enum.GetValues(typeof(NeuropixelsV1Gain));
             comboBoxLfpGain.SelectedItem = ConfigureNode.ProbeConfiguration.LfpAmplifierGain;
-            comboBoxLfpGain.SelectedIndexChanged += SelectedIndexChanged;
 
             comboBoxReference.DataSource = Enum.GetValues(typeof(NeuropixelsV1ReferenceSource));
             comboBoxReference.SelectedItem = ConfigureNode.ProbeConfiguration.Reference;
-            comboBoxReference.SelectedIndexChanged += SelectedIndexChanged;
 
             checkBoxSpikeFilter.Checked = ConfigureNode.ProbeConfiguration.SpikeFilter;
-            checkBoxSpikeFilter.CheckedChanged += SelectedIndexChanged;
 
-            textBoxAdcCalibrationFile.TextChanged += FileTextChanged;
             textBoxAdcCalibrationFile.Text = ConfigureNode.AdcCalibrationFile;
 
-            textBoxGainCalibrationFile.TextChanged += FileTextChanged;
             textBoxGainCalibrationFile.Text = ConfigureNode.GainCalibrationFile;
 
             comboBoxChannelPresets.DataSource = Enum.GetValues(typeof(ChannelPreset));
             CheckForExistingChannelPreset();
-            comboBoxChannelPresets.SelectedIndexChanged += SelectedIndexChanged;
 
             CheckStatus();
         }
@@ -231,6 +224,7 @@ namespace OpenEphys.Onix.Design
 
             channelConfiguration.HighlightEnabledContacts();
             channelConfiguration.HighlightSelectedContacts();
+            channelConfiguration.DrawContactLabels();
             channelConfiguration.RefreshZedGraph();
         }
 

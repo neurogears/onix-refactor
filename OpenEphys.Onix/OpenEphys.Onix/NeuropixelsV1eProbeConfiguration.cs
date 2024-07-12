@@ -61,32 +61,12 @@ namespace OpenEphys.Onix
         }
     }
 
-    public class NeuropixelsV1eElectrode
+    public class NeuropixelsV1eElectrode : Electrode
     {
-        /// <summary>
-        /// Index of the electrode within the context of the probe
-        /// </summary>
-        public int ElectrodeNumber { get; private set; }
-        /// <summary>
-        /// The shank this electrode belongs to. For NeuropixelsV1e, there is only one shank, so all shanks will equal 0
-        /// </summary>
-        public int Shank { get; private set; } = 0;
-        /// <summary>
-        /// Index of the electrode within this shank
-        /// </summary>
-        public int ShankIndex { get; private set; }
         /// <summary>
         /// The bank, or logical block of channels, this electrode belongs to
         /// </summary>
         public NeuropixelsV1Bank Bank { get; private set; }
-        /// <summary>
-        /// Index of the electrode within a logical block. For NeuropixelsV1e, this is the index within a Bank
-        /// </summary>
-        public int Channel { get; private set; }
-        /// <summary>
-        /// Location of the electrode in two-dimensional space
-        /// </summary>
-        public PointF Position { get; private set; }
 
         public NeuropixelsV1eElectrode(int electrodeNumber)
         {

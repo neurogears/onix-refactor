@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Text;
-using System.Linq;
 using System.Reactive.Linq;
 using System.Collections.Generic;
 using System.CodeDom.Compiler;
 using OpenEphys.ProbeInterface;
 using Newtonsoft.Json;
-using Bonsai;
 
 namespace OpenEphys.Onix
 {
@@ -149,67 +147,6 @@ namespace OpenEphys.Onix
             }
             stringBuilder.Append("}");
 
-            return stringBuilder.ToString();
-        }
-    }
-
-    [GeneratedCodeAttribute("Bonsai.Sgen", "0.3.0.0 (Newtonsoft.Json v13.0.0.0)")]
-    [CombinatorAttribute()]
-    [WorkflowElementCategoryAttribute(ElementCategory.Source)]
-    public class Probe : ProbeInterface.Probe
-    {
-        [JsonConstructor]
-        public Probe(ProbeNdim ndim, ProbeSiUnits si_units, ProbeAnnotations annotations, ContactAnnotations contact_annotations,
-            float[][] contact_positions, float[][][] contact_plane_axes, ContactShape[] contact_shapes,
-            ContactShapeParam[] contact_shape_params, float[][] probe_planar_contour, int[] device_channel_indices,
-            string[] contact_ids, string[] shank_ids)
-            : base(ndim, si_units, annotations, contact_annotations, contact_positions, contact_plane_axes, contact_shapes,
-                  contact_shape_params, probe_planar_contour, device_channel_indices, contact_ids, shank_ids)
-        {
-        }
-
-        public Probe(Probe probe)
-            : base(probe)
-        {
-        }
-
-        public IObservable<Probe> Process()
-        {
-            return Observable.Defer(() => Observable.Return(new Probe(this)));
-        }
-
-        public IObservable<Probe> Process<TSource>(IObservable<TSource> source)
-        {
-            return Observable.Select(source, _ => new Probe(this));
-        }
-
-        protected virtual bool PrintMembers(StringBuilder stringBuilder)
-        {
-            stringBuilder.Append("ndim = " + NumDimensions + ", ");
-            stringBuilder.Append("si_units = " + SiUnits + ", ");
-            stringBuilder.Append("annotations = " + Annotations + ", ");
-            stringBuilder.Append("contact_annotations = " + ContactAnnotations + ", ");
-            stringBuilder.Append("contact_positions = " + ContactPositions + ", ");
-            stringBuilder.Append("contact_plane_axes = " + ContactPlaneAxes + ", ");
-            stringBuilder.Append("contact_shapes = " + ContactShapes + ", ");
-            stringBuilder.Append("contact_shape_params = " + ContactShapeParams + ", ");
-            stringBuilder.Append("probe_planar_contour = " + ProbePlanarContour + ", ");
-            stringBuilder.Append("device_channel_indices = " + DeviceChannelIndices + ", ");
-            stringBuilder.Append("contact_ids = " + ContactIds + ", ");
-            stringBuilder.Append("shank_ids = " + ShankIds);
-            return true;
-        }
-
-        public override string ToString()
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(GetType().Name);
-            stringBuilder.Append(" { ");
-            if (PrintMembers(stringBuilder))
-            {
-                stringBuilder.Append(" ");
-            }
-            stringBuilder.Append("}");
             return stringBuilder.ToString();
         }
     }

@@ -10,11 +10,11 @@ namespace OpenEphys.Onix.Design
 {
     public partial class NeuropixelsV1eChannelConfigurationDialog : ChannelConfigurationDialog
     {
-        public event EventHandler OnZoom;
-        public event EventHandler OnFileLoad;
+        internal event EventHandler OnZoom;
+        internal event EventHandler OnFileLoad;
 
-        public readonly List<NeuropixelsV1eElectrode> Electrodes;
-        public readonly List<NeuropixelsV1eElectrode> ChannelMap;
+        internal readonly List<NeuropixelsV1eElectrode> Electrodes;
+        internal readonly List<NeuropixelsV1eElectrode> ChannelMap;
 
         public NeuropixelsV1eChannelConfigurationDialog(NeuropixelsV1eProbeGroup probeGroup)
             : base(probeGroup)
@@ -35,7 +35,7 @@ namespace OpenEphys.Onix.Design
             RefreshZedGraph();
         }
 
-        public override ProbeGroup DefaultChannelLayout()
+        internal override ProbeGroup DefaultChannelLayout()
         {
             return new NeuropixelsV1eProbeGroup();
         }
@@ -64,7 +64,7 @@ namespace OpenEphys.Onix.Design
             OnFileLoad?.Invoke(this, EventArgs.Empty);
         }
 
-        public override void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
+        internal override void ZoomEvent(ZedGraphControl sender, ZoomState oldState, ZoomState newState)
         {
             base.ZoomEvent(sender, oldState, newState);
 
@@ -79,7 +79,7 @@ namespace OpenEphys.Onix.Design
             OnZoom?.Invoke(this, EventArgs.Empty);
         }
 
-        public override void DrawScale()
+        internal override void DrawScale()
         {
             const int MajorTickIncrement = 100;
             const int MajorTickLength = 10;
@@ -127,14 +127,14 @@ namespace OpenEphys.Onix.Design
             AddPointsToCurve(pointList);
         }
 
-        public override void HighlightEnabledContacts()
+        internal override void HighlightEnabledContacts()
         {
             if (Electrodes == null || Electrodes.Count == 0) 
                 return;
 
             foreach(var e in Electrodes)
             {
-                var tag = string.Format(ContactStringFormat, 0, e.ElectrodeNumber);
+                var tag = ContactTag.GetContactString(0, e.ElectrodeNumber);
 
                 var fillColor = ChannelMap[e.Channel].ElectrodeNumber == e.ElectrodeNumber ?
                                 (ReferenceContacts.Any(x => x == e.ElectrodeNumber) ? ReferenceContactFill : EnabledContactFill) : 
@@ -151,10 +151,12 @@ namespace OpenEphys.Onix.Design
             }
         }
 
-        public override void DrawContactLabels()
+        internal override void DrawContactLabels()
         {
             if (Electrodes == null || Electrodes.Count == 0)
                 return;
+
+            zedGraphChannels.GraphPane.GraphObjList.RemoveAll(obj => obj != null && obj is TextObj);
 
             var fontSize = CalculateFontSize();
 
@@ -165,7 +167,7 @@ namespace OpenEphys.Onix.Design
                 TextObj textObj = new(id, e.Position.X, e.Position.Y)
                 {
                     ZOrder = ZOrder.A_InFront,
-                    Tag = string.Format(TextStringFormat, 0, e.ElectrodeNumber)
+                    Tag = ContactTag.GetTextString(0, e.ElectrodeNumber)
                 };
 
                 SetTextObj(textObj, fontSize);
@@ -174,7 +176,7 @@ namespace OpenEphys.Onix.Design
             }
         }
 
-        public void EnableElectrodes(List<NeuropixelsV1eElectrode> electrodes)
+        internal void EnableElectrodes(List<NeuropixelsV1eElectrode> electrodes)
         {
             ChannelMap.SelectElectrodes(electrodes);
         }

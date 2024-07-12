@@ -32,7 +32,6 @@ namespace OpenEphys.Onix.Design
             };
 
             panelBno055.Controls.Add(ConfigureBno055);
-            this.AddMenuItemsFromDialog(ConfigureBno055, "Bno055");
             ConfigureBno055.Show();
             ConfigureBno055.Invalidate();
         }

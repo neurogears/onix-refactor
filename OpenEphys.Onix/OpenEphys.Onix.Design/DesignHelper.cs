@@ -35,32 +35,6 @@ namespace OpenEphys.Onix.Design
             }
         }
 
-        public static void AddMenuItemsFromDialog(this Form thisForm, Form form, string menuName)
-        {
-            if (form != null)
-            {
-                var menuStrips = form.GetAllChildren()
-                                     .OfType<MenuStrip>()
-                                     .ToList();
-
-                var thisMenuStrip = thisForm.GetAllChildren()
-                                            .OfType<MenuStrip>()
-                                            .FirstOrDefault();
-
-                if (menuStrips != null && menuStrips.Count > 0)
-                {
-                    foreach (var menuStrip in menuStrips)
-                    {
-                        var toolStripMenuItem = new ToolStripMenuItem(menuName);
-
-                        toolStripMenuItem.DropDownItems.AddRange(menuStrip.Items);
-
-                        thisMenuStrip.Items.AddRange(new ToolStripItem[] { toolStripMenuItem });
-                    }
-                }
-            }
-        }
-
         /// <summary>
         /// Given two forms, take all menu items that are in the "File" MenuItem of the child form, and copy them directly to the 
         /// "File" MenuItem for the parent form
@@ -97,7 +71,7 @@ namespace OpenEphys.Onix.Design
                     {
                         foreach (ToolStripMenuItem menuItem in menuStrip.Items)
                         {
-                            if (menuItem.Text == "File")
+                            if (menuItem.Text == FileString)
                             {
                                 while (menuItem.DropDownItems.Count > 0)
                                 {
@@ -152,7 +126,7 @@ namespace OpenEphys.Onix.Design
                     {
                         foreach (ToolStripMenuItem menuItem in menuStrip.Items)
                         {
-                            if (menuItem.Text == "File")
+                            if (menuItem.Text == FileString)
                             {
                                 while (menuItem.DropDownItems.Count > 0)
                                 {

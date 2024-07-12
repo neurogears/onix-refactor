@@ -229,7 +229,9 @@ namespace OpenEphys.Onix.Design
                     break;
             }
 
-            channelConfiguration.DrawChannels();
+            channelConfiguration.HighlightEnabledContacts();
+            channelConfiguration.HighlightSelectedContacts();
+            channelConfiguration.RefreshZedGraph();
         }
 
         private void CheckForExistingChannelPreset()
@@ -277,7 +279,7 @@ namespace OpenEphys.Onix.Design
                 toolStripStatus.Image = Properties.Resources.StatusWarningImage;
                 toolStripStatus.Text = "Serial number mismatch";
             }
-            else if (!channelConfiguration.GetProbeGroup().ValidateDeviceChannelIndices())
+            else if (!channelConfiguration.ChannelConfiguration.ValidateDeviceChannelIndices())
             {
                 toolStripStatus.Image = Properties.Resources.StatusBlockedImage;
                 toolStripStatus.Text = "Invalid channels selected";
@@ -385,14 +387,18 @@ namespace OpenEphys.Onix.Design
                 else if (button.Name == nameof(buttonClearSelections))
                 {
                     channelConfiguration.SetAllSelections(false);
-                    channelConfiguration.DrawChannels();
+                    channelConfiguration.HighlightEnabledContacts();
+                    channelConfiguration.HighlightSelectedContacts();
+                    channelConfiguration.DrawContactLabels();
                     channelConfiguration.RefreshZedGraph();
                 }
                 else if (button.Name == nameof(buttonEnableContacts))
                 {
                     EnableSelectedContacts();
                     channelConfiguration.SetAllSelections(false);
-                    channelConfiguration.DrawChannels();
+                    channelConfiguration.HighlightEnabledContacts();
+                    channelConfiguration.HighlightSelectedContacts();
+                    channelConfiguration.DrawContactLabels();
                     channelConfiguration.RefreshZedGraph();
                 }
             }
@@ -442,11 +448,6 @@ namespace OpenEphys.Onix.Design
         {
             channelConfiguration.MoveToVerticalPosition(relativePosition);
             channelConfiguration.RefreshZedGraph();
-        }
-
-        public NeuropixelsV1eProbeGroup GetProbeGroup()
-        {
-            return (NeuropixelsV1eProbeGroup)channelConfiguration.GetProbeGroup();
         }
 
         private void TrackBarScroll(object sender, EventArgs e)

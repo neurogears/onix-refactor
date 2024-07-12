@@ -112,21 +112,21 @@
             this.menuItemOpenFile.Name = "menuItemOpenFile";
             this.menuItemOpenFile.Size = new System.Drawing.Size(215, 34);
             this.menuItemOpenFile.Text = "Open File";
-            this.menuItemOpenFile.Click += new System.EventHandler(this.MenuItemOpenFile_Click);
+            this.menuItemOpenFile.Click += new System.EventHandler(this.MenuItemOpenFile);
             // 
             // menuItemSaveFile
             // 
             this.menuItemSaveFile.Name = "menuItemSaveFile";
             this.menuItemSaveFile.Size = new System.Drawing.Size(215, 34);
             this.menuItemSaveFile.Text = "Save File";
-            this.menuItemSaveFile.Click += new System.EventHandler(this.MenuItemSaveFile_Click);
+            this.menuItemSaveFile.Click += new System.EventHandler(this.MenuItemSaveFile);
             // 
             // loadDefaultToolStripMenuItem
             // 
             this.loadDefaultToolStripMenuItem.Name = "loadDefaultToolStripMenuItem";
             this.loadDefaultToolStripMenuItem.Size = new System.Drawing.Size(215, 34);
             this.loadDefaultToolStripMenuItem.Text = "Load Default";
-            this.loadDefaultToolStripMenuItem.Click += new System.EventHandler(this.LoadDefaultToolStripMenuItem_Click);
+            this.loadDefaultToolStripMenuItem.Click += new System.EventHandler(this.MenuItemLoadDefaultConfig);
             // 
             // buttonCancel
             // 
@@ -148,7 +148,7 @@
             this.buttonOK.TabIndex = 3;
             this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.ButtonOK_Click);
+            this.buttonOK.Click += new System.EventHandler(this.ButtonOK);
             // 
             // ChannelConfigurationDialog
             // 

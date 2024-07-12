@@ -177,18 +177,18 @@ namespace OpenEphys.Onix.Design
                 return;
             }
 
-            var currentNumberOfProbes = ChannelConfiguration.Probes.Count();
-            var newNumberOfProbes = newConfiguration.Probes.Count();
-
-            if (currentNumberOfProbes != newNumberOfProbes)
-                throw new InvalidOperationException("New file is invalid; number of probes does not match current configuration.");
-
-            for (int i = 0; i < currentNumberOfProbes; i++)
+            if (ChannelConfiguration.NumberOfContacts == newConfiguration.NumberOfContacts)
             {
-                if (ChannelConfiguration.Probes.ElementAt(i).NumberOfContacts != newConfiguration.Probes.ElementAt(i).NumberOfContacts)
-                    throw new InvalidOperationException($"New file is invalid; number of contacts in probe {i} does not match current configuration");
+                newConfiguration.Validate();
 
-                ChannelConfiguration.UpdateDeviceChannelIndices(i, newConfiguration.Probes.ElementAt(i).DeviceChannelIndices);
+                ChannelConfiguration = newConfiguration;
+                DrawProbeGroup();
+                RefreshZedGraph();
+            }
+            else
+            {
+                throw new InvalidOperationException($"Number of contacts does not match; expected {ChannelConfiguration.NumberOfContacts} contacts" +
+                    $", but found {newConfiguration.NumberOfContacts} contacts");
             }
         }
 

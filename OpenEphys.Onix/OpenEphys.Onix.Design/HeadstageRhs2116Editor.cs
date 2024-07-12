@@ -14,14 +14,14 @@ namespace OpenEphys.Onix.Design
                 var editorState = (IWorkflowEditorState)provider.GetService(typeof(IWorkflowEditorState));
                 if (editorState != null && !editorState.WorkflowRunning && component is ConfigureHeadstageRhs2116 configureNode)
                 {
-                    using var editorDialog = new HeadstageRhs2116Dialog(configureNode.StimulusTrigger.ChannelConfiguration, 
+                    using var editorDialog = new HeadstageRhs2116Dialog(configureNode.StimulusTrigger.ChannelConfiguration,
                         configureNode.StimulusTrigger.StimulusSequence, configureNode.Rhs2116A);
 
                     if (editorDialog.ShowDialog() == DialogResult.OK)
                     {
                         configureNode.StimulusTrigger.StimulusSequence = editorDialog.StimulusSequenceDialog.Sequence;
-                        configureNode.StimulusTrigger.ChannelConfiguration = (Rhs2116ProbeGroup)editorDialog.StimulusSequenceDialog.ChannelDialog.GetProbeGroup();
-                        configureNode.ChannelConfiguration = (Rhs2116ProbeGroup)editorDialog.StimulusSequenceDialog.ChannelDialog.GetProbeGroup();
+                        configureNode.StimulusTrigger.ChannelConfiguration = (Rhs2116ProbeGroup)editorDialog.StimulusSequenceDialog.ChannelDialog.ChannelConfiguration;
+                        configureNode.ChannelConfiguration = (Rhs2116ProbeGroup)editorDialog.StimulusSequenceDialog.ChannelDialog.ChannelConfiguration;
                         configureNode.Rhs2116A = editorDialog.Rhs2116Dialog.ConfigureNode;
 
                         return true;

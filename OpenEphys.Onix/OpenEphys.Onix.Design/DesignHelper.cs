@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-using OpenEphys.ProbeInterface;
 
 namespace OpenEphys.Onix.Design
 {
@@ -33,32 +31,6 @@ namespace OpenEphys.Onix.Design
                 foreach (Control child in next.Controls)
                     stack.Push(child);
                 yield return next;
-            }
-        }
-
-        public static void AddMenuItemsFromDialog(this Form thisForm, Form form, string menuName)
-        {
-            if (form != null)
-            {
-                var menuStrips = form.GetAllChildren()
-                                     .OfType<MenuStrip>()
-                                     .ToList();
-
-                var thisMenuStrip = thisForm.GetAllChildren()
-                                            .OfType<MenuStrip>()
-                                            .FirstOrDefault();
-
-                if (menuStrips != null && menuStrips.Count > 0)
-                {
-                    foreach (var menuStrip in menuStrips)
-                    {
-                        var toolStripMenuItem = new ToolStripMenuItem(menuName);
-
-                        toolStripMenuItem.DropDownItems.AddRange(menuStrip.Items);
-
-                        thisMenuStrip.Items.AddRange(new ToolStripItem[] { toolStripMenuItem });
-                    }
-                }
             }
         }
 
@@ -98,7 +70,7 @@ namespace OpenEphys.Onix.Design
                     {
                         foreach (ToolStripMenuItem menuItem in menuStrip.Items)
                         {
-                            if (menuItem.Text == "File")
+                            if (menuItem.Text == FileString)
                             {
                                 while (menuItem.DropDownItems.Count > 0)
                                 {
@@ -153,7 +125,7 @@ namespace OpenEphys.Onix.Design
                     {
                         foreach (ToolStripMenuItem menuItem in menuStrip.Items)
                         {
-                            if (menuItem.Text == "File")
+                            if (menuItem.Text == FileString)
                             {
                                 while (menuItem.DropDownItems.Count > 0)
                                 {

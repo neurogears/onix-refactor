@@ -150,7 +150,7 @@ namespace OpenEphys.Onix.Design
 
                 for (int j = 0; j < probe.NumberOfContacts; j++)
                 {
-                    BoxObj contactObj = (BoxObj)ChannelDialog.zedGraphChannels.GraphPane.GraphObjList[string.Format(ChannelConfigurationDialog.ContactStringFormat, i, j)];
+                    BoxObj contactObj = (BoxObj)ChannelDialog.zedGraphChannels.GraphPane.GraphObjList[ContactTag.GetContactString(i, j)];
 
                     if (contactObj != null)
                     {
@@ -218,7 +218,7 @@ namespace OpenEphys.Onix.Design
 
                     TextObj contactNumber = new(i.ToString(), contactTextLocation, curve.Points[0].Y)
                     {
-                        Tag = string.Format(ChannelConfigurationDialog.TextStringFormat, i / Rhs2116ProbeGroup.NumberOfChannelsPerProbe, i)
+                        Tag = ContactTag.GetTextString(i / Rhs2116ProbeGroup.NumberOfChannelsPerProbe, i)
                     };
                     contactNumber.FontSpec.Size = 12;
                     contactNumber.FontSpec.Border.IsVisible = false;
@@ -229,8 +229,6 @@ namespace OpenEphys.Onix.Design
             }
 
             HighlightInvalidSequences();
-
-            zedGraphWaveform.GraphPane.YAxis.Scale.MinorStep = 0;
 
             zedGraphWaveform.AxisChange();
 
@@ -289,6 +287,8 @@ namespace OpenEphys.Onix.Design
             zedGraphWaveform.GraphPane.XAxis.MinorTic.IsAllTics = false;
             zedGraphWaveform.GraphPane.YAxis.MajorTic.IsAllTics = false;
             zedGraphWaveform.GraphPane.YAxis.MinorTic.IsAllTics = false;
+
+            zedGraphWaveform.GraphPane.YAxis.Scale.MinorStep = 0;
 
             zedGraphWaveform.GraphPane.XAxis.Title.Text = "Time [μs]";
             zedGraphWaveform.GraphPane.YAxis.Title.Text = "Amplitude [μA]";
@@ -470,10 +470,10 @@ namespace OpenEphys.Onix.Design
 
         private void AddDeviceChannelIndexToGridRow()
         {
-            if (ChannelDialog == null || ChannelDialog.GetProbeGroup().NumberOfContacts != 32)
+            if (ChannelDialog == null || ChannelDialog.ChannelConfiguration.NumberOfContacts != 32)
                 return;
 
-            var deviceChannelIndices = ChannelDialog.GetProbeGroup().GetDeviceChannelIndices();
+            var deviceChannelIndices = ChannelDialog.ChannelConfiguration.GetDeviceChannelIndices();
 
             for (int i = 0; i < deviceChannelIndices.Count(); i++)
             {

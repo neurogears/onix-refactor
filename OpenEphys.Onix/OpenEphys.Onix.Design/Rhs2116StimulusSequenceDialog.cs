@@ -53,6 +53,7 @@ namespace OpenEphys.Onix.Design
 
             comboBoxStepSize.DataSource = Enum.GetValues(typeof(Rhs2116StepSize));
             comboBoxStepSize.SelectedIndex = (int)Sequence.CurrentStepSize;
+            comboBoxStepSize.SelectedIndexChanged += ComboBoxStepSize_SelectedIndexChanged;
 
             if (probeGroup.NumberOfContacts != 32)
             {

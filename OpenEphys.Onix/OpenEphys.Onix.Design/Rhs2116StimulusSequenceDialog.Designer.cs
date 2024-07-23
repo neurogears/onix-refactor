@@ -124,7 +124,7 @@
             this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.buttonCancel.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonCancel.Location = new System.Drawing.Point(319, 9);
+            this.buttonCancel.Location = new System.Drawing.Point(319, 10);
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.Size = new System.Drawing.Size(140, 42);
             this.buttonCancel.TabIndex = 0;
@@ -170,14 +170,14 @@
             this.panelButtons.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelButtons.Location = new System.Drawing.Point(0, 0);
             this.panelButtons.Name = "panelButtons";
-            this.panelButtons.Size = new System.Drawing.Size(466, 60);
+            this.panelButtons.Size = new System.Drawing.Size(466, 61);
             this.panelButtons.TabIndex = 0;
             // 
             // buttonOk
             // 
             this.buttonOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonOk.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.buttonOk.Location = new System.Drawing.Point(170, 9);
+            this.buttonOk.Location = new System.Drawing.Point(170, 10);
             this.buttonOk.Name = "buttonOk";
             this.buttonOk.Size = new System.Drawing.Size(140, 42);
             this.buttonOk.TabIndex = 4;
@@ -345,7 +345,6 @@
             this.comboBoxStepSize.Size = new System.Drawing.Size(163, 28);
             this.comboBoxStepSize.TabIndex = 34;
             this.comboBoxStepSize.TabStop = false;
-            this.comboBoxStepSize.SelectedIndexChanged += new System.EventHandler(this.ComboBoxStepSize_SelectedIndexChanged);
             // 
             // buttonClearPulses
             // 
@@ -494,7 +493,7 @@
             this.tabPageEditorDialog.Location = new System.Drawing.Point(4, 29);
             this.tabPageEditorDialog.Name = "tabPageEditorDialog";
             this.tabPageEditorDialog.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageEditorDialog.Size = new System.Drawing.Size(458, 317);
+            this.tabPageEditorDialog.Size = new System.Drawing.Size(458, 318);
             this.tabPageEditorDialog.TabIndex = 2;
             this.tabPageEditorDialog.Text = "EditorDialog";
             this.tabPageEditorDialog.UseVisualStyleBackColor = true;
@@ -504,7 +503,7 @@
             this.propertyGridStimulusSequence.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridStimulusSequence.Location = new System.Drawing.Point(3, 3);
             this.propertyGridStimulusSequence.Name = "propertyGridStimulusSequence";
-            this.propertyGridStimulusSequence.Size = new System.Drawing.Size(452, 311);
+            this.propertyGridStimulusSequence.Size = new System.Drawing.Size(452, 312);
             this.propertyGridStimulusSequence.TabIndex = 4;
             this.propertyGridStimulusSequence.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.PropertyValueChanged);
             // 
@@ -554,7 +553,7 @@
             this.tabPageTable.Location = new System.Drawing.Point(4, 29);
             this.tabPageTable.Name = "tabPageTable";
             this.tabPageTable.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageTable.Size = new System.Drawing.Size(1164, 799);
+            this.tabPageTable.Size = new System.Drawing.Size(1164, 802);
             this.tabPageTable.TabIndex = 1;
             this.tabPageTable.Text = "Table";
             this.tabPageTable.UseVisualStyleBackColor = true;
@@ -571,7 +570,7 @@
             this.dataGridViewStimulusTable.Name = "dataGridViewStimulusTable";
             this.dataGridViewStimulusTable.RowHeadersWidth = 62;
             this.dataGridViewStimulusTable.RowTemplate.Height = 28;
-            this.dataGridViewStimulusTable.Size = new System.Drawing.Size(1158, 793);
+            this.dataGridViewStimulusTable.Size = new System.Drawing.Size(1158, 796);
             this.dataGridViewStimulusTable.TabIndex = 0;
             this.dataGridViewStimulusTable.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.DataGridViewStimulusTable_CellEndEdit);
             this.dataGridViewStimulusTable.DataBindingComplete += new System.Windows.Forms.DataGridViewBindingCompleteEventHandler(this.DataGridViewStimulusTable_DataBindingComplete);
@@ -609,7 +608,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.panelButtons);
             this.splitContainer2.Size = new System.Drawing.Size(466, 835);
-            this.splitContainer2.SplitterDistance = 770;
+            this.splitContainer2.SplitterDistance = 769;
             this.splitContainer2.SplitterWidth = 5;
             this.splitContainer2.TabIndex = 0;
             // 
@@ -628,8 +627,8 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tabControlParameters);
             this.splitContainer3.Panel2MinSize = 315;
-            this.splitContainer3.Size = new System.Drawing.Size(466, 770);
-            this.splitContainer3.SplitterDistance = 411;
+            this.splitContainer3.Size = new System.Drawing.Size(466, 769);
+            this.splitContainer3.SplitterDistance = 410;
             this.splitContainer3.SplitterWidth = 8;
             this.splitContainer3.TabIndex = 0;
             // 
@@ -638,7 +637,7 @@
             this.panelProbe.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelProbe.Location = new System.Drawing.Point(0, 0);
             this.panelProbe.Name = "panelProbe";
-            this.panelProbe.Size = new System.Drawing.Size(466, 411);
+            this.panelProbe.Size = new System.Drawing.Size(466, 410);
             this.panelProbe.TabIndex = 0;
             // 
             // menuStrip

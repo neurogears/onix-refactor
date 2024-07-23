@@ -15,7 +15,7 @@ namespace OpenEphys.Onix.Design
 
         public static void SerializeObject(object _object, string filepath)
         {
-            var stringJson = JsonConvert.SerializeObject(_object);
+            var stringJson = JsonConvert.SerializeObject(_object, Formatting.Indented);
 
             File.WriteAllText(filepath, stringJson);
         }

@@ -24,7 +24,6 @@ namespace OpenEphys.Onix.Design
                         configureNode.DspCutoff = editorDialog.ConfigureNode.DspCutoff;
                         configureNode.Enable = editorDialog.ConfigureNode.Enable;
                         configureNode.RespectExternalActiveStim = editorDialog.ConfigureNode.RespectExternalActiveStim;
-                        configureNode.StimulusSequence = editorDialog.ConfigureNode.StimulusSequence;
 
                         return true;
                     }

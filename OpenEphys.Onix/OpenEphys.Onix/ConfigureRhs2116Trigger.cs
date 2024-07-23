@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Drawing.Design;
 using System.Reactive.Subjects;
 using Bonsai;
 using Newtonsoft.Json;
 using System.Text;
 using System.Xml.Serialization;
+using System.Reactive.Disposables;
 
 namespace OpenEphys.Onix
 {
@@ -62,28 +62,73 @@ namespace OpenEphys.Onix
 
             return source.ConfigureDevice(context =>
             {
-                var device = context.GetDeviceContext(deviceAddress, Rhs2116Trigger.ID);
+                var rhs2116AAddress = HeadstageRhs2116.GetRhs2116ADeviceAddress(GenericHelper.GetHubAddressFromDeviceAddress(deviceAddress));
+                var rhs2116A = context.GetDeviceContext(rhs2116AAddress, Rhs2116.ID);
+                var rhs2116BAddress = HeadstageRhs2116.GetRhs2116BDeviceAddress(GenericHelper.GetHubAddressFromDeviceAddress(deviceAddress));
+                var rhs2116B = context.GetDeviceContext(rhs2116BAddress, Rhs2116.ID);
 
+                var device = context.GetDeviceContext(deviceAddress, Rhs2116Trigger.ID);
                 device.WriteRegister(Rhs2116Trigger.TRIGGERSOURCE, (uint)triggerSource);
 
-                var deviceInfo = new Rhs2116TriggerDeviceInfo(context, DeviceType, deviceAddress, channelConfiguration, stimulusSequence.Value);
+                static void WriteStimulusSequence(DeviceContext device, Rhs2116StimulusSequence sequence)
+                {
+                    if (!sequence.Valid)
+                    {
+                        throw new WorkflowException("The requested stimulus sequence is invalid.");
+                    }
 
-                return DeviceManager.RegisterDevice(deviceName, deviceInfo);
+                    if (!sequence.FitsInHardware)
+                    {
+                        throw new WorkflowException(string.Format("The requested stimulus is too complex. {0}/{1} memory slots are required.",
+                            sequence.StimulusSlotsRequired,
+                            Rhs2116.StimMemorySlotsAvailable));
+                    }
+
+                    var registerValue = Rhs2116Config.StimulatorStepSizeToRegisters[sequence.CurrentStepSize];
+                    device.WriteRegister(Rhs2116.STEPSZ, registerValue[2] << 13 | registerValue[1] << 7 | registerValue[0]);
+
+                    // Anodic amplitudes
+                    // TODO: cache last write and compare
+                    var registerAddress = Rhs2116.POS00;
+                    int i = 0;
+                    foreach (var a in sequence.AnodicAmplitudes)
+                    {
+                        device.WriteRegister((uint)(registerAddress + i++), a);
+                    }
+
+                    // Cathodic amplitudes
+                    // TODO: cache last write and compare
+                    registerAddress = Rhs2116.NEG00;
+                    i = 0;
+                    foreach (var a in sequence.CathodicAmplitudes)
+                    {
+                        device.WriteRegister((uint)(registerAddress + i++), a);
+                    }
+
+                    // Create delta table and set length
+                    var dt = sequence.DeltaTable;
+                    device.WriteRegister(Rhs2116.NUMDELTAS, (uint)dt.Count);
+
+                    // If we want to do this efficiently, we probably need a different data structure on the
+                    // FPGA ram that allows columns to be out of order (e.g. linked list)
+                    uint j = 0;
+                    foreach (var d in dt)
+                    {
+                        uint idxTime = j++ << 22 | (d.Key & 0x003FFFFF);
+                        device.WriteRegister(Rhs2116.DELTAIDXTIME, idxTime);
+                        device.WriteRegister(Rhs2116.DELTAPOLEN, d.Value);
+                    }
+                }
+
+            return new CompositeDisposable(
+                stimulusSequence.Subscribe(newValue =>
+                {
+                    // TODO: These are the wrong devices
+                    WriteStimulusSequence(rhs2116A, newValue.StimulusSequenceA);
+                    WriteStimulusSequence(rhs2116B, newValue.StimulusSequenceB);
+                }),
+                DeviceManager.RegisterDevice(deviceName, device, DeviceType));
             });
-        }
-    }
-
-    class Rhs2116TriggerDeviceInfo : DeviceInfo
-    {
-        public Rhs2116ProbeGroup ChannelConfiguration { get; }
-        public Rhs2116StimulusSequenceDual StimulusSequence { get; }
-
-        public Rhs2116TriggerDeviceInfo(ContextTask context, Type deviceType, uint deviceAddress,
-                                        Rhs2116ProbeGroup channelConfiguration, Rhs2116StimulusSequenceDual stimulusSequence)
-            : base(context, deviceType, deviceAddress)
-        {
-            ChannelConfiguration = channelConfiguration;
-            StimulusSequence = stimulusSequence;
         }
     }
 

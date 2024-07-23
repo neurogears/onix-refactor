@@ -27,7 +27,7 @@ namespace OpenEphys.Onix
         }
 
         /// <summary>
-        /// Copy construct for Rhs2116StimulusSequence; performs a shallow copy using MemberwiseClone()
+        /// Copy constructor for Rhs2116StimulusSequence; performs a shallow copy using MemberwiseClone()
         /// </summary>
         /// <param name="sequence">Existing Stimulus Sequence</param>
         public Rhs2116StimulusSequence(Rhs2116StimulusSequence sequence)

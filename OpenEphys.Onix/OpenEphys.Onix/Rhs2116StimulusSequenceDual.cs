@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Serialization;
 
@@ -10,98 +9,100 @@ namespace OpenEphys.Onix
     /// </summary>
     public class Rhs2116StimulusSequenceDual
     {
-        private readonly Rhs2116StimulusSequence stimulusSequenceA;
-        private readonly Rhs2116StimulusSequence stimulusSequenceB;
+        internal readonly Rhs2116StimulusSequence StimulusSequenceA;
+        internal readonly Rhs2116StimulusSequence StimulusSequenceB;
 
         /// <summary>
         /// Default constructor for Rhs2116StimulusSequenceDual. Initializes with 16 stimuli per sequence
         /// </summary>
         public Rhs2116StimulusSequenceDual()
         {
-            stimulusSequenceA = new Rhs2116StimulusSequence();
-            stimulusSequenceB = new Rhs2116StimulusSequence();
+            StimulusSequenceA = new Rhs2116StimulusSequence();
+            StimulusSequenceB = new Rhs2116StimulusSequence();
         }
 
         /// <summary>
-        /// Copy construct for Rhs2116StimulusSequenceDual; performs a shallow copy using MemberwiseClone()
+        /// Copy constructor for Rhs2116StimulusSequenceDual. Performs a shallow copy using MemberwiseClone().
         /// </summary>
         /// <param name="stimulusSequenceDual">Existing Dual Stimulus Sequence</param>
         public Rhs2116StimulusSequenceDual(Rhs2116StimulusSequenceDual stimulusSequenceDual)
         {
-            stimulusSequenceA = new Rhs2116StimulusSequence(stimulusSequenceDual.stimulusSequenceA);
-            stimulusSequenceB = new Rhs2116StimulusSequence(stimulusSequenceDual.stimulusSequenceB);
+            StimulusSequenceA = new Rhs2116StimulusSequence(stimulusSequenceDual.StimulusSequenceA);
+            StimulusSequenceB = new Rhs2116StimulusSequence(stimulusSequenceDual.StimulusSequenceB);
         }
 
         public Rhs2116Stimulus[] Stimuli
         {
-            get { return stimulusSequenceA.Stimuli.Concat(stimulusSequenceB.Stimuli).ToArray(); }
+            get { return StimulusSequenceA.Stimuli.Concat(StimulusSequenceB.Stimuli).ToArray(); }
             set
             {
-                stimulusSequenceA.Stimuli = value.Take(16).ToArray();
-                stimulusSequenceB.Stimuli = value.Skip(16).Take(16).ToArray();
+                StimulusSequenceA.Stimuli = value.Take(16).ToArray();
+                StimulusSequenceB.Stimuli = value.Skip(16).Take(16).ToArray();
             }
         }
 
         public Rhs2116StepSize CurrentStepSize
         {
-            get { return stimulusSequenceA.CurrentStepSize; }
+            get { return StimulusSequenceA.CurrentStepSize; }
             set
             {
-                stimulusSequenceA.CurrentStepSize = value;
-                stimulusSequenceB.CurrentStepSize = value;
+                StimulusSequenceA.CurrentStepSize = value;
+                StimulusSequenceB.CurrentStepSize = value;
             }
         }
 
         /// <summary>
-        /// Maximum length of the sequence across all channels
+        /// Gets the maximum length of the sequence across all channels
         /// </summary>
         [XmlIgnore]
-        public uint SequenceLengthSamples => Math.Max(stimulusSequenceA.SequenceLengthSamples, stimulusSequenceB.SequenceLengthSamples);
+        public uint SequenceLengthSamples => Math.Max(StimulusSequenceA.SequenceLengthSamples, StimulusSequenceB.SequenceLengthSamples);
 
         /// <summary>
-        /// Maximum peak to peak amplitude of the sequence across all channels.
+        /// Gets the maximum peak to peak amplitude of the sequence across all channels.
         /// </summary>
         [XmlIgnore]
-        public int MaximumPeakToPeakAmplitudeSteps => Math.Max(stimulusSequenceA.MaximumPeakToPeakAmplitudeSteps, stimulusSequenceB.MaximumPeakToPeakAmplitudeSteps);
+        public int MaximumPeakToPeakAmplitudeSteps => Math.Max(StimulusSequenceA.MaximumPeakToPeakAmplitudeSteps, StimulusSequenceB.MaximumPeakToPeakAmplitudeSteps);
 
         /// <summary>
-        /// Is the stimulus sequence well defined
+        /// Gets the boolean indicating if the stimulus sequence is well defined.
         /// </summary>
         [XmlIgnore]
-        public bool Valid => stimulusSequenceA.Valid && stimulusSequenceB.Valid;
+        public bool Valid => StimulusSequenceA.Valid && StimulusSequenceB.Valid;
 
         /// <summary>
-        /// Does the sequence fit in hardware
+        /// Gets a boolean indicating if the sequence will fit in hardware.
         /// </summary>
-        public bool FitsInHardware => stimulusSequenceA.FitsInHardware && stimulusSequenceB.FitsInHardware;
+        public bool FitsInHardware => StimulusSequenceA.FitsInHardware && StimulusSequenceB.FitsInHardware;
 
         /// <summary>
-        /// The maximum number of memory slots available
+        /// Gets the the maximum number of hardware memory slots available.
         /// </summary>
         [XmlIgnore]
         public int MaxMemorySlotsAvailable => Rhs2116.StimMemorySlotsAvailable;
 
         /// <summary>
-        /// Number of hardware memory slots required by the sequence
+        /// Gets the number of hardware memory slots required by the sequence.
         /// </summary>
         [XmlIgnore]
-        public int StimulusSlotsRequired => Math.Max(stimulusSequenceA.DeltaTable.Count, stimulusSequenceB.DeltaTable.Count);
+        public int StimulusSlotsRequired => Math.Max(StimulusSequenceA.DeltaTable.Count, StimulusSequenceB.DeltaTable.Count);
+
 
         [XmlIgnore]
-        public double CurrentStepSizeuA => stimulusSequenceA.CurrentStepSizeuA;
+        public double CurrentStepSizeuA => StimulusSequenceA.CurrentStepSizeuA;
 
-        [XmlIgnore]
-        public double MaxPossibleAmplitudePerPhaseMicroAmps => CurrentStepSizeuA * 255;
 
-        internal IEnumerable<byte> AnodicAmplitudes => stimulusSequenceA.AnodicAmplitudes.Concat(stimulusSequenceB.AnodicAmplitudes);
+        //[XmlIgnore]
+        //public double MaxPossibleAmplitudePerPhaseMicroAmps => CurrentStepSizeuA * 255;
+
+        //internal IEnumerable<byte> AnodicAmplitudes => stimulusSequenceA.AnodicAmplitudes.Concat(stimulusSequenceB.AnodicAmplitudes);
         
-        internal IEnumerable<byte> CathodicAmplitudes => stimulusSequenceA.CathodicAmplitudes.Concat(stimulusSequenceB.CathodicAmplitudes);
+        //internal IEnumerable<byte> CathodicAmplitudes => stimulusSequenceA.CathodicAmplitudes.Concat(stimulusSequenceB.CathodicAmplitudes);
 
-        internal Dictionary<uint, uint> DeltaTableA => stimulusSequenceA.DeltaTable;
+        //internal Dictionary<uint, uint> DeltaTableA => stimulusSequenceA.DeltaTable;
         
-        internal Dictionary<uint, uint> DeltaTableB => stimulusSequenceB.DeltaTable;
+        //internal Dictionary<uint, uint> DeltaTableB => stimulusSequenceB.DeltaTable;
 
-        internal Dictionary<uint, uint> DeltaTable => DeltaTableA;
+        //internal Dictionary<uint, uint> DeltaTable => DeltaTableA;
 
     }
 }

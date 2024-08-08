@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
 
-namespace OpenEphys.Onix
+namespace OpenEphys.Onix1
 {
     public class Rhs2116Stimulus
     {
@@ -132,7 +132,7 @@ namespace OpenEphys.Onix
             get
             {
                 return NumberOfStimuli == 0
-                    ? CathodicWidthSamples == 0 && AnodicWidthSamples == 0 && InterStimulusIntervalSamples == 0 && 
+                    ? CathodicWidthSamples == 0 && AnodicWidthSamples == 0 && InterStimulusIntervalSamples == 0 &&
                       AnodicAmplitudeSteps == 0 && CathodicAmplitudeSteps == 0 && DelaySamples == 0 && DwellSamples == 0
                     : !(AnodicWidthSamples == 0 && AnodicAmplitudeSteps > 0) &&
                       !(CathodicWidthSamples == 0 && CathodicAmplitudeSteps > 0) &&
@@ -145,5 +145,4 @@ namespace OpenEphys.Onix
             return (Rhs2116Stimulus)MemberwiseClone();
         }
     }
-
 }

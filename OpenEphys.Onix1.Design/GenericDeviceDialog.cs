@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public abstract partial class GenericDeviceDialog : Form
     {

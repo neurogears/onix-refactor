@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Bonsai.Design;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public class Rhs2116Editor : WorkflowComponentEditor
     {

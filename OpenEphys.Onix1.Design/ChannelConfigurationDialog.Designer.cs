@@ -1,4 +1,4 @@
-﻿namespace OpenEphys.Onix.Design
+﻿namespace OpenEphys.Onix1.Design
 {
     partial class ChannelConfigurationDialog
     {

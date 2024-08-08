@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
-using System;
 
-namespace OpenEphys.Onix
+namespace OpenEphys.Onix1
 {
     /// <summary>
     /// Defines a class that holds the Stimulus Sequence for an Rhs2116 device.

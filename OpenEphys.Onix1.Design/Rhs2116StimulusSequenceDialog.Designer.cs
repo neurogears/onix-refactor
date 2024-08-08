@@ -1,4 +1,4 @@
-﻿namespace OpenEphys.Onix.Design
+﻿namespace OpenEphys.Onix1.Design
 {
     partial class Rhs2116StimulusSequenceDialog
     {
@@ -149,7 +149,7 @@
             // 
             this.toolStripStatusIsValid.BorderSides = System.Windows.Forms.ToolStripStatusLabelBorderSides.Right;
             this.toolStripStatusIsValid.BorderStyle = System.Windows.Forms.Border3DStyle.Raised;
-            this.toolStripStatusIsValid.Image = global::OpenEphys.Onix.Design.Properties.Resources.StatusReadyImage;
+            this.toolStripStatusIsValid.Image = global::OpenEphys.Onix1.Design.Properties.Resources.StatusReadyImage;
             this.toolStripStatusIsValid.Name = "toolStripStatusIsValid";
             this.toolStripStatusIsValid.Size = new System.Drawing.Size(228, 29);
             this.toolStripStatusIsValid.Text = "Valid stimulus sequence";

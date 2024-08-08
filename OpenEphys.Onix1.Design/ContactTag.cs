@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public class ContactTag
     {

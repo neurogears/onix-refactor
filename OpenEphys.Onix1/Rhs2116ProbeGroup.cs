@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Text;
-using System.Reactive.Linq;
-using System.Collections.Generic;
 using System.CodeDom.Compiler;
-using OpenEphys.ProbeInterface;
+using System.Collections.Generic;
 using Newtonsoft.Json;
+using OpenEphys.ProbeInterface;
 
-namespace OpenEphys.Onix
+namespace OpenEphys.Onix1
 {
     [GeneratedCodeAttribute("Bonsai.Sgen", "0.3.0.0 (Newtonsoft.Json v13.0.0.0)")]
     public class Rhs2116ProbeGroup : ProbeGroup
@@ -116,38 +114,6 @@ namespace OpenEphys.Onix
             }
 
             return probePlanarContour;
-        }
-
-        public IObservable<Rhs2116ProbeGroup> Process()
-        {
-            return Observable.Defer(() => Observable.Return(new Rhs2116ProbeGroup(this)));
-        }
-
-        public IObservable<Rhs2116ProbeGroup> Process<TSource>(IObservable<TSource> source)
-        {
-            return Observable.Select(source, _ => new Rhs2116ProbeGroup(this));
-        }
-
-        protected virtual bool PrintMembers(StringBuilder stringBuilder)
-        {
-            stringBuilder.Append("specification = " + Specification + ", ");
-            stringBuilder.Append("version = " + Version + ", ");
-            stringBuilder.Append("probes = " + Probes);
-            return true;
-        }
-
-        public override string ToString()
-        {
-            StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(GetType().Name);
-            stringBuilder.Append(" { ");
-            if (PrintMembers(stringBuilder) )
-            {
-                stringBuilder.Append(" ");
-            }
-            stringBuilder.Append("}");
-
-            return stringBuilder.ToString();
         }
     }
 }

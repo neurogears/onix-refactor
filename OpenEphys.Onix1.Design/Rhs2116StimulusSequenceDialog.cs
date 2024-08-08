@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using ZedGraph;
 using System.IO;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public partial class Rhs2116StimulusSequenceDialog : Form
     {
@@ -26,14 +26,14 @@ namespace OpenEphys.Onix.Design
         /// Opens a dialog allowing for easy changing of stimulus sequence parameters
         /// </summary>
         /// <param name="sequence"></param>
-        /// <param name="probeGroup"></param>
-        public Rhs2116StimulusSequenceDialog(Rhs2116StimulusSequenceDual sequence, Rhs2116ProbeGroup probeGroup)
+        public Rhs2116StimulusSequenceDialog(Rhs2116StimulusSequenceDual sequence)
         {
             InitializeComponent();
             Shown += FormShown;
 
             Sequence = new Rhs2116StimulusSequenceDual(sequence);
 
+            var probeGroup = new Rhs2116ProbeGroup();
 
             ChannelDialog = new(probeGroup)
             {
@@ -309,7 +309,7 @@ namespace OpenEphys.Onix.Design
                 if (!Sequence.FitsInHardware)
                 {
                     toolStripStatusIsValid.Image = Properties.Resources.StatusBlockedImage;
-                    toolStripStatusIsValid.Text = "Invalid seqeunce - Too many pulses defined";
+                    toolStripStatusIsValid.Text = "Invalid sequence - Too many pulses defined";
                 }
                 else
                 {

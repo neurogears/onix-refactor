@@ -7,18 +7,30 @@ using System.Reactive.Subjects;
 
 namespace OpenEphys.Onix1
 {
+    [Editor("OpenEphys.Onix1.Design.Rhs2116Editor, OpenEphys.Onix1.Design", typeof(ComponentEditor))]
     public class ConfigureRhs2116 : SingleDeviceFactory
     {
-
         readonly BehaviorSubject<Rhs2116AnalogLowCutoff> analogLowCutoff = new(Rhs2116AnalogLowCutoff.Low100mHz);
         readonly BehaviorSubject<Rhs2116AnalogLowCutoff> analogLowCutoffRecovery = new(Rhs2116AnalogLowCutoff.Low250Hz);
         readonly BehaviorSubject<Rhs2116AnalogHighCutoff> analogHighCutoff = new(Rhs2116AnalogHighCutoff.High10000Hz);
         readonly BehaviorSubject<bool> respectExternalActiveStim = new(true);
-        readonly BehaviorSubject<Rhs2116StimulusSequence> stimulusSequence = new(new Rhs2116StimulusSequence());
 
         public ConfigureRhs2116()
             : base(typeof(Rhs2116))
         {
+        }
+
+        public ConfigureRhs2116(ConfigureRhs2116 rhs2116)
+            : base(typeof(Rhs2116))
+        {
+            Enable = rhs2116.Enable;
+            DspCutoff = rhs2116.DspCutoff;
+            RespectExternalActiveStim = rhs2116.RespectExternalActiveStim;
+            AnalogLowCutoffRecovery = rhs2116.AnalogLowCutoffRecovery;
+            AnalogLowCutoff = rhs2116.AnalogLowCutoff;
+            AnalogHighCutoff = rhs2116.AnalogHighCutoff;
+            DeviceAddress = rhs2116.DeviceAddress;
+            DeviceName = rhs2116.DeviceName;
         }
 
         [Category(ConfigurationCategory)]
@@ -68,14 +80,6 @@ namespace OpenEphys.Onix1
             set => respectExternalActiveStim.OnNext(value);
         }
 
-        [Category(AcquisitionCategory)]
-        [Description("Stimulus sequence.")]
-        public Rhs2116StimulusSequence StimulusSequence
-        {
-            get => stimulusSequence.Value;
-            set => stimulusSequence.OnNext(value);
-        }
-
         public override IObservable<ContextTask> Process(IObservable<ContextTask> source)
         {
             var enable = Enable;
@@ -123,42 +127,6 @@ namespace OpenEphys.Onix1
                         device.WriteRegister(Rhs2116.BW0, regs[1] << 6 | regs[0]);
                         device.WriteRegister(Rhs2116.BW1, regs[3] << 6 | regs[2]);
                         device.WriteRegister(Rhs2116.FASTSETTLESAMPLES, Rhs2116Config.AnalogHighCutoffToFastSettleSamples[newValue]);
-                    }),
-                    stimulusSequence.Subscribe(newValue =>
-                    {
-                        // Step size
-                        var reg = Rhs2116Config.StimulatorStepSizeToRegisters[newValue.CurrentStepSize];
-                        device.WriteRegister(Rhs2116.STEPSZ, reg[2] << 13 | reg[1] << 7 | reg[0]);
-
-                        // Anodic amplitudes
-                        // TODO: cache last write and compare?
-                        var a = newValue.AnodicAmplitudes;
-                        for (int i = 0; i < a.Count(); i++)
-                        {
-                            device.WriteRegister(Rhs2116.POS00 + (uint)i, a.ElementAt(i));
-                        }
-
-                        // Cathodic amplitudes
-                        // TODO: cache last write and compare?
-                        var c = newValue.CathodicAmplitudes;
-                        for (int i = 0; i < a.Count(); i++)
-                        {
-                            device.WriteRegister(Rhs2116.NEG00 + (uint)i, c.ElementAt(i));
-                        }
-
-                        // Create delta table and set length
-                        var dt = newValue.DeltaTable;
-                        device.WriteRegister(Rhs2116.NUMDELTAS, (uint)dt.Count);
-
-                        // TODO: If we want to do this efficently, we probably need a different data structure on the
-                        // FPGA ram that allows columns to be out of order (e.g. linked list)
-                        uint j = 0;
-                        foreach (var d in dt)
-                        {
-                            uint indexAndTime = j++ << 22 | (d.Key & 0x003FFFFF);
-                            device.WriteRegister(Rhs2116.DELTAIDXTIME, indexAndTime);
-                            device.WriteRegister(Rhs2116.DELTAPOLEN, d.Value);
-                        }
                     })
                 );
             });

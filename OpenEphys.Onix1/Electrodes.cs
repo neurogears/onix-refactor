@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace OpenEphys.Onix
+namespace OpenEphys.Onix1
 {
     public abstract class Electrodes
     {
@@ -24,9 +24,5 @@ namespace OpenEphys.Onix
         /// Location of the electrode in two-dimensional space
         /// </summary>
         public PointF Position { get; internal set; }
-
-        public Electrodes()
-        {
-        }
     }
 }

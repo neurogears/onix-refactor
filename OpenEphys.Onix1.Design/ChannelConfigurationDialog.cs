@@ -7,7 +7,7 @@ using System;
 using OpenEphys.ProbeInterface;
 using System.Collections.Generic;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     /// <summary>
     /// Simple dialog window that serves as the base class for all Channel Configuration windows.

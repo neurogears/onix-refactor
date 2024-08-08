@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using Bonsai.Design;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public class Rhs2116StimulusSequenceEditor : WorkflowComponentEditor
     {
@@ -14,12 +14,11 @@ namespace OpenEphys.Onix.Design
                 var editorState = (IWorkflowEditorState)provider.GetService(typeof(IWorkflowEditorState));
                 if (editorState != null && !editorState.WorkflowRunning && component is ConfigureRhs2116Trigger configureNode)
                 {
-                    using var editorDialog = new Rhs2116StimulusSequenceDialog(configureNode.StimulusSequence, configureNode.ChannelConfiguration);
+                    using var editorDialog = new Rhs2116StimulusSequenceDialog(configureNode.StimulusSequence);
 
                     if (editorDialog.ShowDialog() == DialogResult.OK)
                     {
                         configureNode.StimulusSequence = editorDialog.Sequence;
-                        configureNode.ChannelConfiguration = (Rhs2116ProbeGroup)editorDialog.ChannelDialog.ChannelConfiguration;
 
                         return true;
                     }

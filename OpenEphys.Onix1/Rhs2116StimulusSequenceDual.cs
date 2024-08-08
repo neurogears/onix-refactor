@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Xml.Serialization;
 
-namespace OpenEphys.Onix
+namespace OpenEphys.Onix1
 {
     /// <summary>
     /// Defines a class that holds the Stimulus Sequence for two Rhs2116 devices.
@@ -89,20 +89,5 @@ namespace OpenEphys.Onix
 
         [XmlIgnore]
         public double CurrentStepSizeuA => StimulusSequenceA.CurrentStepSizeuA;
-
-
-        //[XmlIgnore]
-        //public double MaxPossibleAmplitudePerPhaseMicroAmps => CurrentStepSizeuA * 255;
-
-        //internal IEnumerable<byte> AnodicAmplitudes => stimulusSequenceA.AnodicAmplitudes.Concat(stimulusSequenceB.AnodicAmplitudes);
-        
-        //internal IEnumerable<byte> CathodicAmplitudes => stimulusSequenceA.CathodicAmplitudes.Concat(stimulusSequenceB.CathodicAmplitudes);
-
-        //internal Dictionary<uint, uint> DeltaTableA => stimulusSequenceA.DeltaTable;
-        
-        //internal Dictionary<uint, uint> DeltaTableB => stimulusSequenceB.DeltaTable;
-
-        //internal Dictionary<uint, uint> DeltaTable => DeltaTableA;
-
     }
 }

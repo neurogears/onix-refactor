@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using OpenEphys.ProbeInterface;
 using ZedGraph;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public partial class Rhs2116ChannelConfigurationDialog : ChannelConfigurationDialog
     {

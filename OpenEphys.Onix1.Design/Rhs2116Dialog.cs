@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public partial class Rhs2116Dialog : GenericDeviceDialog
     {

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows.Forms;
 
-namespace OpenEphys.Onix.Design
+namespace OpenEphys.Onix1.Design
 {
     public partial class HeadstageRhs2116Dialog : Form
     {
@@ -18,13 +18,15 @@ namespace OpenEphys.Onix.Design
 
             ChannelConfiguration = new Rhs2116ProbeGroup(channelConfiguration);
 
-            StimulusSequenceDialog = new Rhs2116StimulusSequenceDialog(sequence, channelConfiguration)
+            StimulusSequenceDialog = new Rhs2116StimulusSequenceDialog(sequence)
             {
                 TopLevel = false,
                 FormBorderStyle = FormBorderStyle.None,
                 Dock = DockStyle.Fill,
                 Parent = this,
             };
+
+            StimulusSequenceDialog.ChannelDialog.ChannelConfiguration = ChannelConfiguration;
 
             tabPageStimulusSequence.Controls.Add(StimulusSequenceDialog);
             this.AddMenuItemsFromDialogToFileOption(StimulusSequenceDialog);

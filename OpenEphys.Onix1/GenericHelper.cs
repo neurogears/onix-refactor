@@ -1,4 +1,4 @@
-﻿namespace OpenEphys.Onix
+﻿namespace OpenEphys.Onix1
 {
     static class GenericHelper
     {
